@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="itwillbs.p2c3.class_will.mapper.AdminMapper">
+
+	<select id="selectMemberList" resultType="map" parameterType="map">
+	    SELECT 
+	        m.member_code,
+	        m.member_email,
+	        m.member_name,
+	        m.member_img,
+	        m.member_tel,
+	        m.member_pwd,
+	        m.member_social,
+	        m.member_marketing1,
+	        m.member_marketing2,
+	        status.code_value AS member_status,
+	        m.member_addr,
+	        m.member_nickname,
+	        m.member_credit,
+	        type.code_value AS member_type,
+	        m.member_reg_date
+	    FROM MEMBER m
+	    LEFT JOIN common2 status 
+	    ON m.member_status = status.common2_code 
+	    AND status.common1_code = #{params.member_status}
+	    LEFT JOIN common2 type 
+	    ON m.member_type = type.common2_code 
+	    AND type.common1_code = #{params.member_type}
+	    WHERE m.member_type = #{params.param1}
+	</select>
+	
+	<select id="selectMemberInfo" resultType="map" parameterType="map">
+		SELECT	m.member_code,
+		        m.member_email,
+		        m.member_name,
+		        m.member_img,
+		        m.member_tel,
+		        m.member_pwd,
+		        m.member_social,
+		        m.member_marketing1,
+		        m.member_marketing2,
+		        status.code_value AS member_status,
+		        m.member_addr,
+		        m.member_nickname,
+		        m.member_credit,
+		        type.code_value AS member_type,
+		        m.member_reg_date
+		FROM MEMBER m
+	    LEFT JOIN common2 status 
+	    ON m.member_status = status.common2_code 
+	    AND status.common1_code = #{params.member_status}
+	    LEFT JOIN common2 type 
+	    ON m.member_type = type.common2_code 
+	    AND type.common1_code = #{params.member_type}
+		WHERE member_code = #{params.param1}
+	</select>
+	
+	<select id="selectColumnNames" resultType="String">
+		SELECT COLUMN_NAME 
+		FROM INFORMATION_SCHEMA.COLUMNS 
+		WHERE TABLE_NAME = #{tableName}
+		AND TABLE_SCHEMA = 'c3d2401t2_2'
+		ORDER BY ORDINAL_POSITION
+	</select>
+	
+	<select id="selectTable" resultType="map">
+	    SELECT 
+	        m.member_code,
+	        m.member_email,
+	        m.member_name,
+	        m.member_img,
+	        m.member_tel,
+	        m.member_pwd,
+	        m.member_social,
+	        m.member_marketing1,
+	        m.member_marketing2,
+	        status.code_value AS member_status,
+	        m.member_addr,
+	        m.member_nickname,
+	        m.member_credit,
+	        type.code_value AS member_type,
+	        m.member_reg_date
+	    FROM MEMBER m
+	    LEFT JOIN common2 status 
+	    ON m.member_status = status.common2_code 
+	    AND status.common1_code = 'MES'
+	    LEFT JOIN common2 type 
+	    ON m.member_type = type.common2_code 
+	    AND type.common1_code = 'MET'
+	</select>
+	
+	<select id="selectColumnDataTypes" resultType="String">
+	    SELECT 
+	        CASE 
+	            WHEN DATA_TYPE = 'varchar' THEN CONCAT(DATA_TYPE, '(', CHARACTER_MAXIMUM_LENGTH, ')')
+	            ELSE DATA_TYPE
+	        END AS DATA_TYPE_WITH_LENGTH
+	    FROM INFORMATION_SCHEMA.COLUMNS
+	    WHERE TABLE_NAME = #{tableName}
+	</select>
+	
+	<insert id="insertExcelDatas">
+		INSERT INTO ${tableName}
+		(
+		<foreach collection="columnNames" separator="," item="column">
+			${column}
+		</foreach>
+		)
+		VALUES
+		(
+		<foreach collection="rowDataList" separator="," item="data">
+			#{data}
+		</foreach>
+		)
+	</insert>
+	
+	<select id="selectClassList" resultType="map">
+		SELECT class_code
+		        ,class_name
+		        ,c2.code_value AS 'class_big_category'
+		        ,c3.code_value AS 'class_small_category'
+		        ,class_thumnail
+		        ,class_image
+		        ,class_ex
+		        ,class_location
+		        ,class_hashtag
+		        ,class_creator_explain
+		        ,class_hide
+		        ,class_price
+		        ,crs.code_value AS 'class_regist_status'
+		        ,m.member_name
+		FROM class c
+		LEFT JOIN common2 c2
+		ON c.class_big_category = c2.common2_code
+		AND c2.common1_code = 'CLC'
+		LEFT JOIN common3 c3
+		ON c.class_small_category = c3.common3_code
+		AND c3.common2_code = c2.common2_code
+		AND c3.common1_code = 'CLC'
+		LEFT JOIN common2 crs
+		ON c.class_regist_status = crs.common2_code
+		AND crs.common1_code = 'CRS'
+		JOIN MEMBER m
+		ON c.member_code = m.member_code;
+	</select>
+	
+	<select id="selectClassInfo" resultType="map">
+		SELECT class_code
+				,class_name
+				,class_big_category
+				,class_small_category
+				,class_thumnail
+				,class_image
+				,class_ex
+				,class_location
+				,class_hashtag
+				,class_creator_explain
+				,class_hide
+				,class_price
+				,class_regist_status
+				,m.member_name
+		FROM class c
+		JOIN MEMBER m
+		  ON c.member_code = m.member_code
+		WHERE class_code = #{class_code}
+	</select>
+	
+	<select id="selectCommonCode" resultType="String">
+		SELECT common1_code
+		FROM common1
+		WHERE code_value = #{code_value}
+	</select>
+	
+	<select id="selectCommon2Code" resultType="int">
+		SELECT common2_code
+		FROM common2
+		WHERE common1_code = #{common1_code}
+		AND code_value = #{type}
+	</select>
+	
+	<select id="selectBigCategory">
+		SELECT *
+		FROM common2
+		WHERE common1_code = 'CLC'
+	</select>
+	
+	<select id="selectSmallCategory">
+		SELECT *
+		FROM common3
+		WHERE common1_code = 'CLC'
+	</select>
+	
+	<update id="updatedCategoryData" parameterType="map">
+		UPDATE common3
+		SET code_value = #{smallCategory}
+			,code_hide =
+		<choose>
+			<when test="hidden == true">
+				'Y'
+			</when>
+			<otherwise>
+				'N'
+			</otherwise>
+		</choose> 
+		WHERE common2_code = #{common2_code} 
+		AND common1_code = 'CLC'
+		AND common3_code = #{id}
+	</update>
+	
+	<select id="selectMaxCommon3Code" resultType="int">
+		SELECT COALESCE(MAX(common3_code), 0) + 1
+		FROM common3
+		WHERE common2_code = #{common2_code}
+	</select>
+	
+	
+	<insert id="insertCategoryData" parameterType="map">
+	    INSERT INTO common3
+	    VALUES
+	        ('CLC', #{rowMap.common2_code}, #{rowMap.max_code}, #{rowMap.smallCategory}, null,
+			<choose>
+				<when test="rowMap.hidden == true">
+					'Y'
+				</when>
+				<otherwise>
+					'N'
+				</otherwise>
+			</choose> 
+			)
+	</insert>
+	
+	<delete id="deleteCategoryData" parameterType="map">
+		DELETE FROM common3
+		WHERE 	common1_code = 'CLC' 
+		AND		common2_code = #{rowMap.common2_code}
+		AND		common3_code = #{rowMap.id}
+	</delete>
+	
+	<insert id="insertBoard" parameterType="map">
+		INSERT INTO ${map.type}
+		VALUES
+		(NULL, #{map.subject}, #{map.content}, #{map.category}, 'N', now())
+	</insert>
+	
+	<select id="selectCscList" resultType="map" parameterType="map">
+		SELECT *
+		FROM ${type}
+		ORDER BY ${type}_code DESC
+		<if test="startRow != null and !startRow.equals('')">
+			LIMIT #{startRow}, #{limit}
+		</if>
+	</select>
+	
+	<select id="selectCscCount" resultType="int">
+	    SELECT COUNT(*)
+	    FROM ${type}
+	</select>
+	
+	<select id="selectCommon2Value" resultType="String">
+		SELECT code_value
+		FROM common2
+		WHERE common1_code = #{common1_code}
+		AND common2_code = #{common2_code}
+	</select>
+	
+	<select id="selectBoardCategory" resultType="map">
+		SELECT common2_code , code_value
+		FROM common2
+		WHERE common1_code = #{code}
+	</select>
+	
+	<select id="selectPayList" resultType="map">
+	SELECT    pay_code
+			, pay_merchant_uid
+			, pay_amount
+			, pay_datetime
+			, c2.code_value AS 'pay_type'
+			, pay_status
+			, m.member_email AS 'member_email'
+			, class_schedule_code
+			, pay_headcount
+			, c.class_name AS 'class_name'
+			, imp_uid
+			, use_willpay
+			, pg_provider
+			, card_name
+	FROM pay p 
+	LEFT JOIN common2 c2
+	ON c2.common2_code = p.pay_type 
+	AND c2.common1_code = 'PT'
+	JOIN MEMBER m
+	ON m.member_code = p.member_code 
+	JOIN class c
+	ON c.class_code = p.class_code ;
+	</select>
+	
+	
+	<select id="selectWillpayChart" resultType="Integer">
+		SELECT  SUM(CAST(pay_amount AS DECIMAL(10, 2))) AS totalSales 
+		FROM pay
+		GROUP BY DATE_FORMAT(STR_TO_DATE(pay_datetime, '%Y-%m-%d'), '%Y-%m')
+		ORDER BY DATE_FORMAT(STR_TO_DATE(pay_datetime, '%Y-%m-%d'), '%Y-%m')
+	</select>
+	
+	<select id="selectRewardData" resultType="map">
+		SELECT CAST(reward_fee AS UNSIGNED) AS reward_fee, reward_rate, reward_code
+		FROM reward
+		ORDER BY CAST(reward_fee AS UNSIGNED)
+	</select>
+	
+	<update id="updateRewardData" parameterType="map">
+		UPDATE reward
+		SET reward_fee = #{params.reward_fee}
+		, reward_rate = #{params.reward_rate}
+		WHERE reward_code = #{params.reward_code}
+	</update>
+	
+	<select id="selectCategoryRanking" resultType="map">
+		SELECT c2.code_value ,COUNT(c2.code_value) as reservation_count
+		FROM class c
+		LEFT JOIN common2 c2
+		ON c.class_big_category = c2.common2_code 
+		AND c2.common1_code = 'CLC'
+		GROUP BY class_big_category
+		ORDER BY reservation_count DESC
+		LIMIT 6;	
+	</select>
+	
+	<update id="updateBoard" parameterType="map">
+		UPDATE ${type}
+		SET ${type}_subject = #{subject}
+			,${type}_content = #{content}
+			,${type}_category = #{category}
+		WHERE ${type}_code = #{code}		
+	</update>
+	
+	<update id="deleteBoard" parameterType="map">
+		DELETE FROM ${type}
+		WHERE ${type}_code = #{code}
+	</update>
+	
+	<select id="selectClassListType" resultType="map">
+		SELECT class_code
+		        ,class_name
+		        ,c2.code_value AS 'class_big_category'
+		        ,c3.code_value AS 'class_small_category'
+		        ,class_thumnail
+		        ,class_image
+		        ,class_ex
+		        ,class_location
+		        ,class_hashtag
+		        ,class_creator_explain
+		        ,class_hide
+		        ,class_price
+		        ,crs.code_value AS 'class_regist_status'
+		        ,m.member_name
+		FROM class c
+		LEFT JOIN common2 c2
+		ON c.class_big_category = c2.common2_code
+		AND c2.common1_code = 'CLC'
+		LEFT JOIN common3 c3
+		ON c.class_small_category = c3.common3_code
+		AND c3.common2_code = c2.common2_code
+		AND c3.common1_code = 'CLC'
+		LEFT JOIN common2 crs
+		ON c.class_regist_status = crs.common2_code
+		AND crs.common1_code = 'CRS'
+		JOIN MEMBER m
+		ON c.member_code = m.member_code
+		WHERE c.class_regist_status = #{type}
+	</select>
+	
+	<update id="registClass">
+		UPDATE class
+		SET class_regist_status = 2
+		WHERE class_code = #{class_code}
+	</update>
+	
+	<select id="selectClassReportData" resultType="map">
+		SELECT class_report_code
+			  ,c2.code_value AS 'class_report_big_category'
+			  ,c3.code_value  AS 'class_report_small_category'
+			  ,class_report_content
+			  ,class_report_status
+			  ,c.class_name 
+			  ,m.member_email 
+		FROM class_report cr
+		LEFT JOIN common2 c2
+		ON cr.class_report_big_category = c2.common2_code
+		AND c2.common1_code = "RPC"
+		LEFT JOIN common3 c3
+		ON cr.class_report_small_category = c3.common3_code
+		AND c3.common1_code = "RPC"
+		AND c3.common2_code = c2.common2_code 
+		LEFT JOIN class c 
+		ON c.class_code = cr.class_code
+		LEFT JOIN MEMBER m
+		ON m.member_code = cr.member_code
+		WHERE class_report_status  
+		<if test="status.equals('처리완료')">
+			IN ('숨김처리', '신고취소')
+		</if>
+		<if test="status.equals('처리중')">
+			= '처리중'
+		</if>
+	</select>
+	
+	<select id="selectClssReportDetail" resultType="map">
+		SELECT class_report_code
+			  ,c2.code_value AS 'class_report_big_category'
+			  ,c3.code_value  AS 'class_report_small_category'
+			  ,class_report_content
+			  ,class_report_status
+			  ,c.class_name 
+			  ,m.member_email 
+			  ,cr.class_code
+		FROM class_report cr
+		LEFT JOIN common2 c2
+		ON cr.class_report_big_category = c2.common2_code
+		AND c2.common1_code = "RPC"
+		LEFT JOIN common3 c3
+		ON cr.class_report_small_category = c3.common3_code
+		AND c3.common1_code = "RPC"
+		AND c3.common2_code = c2.common2_code 
+		LEFT JOIN class c 
+		ON c.class_code = cr.class_code
+		LEFT JOIN MEMBER m
+		ON m.member_code = cr.member_code
+		WHERE class_report_code = #{class_report_code}
+	</select>
+	
+	<update id="updateClassReportStatus">
+		UPDATE class_report
+		SET class_report_status = 
+		<if test="status.equals('hide')">
+			"숨김처리"	
+		</if>
+		<if test="status.equals('cancel')">
+			"신고취소"			
+		</if>
+		WHERE class_report_code = #{class_report_code}
+	</update>
+	
+	<update id="updateClassStatusHide">
+		UPDATE class
+		SET class_active = "N"
+		WHERE class_code = #{class_code}
+	</update>	
+	
+	<select id="selectTotalMember" resultType="Integer">
+		SELECT count(member_code)
+		FROM MEMBER
+	</select>
+	
+	<select id="selectNewMemberCount" resultType="Integer">
+		SELECT COUNT(*) AS new_member_count
+		FROM MEMBER
+		WHERE DATE_FORMAT(STR_TO_DATE(member_reg_date, '%Y%m%d'), '%Y-%m-%d') = CURDATE()
+	</select>
+	
+	<select id="selectDailyVisit" resultType="Integer">
+		SELECT IFNULL(visit_count , 0)
+		FROM daily_visit
+		WHERE DATE_FORMAT(STR_TO_DATE(visit_date, '%Y%m%d'), '%Y-%m-%d') = CURDATE()
+	</select>
+	
+	<select id="selectTotalVisit" resultType="Integer">
+		SELECT SUM(visit_count)
+		FROM daily_visit
+	</select>
+	
+	<update id="updateNoticeHide" parameterType="map">
+		UPDATE notice
+		SET notice_hide = 
+		<if test="params.hidden">
+			'Y'
+		</if>
+		<if test="!params.hidden">
+			'N'
+		</if>
+		WHERE notice_code = #{params.notice_code}
+	</update>
+	
+	<update id="updateFaqHide" parameterType="map">
+		UPDATE faq
+		SET faq_hide = 
+		<if test="params.hidden">
+			'Y'
+		</if>
+		<if test="!params.hidden">
+			'N'
+		</if>
+		WHERE faq_code = #{params.faq_code}
+	</update>
+	
+	<insert id="insertEvent" parameterType="map">
+		INSERT INTO event
+		VALUES
+		(
+		null, 
+		#{params.event_subject}, 
+		now(), 
+		#{params.event_start_date}, 
+		#{params.event_end_date}, 
+		#{params.event_thumbnail}, 
+		#{params.event_image}, 
+		#{params.event_point_active}, 
+		#{params.event_point}
+		)
+	</insert>
+</mapper>

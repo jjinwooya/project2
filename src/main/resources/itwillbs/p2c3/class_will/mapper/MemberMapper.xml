@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="itwillbs.p2c3.class_will.mapper.MemberMapper">
+
+	<insert id="insertMember">
+		INSERT INTO MEMBER (
+			  member_name
+			, member_email
+			, member_pwd
+			, member_tel
+			, member_status
+			, member_marketing1
+			, member_marketing2
+			, member_reg_date
+			, member_type
+			, member_img
+			, member_social
+			, member_addr
+			, member_nickname
+			, member_credit
+		)
+		VALUES (
+			  #{member_name}
+			, #{member_email}
+			, #{member_pwd}
+			, #{member_tel}
+			, 1
+			, #{member_marketing1}
+			, #{member_marketing2}
+			, #{member_reg_date}
+			, 1
+			, #{member_img}
+			, #{member_social}
+			, #{member_addr}
+			, #{member_name}
+			, 0
+		) 
+	</insert>
+	
+	<select id="selectMember">
+		SELECT *
+		FROM MEMBER 
+		WHERE member_email = #{member_email}
+	</select>
+	
+	<update id="updatePassword">
+		UPDATE MEMBER
+		SET member_pwd = #{member_pwd}
+		WHERE member_email = #{member_email}
+	</update>
+
+	<update id="updateMemberStatus">
+		UPDATE MEMBER
+		SET member_status = 1
+		WHERE member_email = #{member_email}
+	</update>
+
+	<select id="selectBankInfo" resultType="map">
+		SELECT access_token, user_seq_no
+		FROM bank_user_info
+		WHERE member_code = #{member_code}
+	</select>
+	
+
+</mapper>

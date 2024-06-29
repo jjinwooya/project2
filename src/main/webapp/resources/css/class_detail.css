@@ -1,0 +1,269 @@
+@charset "UTF-8";
+
+.container1 {
+	height : auto;
+	width: 1200px;
+	margin: auto;
+	color : white;
+/* 	margin-top : 50px; */
+}
+
+.sticky-nav1 {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    background-color: black;
+    z-index: 1000;
+}
+
+.classImg {
+	width : 900px;
+	height : 1300px;
+}
+.nav-container1 {
+	display : flex;
+	flex-direction : row;
+	width : 100%;
+	margin : 0;
+	background-color : black;
+	list-style-type : none;
+/* 	padding: 0px 20px; */
+	padding: 0px;
+	font-size: 15px;
+	transition: .5s;
+	
+/*   height: 100px; 원하는 높이로 조정 */
+/*   padding-top: 0; */
+/*   padding-bottom: 0; */
+}
+.navbar-item1 {
+	font-weight: bold;
+	font-size : 1.1em;
+}
+
+.navbar-item1:hover {
+	color : skyblue;
+}
+.nav-item1 {
+	display: inline-block; /* 인라인 블록으로 설정하여 텍스트 가운데 정렬 */
+	padding : 15px;
+	cursor : pointer;
+	width: 100%; /* 부모의 너비를 100%로 설정 */
+}
+.nav-item1 a{
+	text-align : center;
+	text-decoration : none;
+	color : white;
+/* 	padding : 15px; */
+}
+.nav1 {
+	position : sticky;
+	top : 0;
+}
+
+.content1 {
+	top : 40px;
+}
+
+.box1 {
+	margin-top : 10px;
+	position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+.box2 {
+    padding: 10px; /* 상하좌우 padding을 줄임 */
+    margin: 0; /* margin을 0으로 설정하여 불필요한 여백 제거 */
+    text-align: center; /* 텍스트를 가로로 가운데 정렬 */
+}
+.box3 {
+	margin-top : 20px;
+	padding : 2px;
+	text-align : center;
+    padding: 0.01rem 0.01rem; /* 원하는 패딩 값으로 조정 */
+	
+	
+/* 	position: sticky; */
+/*     top: 0; */
+/*     z-index: 1000; */
+}
+.btn1 {
+	font-size: 90%; /* 기본 텍스트 크기 */
+	white-space: nowrap; /* 텍스트 줄 바꿈 방지 */
+/* 	background: white; */
+/* 	border-color:white; */
+/* 	color : red; */
+}
+.btn1 > img { text-align: left; }
+
+
+/* ============== review ============== */
+
+.userPic > img{
+	width : 50px;
+	height : 50px;
+/* 	margin-left : 20px; */
+}
+.reviewInfo {
+/* 	padding-left : 0px; */
+	margin-left : 0px;
+	font-weight: bold;
+	padding-bottom : 0px;
+    display: flex;
+    align-items: flex-start;
+}
+.reviewStar1 {
+	margin-right : 0px;
+	width : 50px;
+}
+.userReview {
+	margin-left : 20px;
+        margin-top: 20px;
+	
+}
+
+.starStyle{
+	color : #DC143C ;	
+}
+
+.userInfo {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+}
+.userNickname {
+	margin: 0;
+/* 	flex-basis: 40%; */
+	        flex: 1;
+}
+/* .userNickname p{ */
+/* 	font-size : 1.0rem; */
+/* } */
+
+.userNickname p {
+	margin: 0;
+	font-size: 1.1rem; /* Adjust the font size as needed */
+	font-weight: bold;
+}
+    
+.reviewDate {
+	margin: 0;
+/* 	flex-basis: 60%; */
+	text-align: left;
+    flex: 0;
+}
+
+.reviewDate p {
+	margin-bottom : 0px;
+	margin-left : 10px;
+}
+
+.reviewPic > img {
+	width : 300px;
+	height : 300px;
+	margin-left : 30px;
+	margin-bottom : 30px;
+}
+.reviewStar {
+	width: 100%;
+    margin-left : 20px;
+	margin-top: 5px;
+}
+
+.userInfoContainer {
+	display: flex;
+	flex-direction: column;
+/* 	width: 100%; */
+	width: 200px;
+}
+.userInfoHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	margin-left : 20px;
+}
+.userNickname, .reviewDate {
+	margin: 0;
+}
+.line {
+	margin-top: 30px;
+}
+
+.btn-customs {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 150px; /* 원하는 너비 값 */
+	height: 50px; /* 원하는 높이 값 */
+	color : black !important;
+	    padding: 0; /* 불필요한 여백 제거 */
+}
+
+.button-icon {
+	width: 25px; 
+	height: 25px;
+	margin-right: 10px; /* 이미지와 텍스트 간격 */
+}
+
+.heartCount span, .shareClass span {
+    margin: 0;
+}
+
+/* ====== 후기 ======*/
+table {
+	border-collapse: collapse;
+	box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.1);
+	background-color: white;
+	width: 100%;
+	border-radius: 10px;
+	font-size: 15px;
+}
+
+/* 테이블 행 */
+th, td {
+	padding: 15px 8px;
+	border-bottom: 1px solid #ddd;
+	color: black;
+}
+
+th {
+	background-color: #eee;
+	color: black;
+}
+
+td > a{
+	display:-webkit-box; 
+    word-wrap:break-word; 
+    -webkit-line-clamp:1; 
+    -webkit-box-orient:vertical; 
+    overflow:hidden; 
+    text-overflow:ellipsis;
+}
+
+/* 테이블 올렸을 때 */
+tbody tr:hover {
+	background-color: white;
+	opacity: 0.9;
+	cursor: pointer;
+}
+
+/* 테이블 비율 */
+th:nth-child(1), td:nth-child(1) {
+	padding-left: 20px;
+}
+
+th:nth-child(2), td:nth-child(2) {
+	width: 130px;
+	text-align: center;
+}
+td > a{
+	display:-webkit-box; 
+    word-wrap:break-word; 
+    -webkit-line-clamp:1; 
+    -webkit-box-orient:vertical; 
+    overflow:hidden; 
+    text-overflow:ellipsis;
+    color: black;
+}

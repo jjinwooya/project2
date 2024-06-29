@@ -1,0 +1,112 @@
+@charset "UTF-8";
+
+/* .creator-class-search>form>input[type=text] { */
+/* 	font-size: 18px; */
+/* 	height: 35px; */
+/* 	padding: 5px; */
+/* 	outline: none; */
+/* 	vertical-align: middle; */
+/* 	border: none; */
+/* 	text-align: center; */
+/* } */
+
+/* .creator-class-search>form>input[type=submit] { */
+/* 	width: 90px; */
+/* 	height: 40px; */
+/* 	outline: none; */
+/* 	font-weight: bold; */
+/* 	margin-left: 5px; */
+/* 	vertical-align: middle; */
+/* } */
+/* .creator-class-searchBox{ */
+/* 	border-top-right-radius:10px;  */
+/* 	border-top-left-radius:10px;  */
+/* } */
+.ui-datepicker td a {
+   color: black; /* 기본 날짜 색상 검정색 */
+}
+.ui-datepicker-header > a > span {
+	color: black;
+	margin: 10px;
+	border: 1px solid gray;
+	border-radius: 4px;
+	padding: 5px 20px;
+	cursor: pointer;
+}
+.ui-datepicker-header > a > span:hover {
+	background: gray;
+	color: white;
+	font-weight: bold;
+	transition-duration: .2s;
+}
+.ui-datepicker-header {
+	text-align:center;
+}
+.ui-state-disabled {
+	background : #eee;
+}
+.ui-state-highlight{
+	background: skyblue;
+	border-radius: 5%;
+}
+.ui-datepicker-title{
+	font-weight: bold;
+	font-size: 25px;
+	margin: 10px 0;
+}
+.creator-main-table {
+	border: 10px solid white;
+	border-radius: 15px;
+	background: white;
+}
+/* .creator-plan-time{ */
+/* 	margin: 40px 80px; */
+/* 	padding: 30px 10px; */
+/* 	background: #eee; */
+/* 	border-radius: 10px; */
+/* } */
+/* .creator-plan-submitBtn{ */
+/* 	border: 1px solid black; */
+/* 	padding: 10px 20px; */
+/* 	background: white; */
+/* 	border-radius: 10px; */
+/* 	font-weight: bold; */
+/* } */
+/* .creator-plan-submitBtn:hover{ */
+/* 	background: buttonhighlight; */
+/* } */
+table {
+	border-collapse: collapse;
+	box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.1);
+	background-color: white;
+	width: 100%;
+	font-size: 15px;
+}
+
+/* 테이블 행 */
+th, td {
+	padding: 15px 8px;
+	border-bottom: 1px solid #ddd;
+	color: black;
+}
+
+th {
+	background-color: #eee;
+	color: black;
+}
+
+td > a{
+	display:-webkit-box; 
+    word-wrap:break-word; 
+    -webkit-line-clamp:1; 
+    -webkit-box-orient:vertical; 
+    overflow:hidden; 
+    text-overflow:ellipsis;
+}
+
+/* 테이블 올렸을 때 */
+tbody tr:hover {
+	background-color: white;
+	opacity: 0.9;
+	cursor: pointer;
+}

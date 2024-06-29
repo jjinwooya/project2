@@ -1,0 +1,27 @@
+h3 {
+}
+.container {
+	margin-top:20px;
+	color: white;
+}
+
+.csc_paging {
+	display:inline-block;
+	width:100px;
+	height:60px;
+}
+
+.csc_detail_button {
+	margin:0 auto;	
+	text-align: center;
+}
+.csc_detail_button > input {
+	padding: 7px 20px;
+	background : skyblue;
+	border :0;
+}
+
+.main{
+	margin-top: 200px!important;
+	
+}

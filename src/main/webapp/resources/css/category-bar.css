@@ -1,0 +1,211 @@
+@charset "UTF-8";
+
+body {
+  color: white;
+  background-color : black;
+}
+
+.height1 {
+    height: 80px;
+}
+
+.categoryBarBox {
+/* 	background: #333; */
+    border-radius: 10px;
+	opacity: 0.95;
+}
+.form1 {
+    position: relative;
+}
+
+.form1 .fa-search{
+    position: absolute;
+    top:15px;
+    left: 20px;
+    color: #9ca3af;
+}
+
+.form1 span{
+	position: absolute;
+    right: 17px;
+    top: 13px;
+    padding: 2px;
+    border-left: 1px solid #d1d5db;
+}
+
+.left-pan{
+    padding-left: 7px;
+}
+
+.left-pan i{
+   padding-left: 10px;
+}
+
+.search-input{
+    height: 45px;
+    width: 200px;
+    text-indent: 33px;
+    border-radius: 100px;
+    margin : 10px 10px 10px 0px;
+}
+
+.form-inputs {
+    height: 40px;
+    width: 100px;
+/*     text-indent: 33px; */
+    border-radius: 100px;
+    text-align : center;
+    cursor: pointer;
+	font-size : 0.95em;
+}
+
+.form-inputs:focus{
+    box-shadow: none;
+    border:none;
+}
+.chooseDiv {
+/*     padding-right: 40px; 이미지 공간 확보를 위해 오른쪽 패딩 추가 */
+    box-sizing: border-box; /* padding이 width에 포함되도록 설정 */
+    text-align: left;
+    width : 130px;
+}
+
+.chooseResult {
+	width : 110px;
+	height : 35px;
+	font-size : 0.9em;
+    cursor: default;
+}
+
+.position-relative {
+    position: relative;
+}
+
+.xicon {
+    position: absolute;
+    top: 25%;
+    right: 15px; /* input의 오른쪽 끝에서 약간 떨어진 위치 */
+/*     transform: translateY(-50%); */
+    transform: translateX(-10%);
+    cursor: pointer;
+    width: 20px; /* 이미지 크기 조절 */
+    height: 20px; /* 이미지 크기 조절 */
+}
+
+.selectDiv {
+	width : 140px;
+}
+
+.hashtag {
+	width : 100px;
+/* 	font-weight: bold; */
+}
+
+.hashtagDiv {
+	margin-right : 20px;
+}
+
+/* .form-inputs { */
+/*     height: 40px; */
+/*     width: 100px; */
+/*     border-radius: 100px; */
+/*     text-align : center; */
+/*     cursor: pointer; */
+/* 	font-size : 0.95em; */
+/* } */
+
+.categorySelect {
+	height : 40px;
+}
+/* .height{ */
+/*     height: 80px; */
+/* } */
+
+/* .form{ */
+/*     position: relative; */
+/* } */
+
+/* .form .fa-search{ */
+/*     position: absolute; */
+/*     top:15px; */
+/*     left: 20px; */
+/*     color: #9ca3af; */
+/* } */
+
+/* .form span{ */
+/* 	position: absolute; */
+/*     right: 17px; */
+/*     top: 13px; */
+/*     padding: 2px; */
+/*     border-left: 1px solid #d1d5db; */
+/* } */
+
+/* .left-pan{ */
+/*     padding-left: 7px; */
+/* } */
+
+/* .left-pan i{ */
+/*    padding-left: 10px; */
+/* } */
+
+/* .form-input{ */
+/*     height: 45px; */
+/*     width: 200px; */
+/*     text-indent: 33px; */
+/*     border-radius: 100px; */
+/* } */
+
+/* .form-input:focus{ */
+/*     box-shadow: none; */
+/*     border:none; */
+/* } */
+
+/* .selectBox { */
+/* 	margin-left : 0; */
+/* } */
+
+/* .categoryBar .row.padded-row { */
+/*     padding-right: 36px; 원하는 padding-right 값 */
+/* } */
+
+
+/* =========================================== */
+
+/* .choose { */
+/* 	cursor: pointer; */
+/* 	width : 120px; */
+/* 	padding-right: 30px; */
+/* } */
+
+/* .xicon { */
+/* 	height : 15px; */
+/* 	width : 15px; */
+/* } */
+
+
+/* .choose { */
+/*     width: 150px; */
+/*     padding-right: 40px; 이미지 공간 확보를 위해 오른쪽 패딩 추가 */
+/*     box-sizing: border-box; padding이 width에 포함되도록 설정 */
+/*     text-align : left; */
+/* } */
+
+/* .position-relative { */
+/*     position: relative; */
+/* } */
+
+/* .xicon { */
+/*     position: absolute; */
+/*     top: 25%; */
+/*     right: 65px; input의 오른쪽 끝에서 약간 떨어진 위치 */
+/* /*     transform: translateY(-30%); */ 
+/*     transform: translateX(-10%); */
+/*     cursor: pointer; */
+/*     width: 20px; 이미지 크기 조절 */
+/*     height: 20px; 이미지 크기 조절 */
+/* } */
+
+
+
+
+

@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="itwillbs.p2c3.class_will.mapper.PayMapper">
+	<!-- 임시 select -->
+	<select id="selectClassInfo" resultType="map">
+		SELECT c.class_name
+			   , c.class_code
+			   , c2.code_value AS 'class_upper' 
+			   , c3.code_value AS 'class_lower'
+			   , c.class_big_category
+			   , c.class_small_category
+			   , c.class_thumnail
+			   , c.class_location
+			   , c.class_price
+			   , c.class_ex
+			   , c.class_creator_explain 
+		--	   , cs.class_schedule_date
+		--	   , cs.class_st_time 
+		-- 	   , cs.class_ed_time
+		-- 	   , cs.class_round 
+		FROM class c
+		-- JOIN class_schedule cs 
+		-- ON c.class_code = cs.class_code 
+		JOIN common2 c2 
+		ON c.class_big_category = c2.common2_code
+		AND c2.common1_code = 'CLC'
+		AND c2.common2_code = c.class_big_category
+		JOIN common3 c3 
+		ON c.class_small_category = c3.common3_code
+		AND c3.common1_code = 'CLC'
+		AND c3.common2_code = c.class_big_category 
+		AND c3.common3_code = c.class_small_category
+		where c.class_code = #{class_code}
+	</select>
+	
+	<select id="selectPayInfo" resultType="map">
+		SELECT c.class_name
+			   , c.class_code
+			   , c2.code_value AS class_upper 
+			   , c3.code_value AS class_lower
+			   , c.class_thumnail
+			   , c.class_location
+			   , c.class_price
+		 	   , m.member_code AS 'class_member_code'
+		 	   , m.member_email 
+		 	   , m.member_nickname 
+		 	   , m.member_tel
+		 	   , CASE WHEN m.member_credit IS NULL THEN '0' ELSE m.member_credit END as 'member_credit'
+		 	   , m.member_name
+			   , cs.class_schedule_date
+			   , cs.class_st_time 
+		 	   , cs.class_ed_time
+		 	   , cs.class_round
+		 	   , cs.class_schedule_code
+		FROM class c
+		JOIN class_schedule cs 
+		ON c.class_code = cs.class_code 
+		JOIN common2 c2 
+		ON c.class_big_category = c2.common2_code
+		AND c2.common1_code = 'CLC'
+		AND c2.common2_code = #{class_big_category}
+		JOIN common3 c3 
+		ON c.class_small_category = c3.common3_code
+		AND c3.common1_code = 'CLC'
+		AND c3.common2_code = #{class_big_category} 
+		AND c3.common3_code = #{class_small_category}
+		JOIN MEMBER m
+		ON c.member_code = m.member_code
+		where c.class_code = #{class_code}
+		AND cs.class_st_time = #{class_st_time}
+		AND cs.class_ed_time = #{class_ed_time}
+		AND cs.class_schedule_date = #{selected_dates}
+	</select>
+	
+	<select id="selectSchedule" resultType="map">
+		SELECT *
+		FROM class_schedule
+		WHERE class_code = #{i}
+	</select>
+	
+	<select id="selectScheduleTime" resultType="map">
+		SELECT class_st_time
+			   , class_ed_time
+			   , class_remain_headcount
+		FROM class_schedule
+		WHERE class_schedule_date = #{date}
+		AND class_code = #{class_code}
+		ORDER BY class_round ASC
+	</select>
+	
+	<select id="selectCredit" resultType="map">
+		SELECT CASE WHEN member_credit IS NULL THEN '0' ELSE member_credit END AS 'member_credit'
+		FROM MEMBER
+		WHERE member_code = #{member_code}
+	</select>
+	
+	<select id="selectObjects" resultType="map">
+		SELECT
+			c.member_code
+		    , cs.class_schedule_code
+		    , c.class_code
+		FROM class c
+		join class_schedule cs
+		on c.class_code = cs.class_code
+		and cs.class_code = #{class_code}
+		and cs.class_st_time = #{class_st_time}
+		and cs.class_ed_time = #{class_ed_time}
+		and cs.class_schedule_date = #{class_schedule_date}
+	</select>
+	
+	<update id="updateCredit">
+		UPDATE MEMBER
+		SET member_credit = member_credit - #{use_willpay}
+		WHERE member_code = #{member_code}
+	</update>
+	
+	<update id="updateHeadcount">
+		UPDATE class_schedule
+		SET class_remain_headcount = class_remain_headcount - #{pay_headcount}
+		WHERE class_schedule_code = #{class_schedule_code}
+	</update>
+	
+	<insert id="registPaySuccessInfo" useGeneratedKeys="true" keyProperty="pay_code">
+		INSERT INTO pay(
+			pay_code
+		    , pay_merchant_uid
+		    , pay_amount
+		    , pay_datetime
+		    , pay_type
+		    , pay_status
+		    , member_code
+		    , class_schedule_code
+		    , pay_headcount
+		    , class_code
+		    , imp_uid
+		    , use_willpay
+		    , pg_provider
+		    , card_name
+		)
+		VALUES (
+			null
+		    , #{merchant_uid}
+		    , #{pay_amount}
+		    , #{pay_datetime}
+		    , #{pay_type}
+		    , 'paid'
+		    , #{member_code}
+		    , #{class_schedule_code}
+		    , #{pay_headcount}
+		    , #{class_code}
+		    , #{imp_uid}
+		    , #{use_willpay}
+		    , #{pg_provider}
+		    , #{card_name}
+		)
+	</insert>
+	
+	<select id="selectSuccessPayInfo" resultType="map">
+		SELECT c.class_name
+		   , c.class_thumnail
+		   , c.class_image
+		   , c.class_location
+		   , c.class_price
+		   , m.member_credit
+		   , p.pay_amount
+		   , p.pay_merchant_uid
+		   , p.pay_headcount
+		   , p.use_willpay
+		   , p.pg_provider
+		   , p.card_name
+		   , p.pay_datetime
+		   , c2tem.code_value AS 'pay_type'
+		   , cs.class_st_time
+		   , cs.class_ed_time
+		   , cs.class_schedule_date
+		   , c2.code_value AS 'upper_level'
+		   , c3.code_value AS 'lower_level'
+		   , CAST(p.pay_amount AS SIGNED) - p.use_willpay AS 'result_amount'
+	FROM pay p 
+	JOIN class c 
+	ON p.class_code = c.class_code
+	JOIN MEMBER m
+	ON p.member_code = m.member_code
+	JOIN class_schedule cs 
+	ON p.class_schedule_code = cs.class_schedule_code
+	JOIN common2 c2 
+	ON c.class_big_category = c2.common2_code
+	AND c2.common1_code = 'CLC'
+	JOIN common2 c2tem
+	ON c2tem.common2_code = p.pay_type 
+	AND c2tem.common1_code = 'PT'
+	JOIN common3 c3 
+	ON c.class_small_category = c3.common3_code 
+	AND c3.common1_code = 'CLC'
+	AND c3.common2_code = c.class_big_category 
+	WHERE p.pay_code = #{pay_code};
+	</select>
+	
+	<!-- ========금융결제원 관련 sql======== -->
+	<insert id="registAccessToken">
+		INSERT 
+		INTO bank_user_info
+		VALUES (
+			#{access_token}
+			, #{user_seq_no}
+			, #{fintech_use_num}
+			, #{account_num}
+			, #{member_code}
+		) 
+	</insert>
+	
+	<select id="selectPackageInfoList" resultType="map">
+		SELECT 
+			reward_fee
+			, reward_rate 
+			, CAST(ROUND((reward_fee + (reward_fee * reward_rate / 100)), -1) AS SIGNED) AS 'reward_total'
+		FROM reward 
+		ORDER BY reward_fee
+	</select>
+	
+	<update id="updateFintechUseNum">
+		UPDATE bank_user_info
+		SET fintech_use_num = #{fintech_use_num}
+		WHERE access_token = #{access_token}
+	</update>
+	
+	<insert id="insertPayAccountInfo">
+		INSERT 
+		INTO pay_account
+		VALUES (
+			null
+			, #{tran_amt}
+			, #{payAc_bank_name}
+			, #{payAc_fintech_use_num}
+			, #{payAc_date}
+			, #{payAc_product_type}
+			, #{member_code}
+			, 2
+			, 'paid'
+		)
+	</insert>
+	<!-- member_credit 업데이트 이후 조회  -->
+	<update id="updateWillpay">
+		UPDATE MEMBER
+		SET member_credit = COALESCE(member_credit, 0) + #{member_credit}
+		WHERE member_code = #{member_code}
+	</update>
+	<select id="selectWillpay" resultType="int">
+		SELECT member_credit
+		FROM MEMBER
+		WHERE member_code = #{member_code}
+	</select>
+	
+</mapper>

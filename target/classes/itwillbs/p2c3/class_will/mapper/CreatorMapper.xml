@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="itwillbs.p2c3.class_will.mapper.CreatorMapper">
+	
+	<!-- 클래스 등록 -->
+	<insert id="createrClassRegPro">
+		INSERT INTO class(  	  
+				  class_code
+				, class_name
+				, class_big_category
+				, class_small_category
+				, class_thumnail
+				, class_image
+				, class_ex
+				, class_location
+				, class_hashtag
+				, class_creator_explain
+				, class_hide
+				, class_price
+				, class_regist_status
+				, member_code
+				, class_map_x
+				, class_map_y
+				, class_active
+				, common2_code
+		)
+		VALUES (
+			NULL
+			, #{class_name}
+			, #{class_big_category}
+			, #{class_small_category}
+			, #{class_thumnail}
+			, #{class_image}
+			, #{class_ex}
+			, #{class_location}
+			, #{class_hashtag}
+			, #{class_creator_explain}
+			, #{class_hide}
+			, #{class_price}
+			, #{class_regist_status}
+			, #{member_code}
+			, #{location_x}
+			, #{location_y}
+			, 'Y'
+			, (
+				SELECT common2_code 
+				FROM common2 
+				WHERE code_value = #{sido}
+				AND common1_code = 'LC'
+			  )
+		)		
+	</insert>
+	
+	<!-- 클래스 상세정보 -->
+	<select id="getClassDetail" resultType="map">
+		SELECT *
+		FROM class
+		WHERE
+			class_code = #{class_code}
+	</select>
+	
+	<!-- 커리큘럼 삽입 -->
+	<insert id="creatorCurriInsert" parameterType="map">
+		<selectKey order="BEFORE" keyProperty="class_code" resultType="int">
+			SELECT IFNULL(MAX(class_code), 0)
+			FROM class
+		</selectKey>
+			INSERT INTO curri(
+				class_code
+				, curri_round
+				, curri_content
+			)
+			VALUES
+		<foreach collection="params" item="param" separator=",">
+			(
+	         	#{class_code}, #{param.curri_round}, #{param.curri_content}
+	        )
+      	</foreach>
+	</insert>
+	
+	<!-- 클래스 일정 삽입 -->
+	<insert id="insertClassPlan">
+		INSERT INTO class_schedule
+		(	class_code
+			, class_schedule_date
+			, class_round
+			, class_total_headcount
+			, class_st_time
+			, class_ed_time
+			, class_remain_headcount			
+		)
+		VALUES
+	        <foreach collection="classTimeList" item="classTime" separator=",">
+	            (
+	            #{map.classSelect}
+	            , #{classTime.date}
+	            , #{classTime.round}
+	            , #{map.class_total_headcount}
+	            , #{classTime.startTime}
+	            , #{classTime.endTime}
+	            , #{map.class_total_headcount}
+	            )
+	        </foreach>
+		
+	</insert>
+	
+	<!-- 클래스 일정 가져오기 -->
+	<select id="getSchedule" resultType="map">
+		SELECT *, (class_total_headcount - class_remain_headcount) AS attend_count
+		FROM class_schedule
+		WHERE 
+			class_code = #{classCode}
+		AND 
+			STR_TO_DATE(class_schedule_date, '%Y-%m-%d') > CURDATE() 
+		ORDER BY 
+			class_schedule_date, class_round
+	</select>
+
+	<!-- 클래스 종료된 일정 가져오기 -->
+	<select id="getEndedSchedule" resultType="map">
+		SELECT *, (class_total_headcount - class_remain_headcount) AS attend_count
+		FROM class_schedule
+		WHERE 
+			class_code = #{classCode}
+		AND 
+			CURDATE() > STR_TO_DATE(class_schedule_date, '%Y-%m-%d') 
+		AND
+			class_total_headcount != class_remain_headcount			
+		ORDER BY 
+			class_schedule_date, class_round
+	</select>
+	
+	<!-- 일정에서 예약자 여부 확인 -->
+	<select id="checkSchedule" resultType="map">
+		SELECT * 
+		FROM 
+			class_schedule
+		WHERE 
+		  	class_schedule_code = #{classScheduleCode}
+		AND 
+			STR_TO_DATE(class_schedule_date, '%Y-%m-%d') > CURDATE() 
+		AND 
+			class_total_headcount = class_remain_headcount
+	</select>
+
+	<!-- 일정삭제 -->
+	<delete id="deleteSchedule">
+		DELETE FROM class_schedule
+		WHERE class_schedule_code = #{classScheduleCode}
+	</delete>
+
+	<!-- 전체일정에서 예약자 여부 확인 -->
+	<select id="checkAllSchedule" resultType="map">
+		SELECT * 
+		FROM 
+			class_schedule
+		WHERE 
+		  	class_code = #{classCode}
+		AND 
+			STR_TO_DATE(class_schedule_date, '%Y-%m-%d') > CURDATE() 
+		AND 
+			class_total_headcount = class_remain_headcount
+		LIMIT 1;
+	</select>
+
+	<!-- 전체일정삭제 -->
+	<delete id="deleteAllSchedule">
+		DELETE FROM class_schedule
+		WHERE 
+			class_code = #{classCode}
+		AND 
+			class_total_headcount = class_remain_headcount
+	</delete>
+	
+	<!-- 카테고리 대분류 조회 -->
+	<select id="getCategory" resultType="map">
+		SELECT 
+			common2_code, code_value
+		FROM 
+			common2 c2
+		WHERE 
+			common1_code = 'CLC'
+		AND 
+			code_hide = 'N'
+	</select>
+
+	<!-- 카테고리 상세 -->
+	<select id="getCategoryDetail" resultType="map">
+		SELECT 
+			common3_code,code_value
+		FROM 
+			common3 c 
+		WHERE 
+			common2_code = #{big_category}
+		AND 
+			code_hide = 'N'
+	</select>
+	
+	
+	<!-- 해쉬태그 가져오기 -->
+	<select id="getHashtag" resultType="map">
+		SELECT *
+		FROM
+			hash_tag
+	</select>
+	
+	<!-- 클래스 정보 가져오기 -->
+	<select id="getClassInfo" resultType="map">
+	SELECT 
+		c.*
+		, c2.code_value
+		, c22.code_value as cate
+		, c222.code_value as hide, 
+		(
+			SELECT 
+				count(*) 
+			FROM 
+				class_schedule 
+			WHERE 
+				class_code=c.class_code
+			AND
+				STR_TO_DATE(class_schedule_date, '%Y-%m-%d') > CURDATE() 
+		) as counter
+		, (
+			SELECT 
+				count(*) 
+			FROM 
+				class_schedule 
+			WHERE 
+				class_code=c.class_code
+			AND
+				CURDATE() > STR_TO_DATE(class_schedule_date, '%Y-%m-%d')
+			AND
+				class_total_headcount != class_remain_headcount
+		) AS endClass
+	FROM 
+		class c
+	LEFT JOIN 
+		common2 c2 
+	ON 
+		c2.common2_code = c.class_regist_status
+	AND
+		c2.common1_code = 'CRS'
+	JOIN 
+		common2 c22
+	ON 
+		c.class_big_category = c22.common2_code
+	AND 
+		c22.common1_code = 'CLC'
+	JOIN 
+		common2 c222
+	ON 
+		c.class_hide = c222.common2_code
+	AND 
+		c222.common1_code = 'HIDE'
+	WHERE
+		c.member_code = #{member_code}
+	</select>
+	
+	<!-- 상태에 따른 클래스 정보 가져오기 -->
+	<select id="getClassStatusInfo" resultType="map">
+	SELECT 
+		c.class_code
+		, c.class_name 
+		, c2.code_value
+		, c22.code_value as cate
+		, c222.code_value as hide
+	FROM 
+		class c
+	LEFT JOIN 
+		common2 c2 
+	ON 
+		c2.common2_code = c.class_regist_status
+	and
+		c2.common1_code = 'CRS'
+	JOIN 
+		common2 c22
+	ON 
+		c.class_big_category = c22.common2_code
+	and 
+		c22.common1_code = 'CLC'
+	JOIN 
+		common2 c222
+	ON 
+		c.class_hide = c222.common2_code
+	and 
+		c222.common1_code = 'HIDE'
+	WHERE 1=1
+		<if test="!status.equals(0)">
+			AND class_regist_status = #{status}
+		</if>
+	AND c.member_code = #{member.member_code}
+	</select>
+	
+	<!-- 클래스 정보 가져오기 -->
+	<select id="getCertifiedClassInfo" resultType="map">
+	SELECT 
+		c.class_code
+		, c.class_name 
+		, c2.code_value
+		, c22.code_value as cate
+		, c222.code_value as hide
+		, (
+			SELECT 
+				count(*) 
+			FROM 
+				class_schedule 
+			WHERE 
+				class_code=c.class_code
+			AND
+				STR_TO_DATE(class_schedule_date, '%Y-%m-%d') > CURDATE() 
+		) AS counter
+		, (
+			SELECT 
+				count(*) 
+			FROM 
+				class_schedule 
+			WHERE 
+				class_code=c.class_code
+			AND
+				CURDATE() > STR_TO_DATE(class_schedule_date, '%Y-%m-%d')
+			AND
+				class_total_headcount != class_remain_headcount
+		) AS endClass
+	FROM 
+		class c
+	LEFT JOIN 
+		common2 c2 
+	ON 
+		c2.common2_code = c.class_regist_status
+	and
+		c2.common1_code = 'CRS'
+	JOIN 
+		common2 c22
+	ON 
+		c.class_big_category = c22.common2_code
+	and 
+		c22.common1_code = 'CLC'
+	JOIN 
+		common2 c222
+	ON 
+		c.class_hide = c222.common2_code
+	and 
+		c222.common1_code = 'HIDE'
+	AND 
+		c222.common2_code = 1
+	WHERE 
+		c.class_regist_status = 2
+	AND 
+		c.member_code = #{member_code}
+	</select>
+	
+	<!-- 문의사항 클래스 정보 가져오기 -->
+	<select id="getinquiryClassInfo" resultType="map">
+	SELECT 
+		   ci.class_inquiry_code
+		 , ci.class_inquiry_subject
+		 , ci.class_inquiry_content
+		 , ci.class_inquiry_date
+		 , ci.class_inquiry_time
+		 , ci.class_inquiry_status
+		 , m.member_name
+		 , c.member_code
+		 , c.class_name
+	FROM 
+		class_inquiry ci
+	JOIN 
+		class c
+	ON 
+		c.class_code = ci.class_code
+	JOIN 
+		MEMBER m
+	ON 
+		ci.member_code = m.member_code 
+	WHERE 
+		c.member_code = #{member_code}
+	</select>
+	
+	<!-- 공개여부 -->
+	<select id="getHide" resultType="map">
+		SELECT 
+			common2_code, code_value
+		FROM 
+			common2 c2
+		WHERE 
+			common1_code = 'HIDE' 
+		AND 
+			code_hide = 'N'
+	</select>
+
+	<!-- 상태리스트  -->
+	<select id="getStatusList" resultType="map">
+		SELECT *
+		FROM 
+			common2 
+		WHERE 
+			common1_code='CRS'
+		AND 
+			code_hide = 'N'
+	</select>
+	
+	<!-- 멤버 타입 변경 -->
+	<update id="updateMemberType">
+		UPDATE MEMBER
+		SET member_type = 2
+		WHERE member_email = #{member_email}
+	</update>
+	
+	<!-- settlement 값 가져오기 -->
+	<select id="getsettlementDate">
+		SELECT settlement_date
+		FROM settlement
+		where member_code = #{member_code}
+	</select>
+	
+	<!-- 누적 정산금 가져오기 -->
+	<select id="getSumSettlement" resultType="map">
+		SELECT CONVERT(IFNULL(SUM(total_amount), 0), SIGNED) AS total_sum
+		FROM(
+			SELECT 
+				(IFNULL(p.pay_amount, 0) + IFNULL(p.use_willpay, 0)) AS total_amount
+			FROM 
+				MEMBER m
+			LEFT JOIN 
+				class c
+			ON 
+				m.member_code = c.member_code
+			LEFT JOIN 
+				class_schedule cs 
+			ON 
+				cs.class_code = c.class_code 
+			JOIN 
+				pay p
+			ON 
+				p.class_schedule_code  = cs.class_schedule_code 
+			left JOIN 
+				settlement st
+			ON 
+				st.member_code = m.member_code 
+			WHERE 
+				c.member_code = #{member.member_code}
+			<if test="!settlementDate == null">
+			AND 
+				DATE_FORMAT(cs.class_schedule_date, '%Y-%m') BETWEEN  DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m')
+															 AND #{settlementDate}
+			</if>
+			AND 
+				DATE_FORMAT(CURDATE(), '%Y-%m') > DATE_FORMAT(cs.class_schedule_date, '%Y-%m')  
+		) AS subquery;
+	</select>
+	
+	<!-- 한달 정산금 -->
+	<select id="getMonthSettlement" resultType="map">
+	SELECT CONVERT(IFNULL(SUM(total_amount), 0), SIGNED) AS total_sum
+	FROM(
+		SELECT (IFNULL(p.pay_amount, 0) + IFNULL(p.use_willpay, 0)) AS total_amount
+		FROM MEMBER m
+		LEFT JOIN class c
+		ON m.member_code = c.member_code
+		LEFT JOIN class_schedule cs 
+		ON cs.class_code = c.class_code 
+		JOIN pay p
+		ON p.class_schedule_code  = cs.class_schedule_code 
+		WHERE c.member_code = #{member.member_code}
+		AND cs.class_schedule_date LIKE CONCAT(#{monthPicker}, '%')
+	) AS subquery;
+	</select>
+	
+	<!-- settlement 테이블에 데이터 조회 -->
+	<select id="checkSettlement" resultType="String">
+		SELECT IFNULL(settlement_date, '0')
+		FROM settlement
+		WHERE member_code = #{member_code}
+		LIMIT 1
+	</select>	
+	
+	<!-- settlement 테이블에 데이터 삽입 -->
+	<insert id="insertSettlement">
+		INSERT INTO settlement(
+			member_code
+			, settlement_amt
+			, settlement_date
+			, settlement_month
+		)
+		VALUES(
+			#{member.member_code}
+			, #{total_sum}
+			, DATE_FORMAT(CURDATE(), '%Y-%m')
+			, DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m')
+		)
+	</insert>
+
+	<!-- settlement 테이블에 데이터 업데이트 -->
+	<update id="updateSettlement">
+		UPDATE settlement
+		SET 
+			settlement_amt =  #{total_sum}
+			, settlement_date = settleDATE_FORMAT(CURDATE(), '%Y-%m')
+			, settlement_month = DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m')
+		WHERE member_code = #{member.member_code}
+	</update>
+	
+
+
+
+
+</mapper>

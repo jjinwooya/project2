@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="itwillbs.p2c3.class_will.mapper.MyPageMapper">
+	<update id="updateMemberImg">
+		<!-- 이미지파일 업데이트 때문에 따로 파놓음. -->
+		UPDATE MEMBER
+		SET
+
+		member_img = #{member_img}
+
+		WHERE
+		member_code = #{member_code}
+	</update>
+
+	<update id="updateMember">
+		UPDATE MEMBER
+		SET
+		<if test="member_addr != null">
+			<if test="member_addr != null and !member_addr.equals('')">
+				member_addr = #{member_addr},
+			</if>
+		</if>
+
+		<if test="member_pwd != null">
+			<if test="member_pwd != null and !member_pwd.equals('')">
+				member_pwd = #{member_pwd},
+			</if>
+		</if>
+		<if test="member_pwd != null">
+			<if test="member_pwd != null and !member_pwd.equals('')">
+				member_nickname = #{member_nickname}
+			</if>
+		</if>
+		
+		WHERE
+		member_code = #{member_code}
+	</update>
+
+	<select id="selectMemberReview">
+		<!-- 회원이 작성한 모든 클래스 리뷰 조회 -->
+		SELECT cr.class_review_code,
+		cr.class_review_subject,
+		cr.class_review_content,
+		cr.class_review_date,
+		cr.class_review_time,
+		c.class_name,
+		cr.class_review_rating
+		FROM class_review cr
+		LEFT JOIN class
+		c ON cr.class_code = c.class_code
+		WHERE cr.member_code = #{member_code}
+	</select>
+
+	<select id="selectReviewByCode">
+		<!-- 회원이 작성한 특정 클래스 리뷰 조회 -->
+		SELECT * FROM class_review
+		WHERE class_review_code = #{review_code}
+	</select>
+
+	<update id="updateReview" parameterType="java.util.Map">
+		<!-- 회원이 작성한 특정 클래스 리뷰 업데이트 -->
+		UPDATE class_review
+		SET class_review_subject = #{class_review_subject},
+		class_review_content = #{class_review_content},
+		class_review_rating =
+		#{class_review_rating}
+		WHERE class_review_code = #{class_review_code}
+	</update>
+
+	<delete id="deleteReview">
+		<!-- 클래스 리뷰 삭제 -->
+		DELETE FROM class_review
+		WHERE class_review_code = #{class_review_code}
+
+	</delete>
+	
+	<select id="countNickname">
+		<!-- 회원 닉네임 중복확인 -->
+		SELECT COUNT(*)
+		FROM MEMBER
+		WHERE member_nickname = #{member_nickname}
+	</select>
+	<update id="updateMemberNormal">
+		<!-- 크리에이터 회원이 일반회원으로-->
+		<!-- 일반 회원이 크리에이터로-->
+		UPDATE MEMBER
+    	SET member_type = 
+    	CASE 
+            WHEN member_type = 1 THEN 2  
+            WHEN member_type = 2 THEN 1  
+            ELSE member_type
+        END
+    	WHERE member_code = #{member_code}
+	</update>
+	
+	
+	<select id="selectMember">
+		<!-- 멤버코드 회원정보 데리고 오기-->
+		SELECT * FROM MEMBER
+		WHERE member_code = ${member_code}
+	
+	</select>
+	
+	
+
+</mapper>

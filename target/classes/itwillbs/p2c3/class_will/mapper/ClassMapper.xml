@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="itwillbs.p2c3.class_will.mapper.ClassMapper">
+	
+	<select id="selectChooseBigCategory">
+		SELECT *
+		FROM common2
+		WHERE common1_code = 'CLC'
+		
+	</select>
+	
+	<!-- 큰 카테고리 -->
+	<select id="selectBigCategoryList">
+		SELECT *
+		FROM common2
+		WHERE common1_code = 'CLC'
+		
+	</select>
+<!-- 		SELECT * -->
+<!-- 		FROM class c -->
+<!-- 		LEFT JOIN common1 c1 -->
+<!-- 		ON c.class_big_category = c1.common1_code -->
+<!-- 		LEFT JOIN common2 c2 -->
+<!-- 		ON c.class_big_category = c2.common2_code -->
+<!-- 		AND c2.common1_code = 'CLC' -->
+<!-- 		LEFT JOIN common3 c3 -->
+<!-- 		ON c.class_small_category = c3.common3_code -->
+<!-- 		AND c3.common2_code = c2.common2_code -->
+<!-- 		AND c3.common1_code = 'CLC' -->
+<!-- 		LEFT JOIN common2 crs -->
+<!-- 		ON c.class_regist_status = crs.common2_code -->
+<!-- 		AND crs.common1_code = 'CRS' -->
+	
+	<!-- 소 카테고리 -->
+	<select id="selectSmallCategory" resultType="map">
+		SELECT *
+		FROM common3
+<!-- 		WHERE common1_code = 'CLC' -->
+		WHERE common1_code = 'CLC' AND common2_code = #{big_category}
+	</select>
+	
+	<!-- 카테고리 지역 -->
+	<select id="selectCategoryLocal" resultType="map">
+		SELECT *
+		FROM common2
+		WHERE common1_code = 'LC'
+	</select>
+	
+	<!-- 해시태그 -->
+	<select id="selectHashtag" resultType="map">
+		SELECT *
+		FROM hash_tag
+	</select>
+	
+	<!-- 카테고리바 필터링된 클래스 -->
+	<select id="selectFilterClass" resultType="map">
+		SELECT class_code
+		        ,class_name
+		        ,c2.code_value AS class_big_category
+		        ,c3.code_value AS class_small_category
+		        ,class_thumnail
+		        ,class_image
+		        ,class_location
+		        ,class_map_x 
+		        ,class_map_y 
+		        ,class_hashtag
+		        ,class_creator_explain
+		        ,class_hide
+		        ,class_price
+		        ,crs.code_value AS class_regist_status
+		        ,m.member_name
+		FROM class c
+		LEFT JOIN common1 c1
+		ON c.class_big_category = c1.common1_code
+		LEFT JOIN common2 c2
+		ON c.class_big_category = c2.common2_code
+		AND c2.common1_code = 'CLC'
+		LEFT JOIN common3 c3
+		ON c.class_small_category = c3.common3_code
+		AND c3.common2_code = c2.common2_code
+		AND c3.common1_code = 'CLC'
+		LEFT JOIN common2 crs
+		ON c.class_regist_status = crs.common2_code
+		AND crs.common1_code = 'CRS'
+		JOIN MEMBER m
+		ON c.member_code = m.member_code
+		WHERE c2.code_value = #{bigCategories} AND c3.code_value = #{smallCategories} AND c.class_location LIKE CONCAT('%', #{locals}, '%')
+		
+	</select>
+	
+	<!-- 클래스 좋아요 -->
+	<insert id="insertLikeClass" parameterType="java.util.Map">
+		INSERT INTO like_class(member_code, class_code)
+		VALUES(
+			#{member_code}, #{class_code}
+		)
+	</insert>
+	
+	<!-- 클래스 좋아요 취소 -->
+	<delete id="deleteLikeClass">
+		DELETE FROM like_class 
+		WHERE member_code = #{member_code} AND class_code = #{class_code}
+	</delete>
+	
+	<!-- 소 카테고리 -->
+	<select id="selectListSmallCategory" resultType="map">
+		SELECT *
+		FROM common3
+<!-- 		WHERE common1_code = 'CLC' -->
+		WHERE common1_code = 'CLC'
+	</select>
+	
+	
+	<!-- 클래스 리스트 -->
+	<select id="selectClassList" resultType="map">
+<!-- 		SELECT * -->
+<!-- 		FROM class -->
+				SELECT class_code
+		        ,class_name
+		        ,c2.code_value AS class_big_category
+		        ,c3.code_value AS class_small_category
+		        ,class_thumnail
+		        ,class_image
+		        ,class_ex
+		        ,class_location
+		        ,class_hashtag
+		        ,class_creator_explain
+		        ,class_hide
+		        ,class_price
+		        ,m.member_name
+		        ,m.member_nickname
+		FROM class c
+		LEFT JOIN common2 c2
+		ON c.class_big_category = c2.common2_code
+		AND c2.common1_code = 'CLC'
+		LEFT JOIN common3 c3
+		ON c.class_small_category = c3.common3_code
+		AND c3.common2_code = c2.common2_code
+		AND c3.common1_code = 'CLC'
+		JOIN MEMBER m
+		ON c.member_code = m.member_code
+	</select>
+	
+	<!-- 클래스 리뷰 -->
+	<select id="selectClassReview" resultType="map">
+		SELECT class_review_subject
+			, class_review_content
+			, class_review_date
+			, class_review_rating
+			, member_name
+			, member_nickname
+			, m.member_code
+		FROM class_review cr
+		JOIN MEMBER m
+		ON m.member_code = cr.member_code 
+		WHERE cr.class_code = #{class_code}
+	</select>
+	
+	<!-- 클래스 질문 -->
+	<select id="selectClassInquiry" resultType="map">
+		SELECT class_inquiry_subject
+			, class_inquiry_content
+			, class_inquiry_date
+			, member_name
+			, member_nickname
+			, m.member_code
+		FROM class_inquiry ci
+		JOIN MEMBER m
+		ON m.member_code = ci.member_code 
+		WHERE ci.class_code = #{class_code}
+	</select>
+	
+    <select id="selectSmallCategories" parameterType="String" resultType="map">
+        SELECT *
+        FROM common3
+        WHERE common1_code = 'CLC' AND common2_code = #{bigCategoryCode}
+    </select>
+</mapper>
+	

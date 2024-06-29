@@ -1,0 +1,377 @@
+@charset "UTF-8";
+
+body {
+	color: white;
+	background : black;
+}
+
+.container1 {
+	background : black;
+	height : auto;
+	width: 1200px;
+	margin: auto;
+}
+
+.classInfo {
+	margin-bottom : 0px; /* 위의 모든 요소 다음에 배치되도록 설정 */
+}
+
+.card-body1 {
+	height : 410px;	
+}
+
+/* .card-bodys { */
+/* 	padding : 15px; */
+/* } */
+
+.card-bodys {
+    height: 200px; /* 예시로 설정한 높이 */
+	padding : 15px;
+    overflow: hidden; /* 내용이 넘칠 경우를 대비해 오버플로우 숨김 설정 */
+}
+/* .card-body h6 { */
+/* 	color : black; */
+/* 	font-weight: bold; */
+/* } */
+
+/* .card-body p{ */
+/* 	color : black; */
+/* } */
+
+.btn1 {
+	font-size: 90%; /* 기본 텍스트 크기 */
+	white-space: nowrap; /* 텍스트 줄 바꿈 방지 */
+/* 	background: white; */
+/* 	border-color:white; */
+/* 	color : red; */
+}
+.classPic {
+	height: 225px; 
+	object-fit: cover;
+}
+
+.className {
+	margin-top: 2px; /* 상단 여백 조정 */
+	flex-shrink: 0; /* 크기가 줄어들지 않도록 설정 */
+	height: 60px;
+/* 	white-space: nowrap;       텍스트가 한 줄로 표시되도록 합니다 */
+	overflow: hidden;          /* 넘치는 텍스트를 숨깁니다 */
+	text-overflow: ellipsis;   /* 넘치는 텍스트를 '...'으로 표시합니다 */
+	
+}
+
+.className h6 {
+	color : black;
+	font-weight: bold;
+}
+
+.createrName {
+	display: flex;
+	align-items: center;
+}
+
+.createrName p {
+	color : black;
+}
+
+.createrName img {
+	width: 30px;
+	height: 30px;
+}
+
+.createrName p {
+	margin-left: 10px; /* 이미지와 텍스트 사이의 간격 조정 */
+	margin-bottom: 0; /* 기본 하단 여백 제거 */
+	font-size : 0.9em;
+}
+
+.classCategory {
+	padding-bottom : 7px;
+}
+
+.category1 {
+	font-size : 0.8em !important;
+}
+/* .classCard { */
+/* /* 	padding : 30px; */ */
+/*     border-radius : 30px !important; */
+
+/* } */
+
+/* .fixed-size { */
+/* 	height: 250px; 원하는 높이로 설정 */
+/* 	overflow: auto; 넘치는 내용을 스크롤로 처리 */
+/* 	display: flex; */
+/* 	flex-direction: column; */
+/* } */
+
+.position-relative1 {
+	position: relative;
+}
+
+.heart-overlay {
+	position: absolute;
+	top: 10px; /* 이미지의 상단에서 10px 위치, 필요에 따라 조정하세요 */
+	right: 10px; /* 이미지의 오른쪽에서 10px 위치, 필요에 따라 조정하세요 */
+	width: 25px; /* 이미지 크기 조정, 필요에 따라 변경하세요 */
+	height: 25px; /* 이미지 크기 조정, 필요에 따라 변경하세요 */
+	cursor: pointer; /* 마우스를 올렸을 때 커서 모양 변경 */
+	transition: opacity 0.01s ease;
+	opacity: 1;
+}
+
+
+.heart-overlay.fade {
+	opacity: 0;
+}
+
+.mt-auto {
+	margin-top: auto;
+}
+
+/* .classInfo { */
+/* 	text-align : right; */
+/* } */
+
+/* .classInfo { */
+/* 	margin_bottom : 10px; */
+/* } */
+.add {
+	text-align : left;
+}
+
+.price{
+	text-align : right;
+}
+
+.box1 {
+    display: flex;
+    align-items: center; /* 수직 중앙 정렬 */
+/*     justify-content: center; 가로 중앙 정렬, 필요에 따라 사용 */
+    height: 60px; /* box1의 높이를 100%로 설정 */
+/*     padding-left : 30px; */
+}
+
+.selectBox1 {
+/*     margin: 0; 마진 제거 */
+    height: auto; /* 높이 자동 조절 */
+    margin-left : 90px;
+    opacity : 0.9;
+}
+
+.classCount{
+	color : white;
+/* 	margin-left : 60px; */
+	margin : 20px;
+    height: auto; /* 높이 자동 조절 */
+}
+
+.classCount p{
+	color : white;
+	margin-left : 40px;
+	font-size : 1.1em;
+	font-weight: bold;
+}
+
+
+/* =============================== 카테고리 바 =============================== */
+
+.height1 {
+    height: 80px;
+}
+.rowCenter {
+	display: flex;
+	align-items: center;
+	margin-bottom : 10px;
+}
+
+.localDropdown {
+	width :	140px;
+}
+
+.localList {
+	text-align : center;
+}
+
+.classPrice {
+/* 	text-align : right; */
+	margin-right : 0px;
+}
+
+.vr-divider {
+    width: 1px;
+    background-color: #ddd;
+    margin: 0 10px; /* Adjust the margin to fit your design */
+}
+.categoryBarBox {
+/* 	background: #333; */
+    border-radius: 10px;
+	opacity: 0.95;
+	height : 230px;
+	padding-top : 20px;
+/* 	background : #333; */
+	opacity: 0.9;
+	    transition: height 0.3s ease; /* 높이 변경 시 부드러운 애니메이션 적용 */
+}
+.form1 {
+    position: relative;
+	border-radius : 30px !important;
+}
+
+.form1 .fa-search{
+    position: absolute;
+    top:15px;
+    left: 20px;
+    color: #9ca3af;
+}
+
+.form1 span{
+	position: absolute;
+    right: 17px;
+    top: 13px;
+    padding: 2px;
+    border-left: 1px solid #d1d5db;
+}
+
+.left-pan{
+    padding-left: 7px;
+}
+
+.left-pan i{
+   padding-left: 10px;
+}
+
+.search-input{
+    height: 45px;
+    width: 200px;
+    text-indent: 33px;
+    border-radius: 100px;
+    margin : 10px 10px 10px 0px;
+}
+
+.form-inputs {
+    height: 45px;
+    width: 100px;
+/*     text-indent: 33px; */
+    border-radius: 100px;
+    text-align : center;
+    cursor: pointer;
+	font-size : 0.95em;
+}
+
+.form-inputs:focus{
+    box-shadow: none;
+    border:none;
+    border-radius: 100px;
+}
+.chooseDiv {
+/*     padding-right: 40px; 이미지 공간 확보를 위해 오른쪽 패딩 추가 */
+    box-sizing: border-box; /* padding이 width에 포함되도록 설정 */
+    text-align: left;
+    width : 130px;
+    padding-bottom : 15px; 
+}
+
+.chooseResult {
+	width : 110px;
+	height : 45px;
+	font-size : 0.9em;
+    cursor: default;
+    border-radius : 10px !important;
+    
+}
+
+.position-relative {
+    position: relative;
+}
+
+.xicon {
+    position: absolute;
+    top: 27%;
+    right: 15px; /* input의 오른쪽 끝에서 약간 떨어진 위치 */
+/*     transform: translateY(-50%); */
+    transform: translateX(-10%);
+    cursor: pointer;
+    width: 20px; /* 이미지 크기 조절 */
+    height: 20px; /* 이미지 크기 조절 */
+}
+
+.selectDiv {
+	width : 100px;
+}
+.btnReset {
+	width : 100px;
+    height: 45px; 
+}
+
+.hashtag {
+	width : 100px;
+    margin-right: 15px; /* 요소 간의 가로 간격 */
+    margin-bottom: 15px; /* 줄 바꿈될 때 요소 간의 세로 간격 */
+}
+
+.hashtagDiv {
+/* 	margin-right : 20px; */
+	padding-top : 0px;
+	margin-bottom : 20px;
+	width : 160px;
+    font-size : 0.9em;
+}
+
+.categorySelect {
+	height : 45px;
+/* 	text-align : left; */
+/* 	height : austo; */
+}
+
+.bigCategory {
+	width: 150px;
+	transition: width 0.3s ease; /* 너비 변경 애니메이션 */
+}
+
+.bigCategory.expanded {
+	width: 300px; /* 마우스를 올렸을 때의 너비 */
+}
+/*         .vr-divider { */
+/*             width: 1px; */
+/*             height: 100%; */
+/*             background-color: #000; */
+/*             margin: 0 10px; */
+/*         } */
+        
+/*                 .d-flex { */
+/*             display: flex; */
+/*             align-items: center; */
+/*         } */
+
+        .smallCategoryList {
+            display: none; /* 초기에는 숨김 */
+            flex-direction: column;
+            margin-left: 10px;
+        }
+
+        .bigCategory.expanded + .smallCategoryList {
+            display: flex; /* bigCategory가 확장되면 표시 */
+        }
+        
+.categoryDrop{
+	width : 135px;
+/* 	width : 60px; */
+}
+.categorySelectBtn {
+	height : 45px;
+/* 	text-align : left; */
+/* 	height : austo; */
+}
+
+/* .dropdown-items:hover { */
+/* 	width : 300px; */
+/* } */
+/*         .categorySelect { */
+/*             width: 100%; */
+/*             height: auto; */
+/*         } */
+/*         .categorySelect option { */
+/*             width: 50%; */
+/*             display: inline-block; */
+/*         } */

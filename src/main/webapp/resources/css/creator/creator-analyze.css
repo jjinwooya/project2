@@ -1,0 +1,35 @@
+@charset "UTF-8";
+.card-text {
+	font-size: 20px;
+	padding-left: 20px;
+	padding-top: 10px;
+}
+
+.card_num > a {
+   text-decoration: none;
+   color: black;
+   font-size: 30px;
+   padding-right: 25px;
+}
+
+.admin_main_center_card {
+	border: 1px solid black;
+	border-radius: 10px;
+	display: inline-block;
+	margin-right: 10px;
+	margin-bottom: 20px;
+	background: white;
+	width: 200px;
+}
+
+.admin_main_card {
+	font-size: 20px;
+	margin-left: 20px;
+	margin-top: 10px;
+}
+.admin_main_center{
+	margin-left: 100px;
+}
+.admin_main_chart{
+	width: 100%;
+}

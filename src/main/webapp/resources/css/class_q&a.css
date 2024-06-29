@@ -1,0 +1,13 @@
+@charset "UTF-8";
+
+.container1 {
+	height : auto;
+	width: 1200px;
+	margin: auto;
+	
+}
+
+.container2 {
+	padding : 20px;
+	background: #333;
+}

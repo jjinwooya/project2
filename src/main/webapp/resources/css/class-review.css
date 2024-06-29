@@ -1,0 +1,97 @@
+@charset "UTF-8";
+
+.container1 {
+	height : auto;
+	width: 1200px;
+	margin: auto;
+	
+}
+
+.container2 {
+	padding : 20px;
+	background: #333;
+}
+
+.userPic > img{
+	width : 50px;
+	height : 50px;
+	margin-left : 20px;
+}
+.reviewInfo {
+/* 	padding-left : 0px; */
+	margin-left : 0px;
+	font-weight: bold;
+	padding-bottom : 0px;
+        display: flex;
+        align-items: flex-start;
+}
+.reviewStar {
+	
+}
+.userReview {
+	margin-left : 20px;
+        margin-top: 20px;
+	
+}
+
+.userInfo {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+}
+.userNickname {
+	margin: 0;
+/* 	flex-basis: 40%; */
+	        flex: 1;
+}
+/* .userNickname p{ */
+/* 	font-size : 1.0rem; */
+/* } */
+
+.userNickname p {
+	margin: 0;
+	font-size: 1.1rem; /* Adjust the font size as needed */
+	font-weight: bold;
+}
+    
+.reviewDate {
+	margin: 0;
+/* 	flex-basis: 60%; */
+	text-align: left;
+        flex: 0;
+}
+
+.reviewDate p {
+	margin-bottom : 0px;
+	margin-left : 10px;
+}
+
+.reviewPic > img {
+	width : 300px;
+	height : 300px;
+	margin-left : 30px;
+	margin-bottom : 30px;
+}
+.reviewStar {
+	width: 100%;
+	margin-top: 5px;
+}
+
+.userInfoContainer {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+.userInfoHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+}
+.userNickname, .reviewDate {
+	margin: 0;
+}
+.line {
+	margin-top: 30px;
+}

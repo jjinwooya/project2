@@ -1,0 +1,25 @@
+* {
+	background-color: #000000;
+}
+
+.article {
+	margin: 30px;
+	
+}
+
+.main-carousel{
+    background: black;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+@media (min-width: 992px) {
+    .hero-header
+    {
+        margin-top: 152px !important;
+    }
+   
+}
+
+

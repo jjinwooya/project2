@@ -1,0 +1,54 @@
+:root {
+    --bs-accordion-active-bg: transparent; /* 초기화 또는 원하는 색상으로 설정 */
+}
+body {
+/* 	background: black; */
+}
+.card {
+	margin-top: 15px;
+/* 	width:100%; */
+}
+.payment_title {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	margin-top: 200px;
+	margin-left: 50px;
+	color: white;
+}
+h5 {
+	color:white;
+}
+
+.card-header {
+	color: black;
+}
+.card-title {
+	color: white;	
+}
+.accordion {
+	width: 100%;
+	margin-top: 50px;
+}
+
+.accordion-item {
+	width: 100%;
+	max-height: 600px;
+	outline: none;
+}
+.accordion-body {
+	font-size: 0.9rem;
+}
+
+.btn {
+	display: flex;
+	justify-content: flex-end;
+	text-align: center;
+}
+.font_color {
+	color: green;
+}
+input[value='전부 사용'] {
+	background: black;
+	color:white;
+}

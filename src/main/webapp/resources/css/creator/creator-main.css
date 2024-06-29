@@ -1,0 +1,48 @@
+@charset "UTF-8";
+
+.creator-event>.card {
+	padding-left: 10px;
+	margin: 0px auto;
+	word-break: keep-all;
+}
+
+.card-content>a {
+	width: 100px;
+	height: 40px;
+}
+
+.card-body>h6 {
+	color: black;
+}
+
+.creator-body {
+	margin: 0 auto;
+}
+
+.creator-main-table {
+	margin: 0 auto;
+}
+
+.selectClass{
+	width: 85%;
+}
+.class_name{
+	width: 100px;
+}
+.category-btn {
+  background-color: #ddd;
+  border: none;
+  color: #333;
+  padding: 10px 20px;
+  margin: 5px auto;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  
+}
+.category-btn.active,
+.category-btn:hover,
+.category-btn.active:hover {
+  background-color: #007bff;
+  color: white;
+}

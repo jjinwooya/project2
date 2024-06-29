@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="itwillbs.p2c3.class_will.mapper.MainMapper">
+
+
+	<select id="selectBigCategory" resultType="map">
+		SELECT *
+		FROM common2
+		WHERE common1_code = 'CLC'
+		AND code_hide LIKE 'N';
+	</select>
+	
+	<select id="selectSmallCategory" resultType="map">
+		SELECT *
+		FROM common3
+		WHERE common1_code = 'CLC'
+		AND code_hide LIKE 'N';
+	</select>
+	
+	<select id="selectLocalCate" resultType="map">
+		SELECT *
+		FROM common2
+		WHERE common1_code = 'LC'
+		AND code_hide LIKE 'N';
+	</select>
+
+	<insert id="insertKeyword">
+		INSERT INTO search_word(search_word_keyword, search_word_date)
+		VALUES(#{keyword}, #{searchDateTime})
+	</insert>
+	
+	
+<!-- 	<select id="selectKeyword" resultType="map"> -->
+<!-- 		SELECT  -->
+<!-- 	</select> -->
+
+</mapper>

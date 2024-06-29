@@ -1,0 +1,94 @@
+@charset "UTF-8";
+
+.creator-class-search>form>input[type=text] {
+	font-size: 18px;
+	height: 35px;
+	padding: 5px;
+	outline: none;
+	vertical-align: middle;
+	border: none;
+	text-align: center;
+}
+
+.creator-class-search>form>input[type=submit] {
+	width: 90px;
+	height: 40px;
+	outline: none;
+	font-weight: bold;
+	margin-left: 5px;
+	vertical-align: middle;
+}
+.creator-class-searchBox{
+	border-top-right-radius:10px; 
+	border-top-left-radius:10px; 
+}
+table {
+	border-collapse: collapse;
+	box-shadow: 4px 4px 10px 0 rgba(0, 0, 0, 0.1);
+	background-color: white;
+	width: 100%;
+	font-size: 15px;
+	border-radius: 10px;
+	text-align:center;
+}
+
+/* 테이블 행 */
+th, td {
+	padding: 15px 8px;
+	border-bottom: 1px solid #ddd;
+	color: black;
+}
+
+th {
+	background-color: #eee;
+	color: black;
+}
+
+td > a{
+	display:-webkit-box; 
+    word-wrap:break-word; 
+    -webkit-line-clamp:1; 
+    -webkit-box-orient:vertical; 
+    overflow:hidden; 
+    text-overflow:ellipsis;
+}
+
+/* 테이블 올렸을 때 */
+tbody tr:hover {
+	background-color: white;
+	opacity: 0.9;
+	cursor: pointer;
+}
+
+/* 테이블 비율 */
+/* th:nth-child(1), td:nth-child(1) { */
+/* } */
+/* th:nth-child(2), td:nth-child(2) { */
+/* 	width: 300px; */
+/* } */
+/* th:nth-child(3), td:nth-child(3) { */
+/* 	width: 80px; */
+/* } */
+/* th:nth-child(4), td:nth-child(4) { */
+/* 	width: 80px; */
+/* } */
+/* th:nth-child(5), td:nth-child(5) { */
+/* 	width: 120px; */
+/* } */
+/* @media (max-width: 767px) { */
+/* 	th:nth-child(1), td:nth-child(1) { */
+/* 		display: none; */
+/* 	} */
+/* 	th:nth-child(2), td:nth-child(2) { */
+/* 		width: 500px;!important; */
+/* 	} */
+/* 	th:nth-child(3), td:nth-child(3) { */
+/* 		display: none; */
+/* 	} */
+/* 	th:nth-child(4), td:nth-child(4) { */
+/* 		display: none; */
+/* 	} */
+/* 	th:nth-child(5), td:nth-child(5) { */
+/* 		width: 10%; */
+/* 	} */
+/* } */

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="itwillbs.p2c3.class_will.mapper.CscMapper">
+	<!-- 게시판 상세보기 -->
+	<select id="selectBoardDetail" resultType="map" parameterType="map">
+		SELECT ${type}_code
+			, ${type}_subject
+			, ${type}_content
+			, c2.code_value AS '${type}_category'
+			, ${type}_hide
+			, ${type}_reg_date 
+		FROM ${type} ${type}
+		LEFT JOIN common2 c2 
+		ON ${type}.${type}_category = c2.common2_code 
+		AND c2.common1_code = #{common1_code}
+		WHERE ${type}_code = #{code}
+	</select>
+	
+	<select id="searchPaging" resultType="Integer">
+        SELECT ${searchType}(notice_code)
+        FROM notice
+        WHERE notice_code 
+        <if test="searchType.equals('MAX')">
+            &lt; #{code}
+        </if>
+        <if test="searchType.equals('MIN')">
+            &gt; #{code}
+        </if>
+    </select>
+    
+	<select id="selectBoardCategoryHide" resultType="map">
+		SELECT common2_code , code_value
+		FROM common2
+		WHERE common1_code = #{code}
+		AND code_hide = 'N'
+	</select>
+	
+	<select id="selectBoardCountHide" resultType="Integer">
+	    SELECT COUNT(*)
+	    FROM ${type}
+	    WHERE ${type}_hide = 'N'
+	</select>
+	
+		
+</mapper>
