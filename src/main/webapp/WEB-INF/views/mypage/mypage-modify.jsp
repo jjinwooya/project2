@@ -232,7 +232,12 @@
 				validateAddress2();
 				checkFormValidity(); // 폼 유효성 검사 실행
 			});
-
+			//닉네임 관련 
+			$("#member_nickname").on("input", function() {
+				validateNickname();
+				checkFormValidity(); // 폼 유효성 검사 실행
+			});
+			
 			// 폼 유효성 검사 함수
 			function checkFormValidity() {
 				let pwdIsValid = $("#member_pwd").val() === ""
@@ -241,7 +246,9 @@
 						|| $("#member_pwd2").val() === $("#member_pwd").val();
 				let isPasswordStrong = $("#member_pwd").val() === ""
 						|| validatePasswordStrength() > 1;
-
+				
+				let nicknameIsValid = validateNickname();		
+						
 				if (pwdIsValid && pwd2IsValid && isPasswordStrong) {
 					$("button[type='submit']").prop("disabled", false); // submit 버튼 활성화
 				} else {
@@ -373,11 +380,12 @@
             let pwd = $("#member_pwd").val();
             let pwd2 = $("#member_pwd2").val();
             let lengthRegx = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*?_]).{6,16}$/;
-
-            if (pwd !== "" && (!lengthRegx.test(pwd) || pwd !== pwd2)) {
-                event.preventDefault();
-                alert("비밀번호가 유효하지 않습니다. 영문자, 숫자, 특수문자(!, @, #, $)를 포함한 6~16자리를 입력하고 비밀번호 확인란과 일치해야 합니다.");
-            }
+            let nickname = $("#member_nickname").val();
+            let nicknameRegex = /^[^\s]{3,15}$/; 
+            if ((pwd !== "" && (!lengthRegx.test(pwd) || pwd !== pwd2)) || !nicknameRegex.test(nickname)) {
+    			event.preventDefault();
+    			alert("닉네임이 유효하지 않거나 비밀번호가 유효하지 않습니다. 닉네임은 공백 없이 3~15자로 입력하고, 비밀번호는 영문자, 숫자, 특수문자(!, @, #, $)를 포함한 6~16자리를 입력하고 비밀번호 확인란과 일치해야 합니다.");
+    		}
         });
 		
 		$(function() { //이거 닉네임관련임.

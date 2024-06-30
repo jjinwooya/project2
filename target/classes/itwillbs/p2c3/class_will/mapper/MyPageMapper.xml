@@ -10,7 +10,8 @@
 		member_img = #{member_img}
 
 		WHERE
-		member_code = #{member_code}
+		member_code =
+		#{member_code}
 	</update>
 
 	<update id="updateMember">
@@ -32,7 +33,7 @@
 				member_nickname = #{member_nickname}
 			</if>
 		</if>
-		
+
 		WHERE
 		member_code = #{member_code}
 	</update>
@@ -74,7 +75,7 @@
 		WHERE class_review_code = #{class_review_code}
 
 	</delete>
-	
+
 	<select id="countNickname">
 		<!-- 회원 닉네임 중복확인 -->
 		SELECT COUNT(*)
@@ -82,26 +83,45 @@
 		WHERE member_nickname = #{member_nickname}
 	</select>
 	<update id="updateMemberNormal">
-		<!-- 크리에이터 회원이 일반회원으로-->
-		<!-- 일반 회원이 크리에이터로-->
+		<!-- 크리에이터 회원이 일반회원으로 -->
+		<!-- 일반 회원이 크리에이터로 -->
 		UPDATE MEMBER
-    	SET member_type = 
-    	CASE 
-            WHEN member_type = 1 THEN 2  
-            WHEN member_type = 2 THEN 1  
-            ELSE member_type
-        END
-    	WHERE member_code = #{member_code}
+		SET member_type =
+		CASE
+		WHEN member_type = 1 THEN 2
+		WHEN
+		member_type = 2 THEN 1
+		ELSE member_type
+		END
+		WHERE member_code =
+		#{member_code}
 	</update>
-	
-	
+
+
 	<select id="selectMember">
-		<!-- 멤버코드 회원정보 데리고 오기-->
+		<!-- 멤버코드 회원정보 데리고 오기 -->
 		SELECT * FROM MEMBER
 		WHERE member_code = ${member_code}
-	
+
 	</select>
-	
-	
+
+
+	<select id="selectLike">
+		<!-- 멤버코드 좋아요한 클래스 데리고 오기 -->
+		SELECT
+		c.class_name, c.class_location , c.class_price, lc.class_code, lc.member_code
+		FROM
+		class c
+		JOIN
+		like_class lc
+		ON
+		c.class_code = lc.class_code
+		WHERE
+		lc.member_code = ${member_code}
+		ORDER BY
+		c.class_code
+
+	</select>
+
 
 </mapper>

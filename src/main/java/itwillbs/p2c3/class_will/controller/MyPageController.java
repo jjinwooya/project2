@@ -22,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import itwillbs.p2c3.class_will.handler.CommonUtils;
 import itwillbs.p2c3.class_will.handler.WillUtils;
 import itwillbs.p2c3.class_will.service.AdminService;
+import itwillbs.p2c3.class_will.service.ClassService;
 import itwillbs.p2c3.class_will.service.MemberService;
 import itwillbs.p2c3.class_will.service.MyPageService;
 import itwillbs.p2c3.class_will.vo.MemberVO;
@@ -47,6 +49,10 @@ public class MyPageController {
 	@Autowired
 	private AdminService adminService;
 
+	
+	@Autowired
+	private ClassService classService;
+	
 	@Autowired
 	private MyPageService myPageService;
 
@@ -75,10 +81,20 @@ public class MyPageController {
 		if (member == null) {
 			return WillUtils.checkDeleteSuccess(false, model, "로그인이 필요한 페이지입니다", true, "member-login");
 		} else {
+			int member_code = member.getMember_code();
+			MemberVO member2 = myPageService.selectMemberInfo(member_code);
+			List<Map<String, String>> memberLike = myPageService.getMemberLike(member.getMember_code());
+			int totalLikes = memberLike.size();
+			model.addAttribute("member", member2);
+			model.addAttribute("memberLike", memberLike);
+			model.addAttribute("total_likes", totalLikes);
 			return "mypage/mypage-wish";
 		}
 
 	}
+	
+	//관심클래스 취소
+	
 
 //	// 마이클래스
 //	@GetMapping("my-class")

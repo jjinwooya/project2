@@ -75,6 +75,11 @@ public class ClassController {
 	    System.out.println("class-list map : " + classList);
 	    System.out.println("memberCode : " + member_code);
 		
+	    List<Map<String, Object>> likeClassCode = classService.selectLikeClassCode(member_code);
+	    model.addAttribute("likeClassCode", likeClassCode);
+	    System.out.println("likeClassCode  :::::::::::" + likeClassCode);
+	    
+	    
 	    // 지역
 		List<Map<String, Object>> localList = classService.getCategoryLocal();
 		model.addAttribute("localList", localList);
@@ -185,7 +190,6 @@ public class ClassController {
 		// 클래스 질문
 		List<Map<String, Object>> classInquiry = classService.getClassInquiry(class_code); 
 		model.addAttribute("classInquiry", classInquiry);
-		
 	    
 		//classInfo 클래스 데이터 가져오기
 		Map<String, Object> classCode = new HashMap<>();

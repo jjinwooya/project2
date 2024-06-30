@@ -70,6 +70,12 @@ public class MyPageService {
 		return myPageMapper.selectMember(member_code);
 		
 	}
+	
+	//멤버가 관심있는 클래스
+	public List<Map<String, String>> getMemberLike(int member_code) {
+		
+		return myPageMapper.selectLike(member_code);
+	}
 
 	
 

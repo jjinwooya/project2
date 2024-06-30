@@ -27,5 +27,7 @@ public interface MyPageMapper {
 	void updateMemberNormal(String member_Code);
 
 	MemberVO selectMember(int member_code);
+
+	List<Map<String, String>> selectLike(int member_code);
 	
 }

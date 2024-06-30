@@ -104,6 +104,13 @@
 		WHERE member_code = #{member_code} AND class_code = #{class_code}
 	</delete>
 	
+	<!-- 클래스 좋아요 -->
+	<select id="selectLikeClassCode" resultType="map">
+		SELECT class_code
+		FROM like_class
+		WHERE member_code = #{member_code} 
+	</select>
+	
 	<!-- 소 카테고리 -->
 	<select id="selectListSmallCategory" resultType="map">
 		SELECT *

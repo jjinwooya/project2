@@ -24,6 +24,9 @@ body {
 /* 	padding : 15px; */
 /* } */
 
+.btnLocation {
+	text-align : right;
+}
 .card-bodys {
     height: 200px; /* 예시로 설정한 높이 */
 	padding : 15px;
@@ -150,6 +153,13 @@ body {
 /*     justify-content: center; 가로 중앙 정렬, 필요에 따라 사용 */
     height: 60px; /* box1의 높이를 100%로 설정 */
 /*     padding-left : 30px; */
+}
+
+.box11 {
+    display: flex;
+    align-items: center; /* 수직 중앙 정렬 */
+    height: 60px; /* box1의 높이를 100%로 설정 */
+	text-align : right;
 }
 
 .selectBox1 {

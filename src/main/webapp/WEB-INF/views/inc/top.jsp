@@ -278,7 +278,8 @@
 /*** Top Navbar End ***/
 
 </style>
-
+<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const collapseElements = document.querySelectorAll('[data-bs-toggle="collapse"]');

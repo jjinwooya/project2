@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -122,38 +125,36 @@ th:nth-child(2), td:nth-child(2) {
 						<jsp:include page="/WEB-INF/views/mypage/sideBar.jsp" />
 
 						<div class="col-lg-9 creator-body">
-							
+
 
 							<div class="creator-event mt-5">
-								<div class="col-md-12 text-center h2 mb-5">  ${member.member_name} 님은 이런 클래스를 관심있게 보고 있어요</div>
+								<div class="col-md-12 text-center h2 mb-5">
+									${member.member_name} 님은 이런 클래스를 관심있게 보고 있어요</div>
 								<div class="container">
 									<h2>관심 클래스</h2>
-									<p>The .table-hover class enables a hover state (grey
-										background on mouse over) on table rows:</p>
+									<p>나의 관심 클래수 개수 : ${total_likes}개</p>
 									<table class="table table-hover">
 										<thead>
 											<tr>
-												<th>Firstname</th>
-												<th>Lastname</th>
-												<th>Email</th>
+												<th>클래스 이름</th>
+												<th>클래스 위치</th>
+												<th>클래스 가격</th>
+												<th>상세보기</th>
+												<th>관심 취소하기</th>
 											</tr>
 										</thead>
 										<tbody>
-											<tr>
-												<td>John</td>
-												<td>Doe</td>
-												<td>john@example.com</td>
-											</tr>
-											<tr>
-												<td>Mary</td>
-												<td>Moe</td>
-												<td>mary@example.com</td>
-											</tr>
-											<tr>
-												<td>July</td>
-												<td>Dooley</td>
-												<td>july@example.com</td>
-											</tr>
+											<c:forEach var="memberLike" items="${memberLike}">
+												<tr>
+													<td>${memberLike.class_name}</td>
+													<td>${memberLike.class_location}</td>
+													<c:set var="credit" value="${memberLike.class_price}" />
+													<td><fmt:formatNumber value="${credit}" type="number" pattern="#,##0" /> 원</td>
+													<td><a href="class-detail?class_code=${memberLike.class_code}" class="btn btn-primary">상세보기</a></td>
+													<td><button class="btn btn-danger"
+														onclick="cancelLike('${memberLike.class_code}', '${member.member_code}')">취소</button></td>
+												</tr>
+											</c:forEach>
 										</tbody>
 									</table>
 								</div>
@@ -173,7 +174,41 @@ th:nth-child(2), td:nth-child(2) {
 	<footer>
 		<jsp:include page="/WEB-INF/views/inc/bottom.jsp" />
 	</footer>
+	<script>
+	 function cancelLike(classCode, memberCode) {
+		// 사용자에게 확인을 받기 위한 confirm 창 표시
+		    var confirmCancel = confirm("관심 클래스를 취소하시겠습니까?");
+		    
+		    // 사용자가 확인을 선택한 경우
+		    if (confirmCancel) {
+		        var data = JSON.stringify({ 
+		            heart_status: false, 
+		            class_code: classCode, 
+		            member_code: memberCode 
+		        });
+		        var xhr = new XMLHttpRequest();
+		        xhr.open("POST", "${pageContext.request.contextPath}/update-heart-status", true);
+		        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
+		        xhr.onreadystatechange = function() {
+		            if (xhr.readyState === 4) {
+		                if (xhr.status === 200) {
+		                    if (xhr.responseText === "success") {
+		                        alert('관심 클래스가 취소되었습니다.');
+		                        location.reload(); // 페이지를 새로고침하여 변경사항을 반영
+		                    } else {
+		                        alert('취소하는 도중 오류가 발생했습니다.');
+		                    }
+		                } else {
+		                    alert('서버와의 통신에 실패했습니다.');
+		                }
+		            }
+		        };
+
+		        xhr.send(data);
+		    }
+		}
+</script>
 	<!-- JavaScript Libraries -->
 	<script
 		src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
