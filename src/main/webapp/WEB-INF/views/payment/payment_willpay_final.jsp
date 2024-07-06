@@ -76,27 +76,21 @@
 			<h2>정상적으로 <span class="text-success">충전 완료</span> 되었습니다. </h2>	
 			<div>
 				<h5 class="text-success">충전 내역</h5>
-				<p>은행 이름 : ${withdrawResult.payAc_bank_name}</p>
+				<p>은행 이름 : ${withdrawResult.will_pay_bank_name}</p>
 				<p>
-					<fmt:formatNumber var="withdraw_amt" value="${withdrawResult.tran_amt }" pattern="#,###"/>
+					<fmt:formatNumber var="withdraw_amt" value="${withdrawResult.will_pay_amount }" pattern="#,###"/>
 					이체된 금액 : ${withdraw_amt}원
 				</p> 
-				<p>결제일시 : ${withdrawResult.payAc_date}</p>
+				<p>결제일시 : ${withdrawResult.will_pay_date}</p>
 				<hr>
-				<c:choose>
-					<c:when test="${empty withdrawResult.tran_amt_total }">
-						<p><span class="text-success">충전된 WILL-PAY</span>
-							<fmt:formatNumber var="amt" value="${withdrawResult.tran_amt }" pattern="#,###"/>
-							: ${amt}원
-						</p>
-					</c:when>
-					<c:otherwise>
-						<p><span class="text-success">충전된 WILL-PAY</span>
-							<fmt:formatNumber var="amt_total" value="${withdrawResult.tran_amt_total }" pattern="#,###"/>
-							: ${amt_total}원
-						</p>
-					</c:otherwise>
-				</c:choose>
+				<p><span class="text-success">충전된 WILL-PAY</span>
+					<fmt:formatNumber var="amt" value="${withdrawResult.will_pay_get_pay }" pattern="#,###"/>
+					: ${amt}원
+				</p>
+<!-- 						<p><span class="text-success">충전된 WILL-PAY</span> -->
+<%-- 							<fmt:formatNumber var="amt_total" value="${withdrawResult.tran_amt_total }" pattern="#,###"/> --%>
+<%-- 							: ${amt_total}원 --%>
+<!-- 						</p> -->
 				<p><span class="text-success">현재 보유 WILL-PAY</span>
 					<fmt:formatNumber var="remain" value="${withdrawResult.member_credit }" pattern="#,###"/>
 					: ${remain}원
@@ -105,7 +99,7 @@
 			<div>
 				<div class="row mt-5">
 					<div class="d-flex justify-content-center bg-secondary-subtle rounded-bottom p-2">
-						<button class="btn btn-dark mx-2" type="button" onclick="location.href='myp_reservation'">결제 내역 확인</button>
+						<button class="btn btn-dark mx-2" type="button" onclick="location.href='my-credit'">결제 내역 확인</button>
 						<button class="btn btn-dark mx-2" type="button" onclick="location.href='./'">클래스윌 메인</button>
 					</div>
 				</div>

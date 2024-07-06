@@ -6,6 +6,8 @@
 <meta charset="UTF-8">
 <title>클래스 상세</title>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/class_detail.css">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+
 <!-- Libraries Stylesheet -->
 <link href="${pageContext.request.contextPath}/resources/lib/lightbox/css/lightbox.min.css" rel="stylesheet">
 <link href="${pageContext.request.contextPath}/resources/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
@@ -82,10 +84,12 @@
     .headcount {
         color: white;
     }
+    
+    
 </style>
 <script type="text/javascript">
 document.addEventListener("DOMContentLoaded", function() {
-    var heartOverlays = document.querySelectorAll(".heart-overlay");
+    var heartOverlays = document.querySelectorAll(".heartImg");
     var originalSrc = "${pageContext.request.contextPath}/resources/images/profile/heart.png";
     var changeSrc = "${pageContext.request.contextPath}/resources/images/profile/heart_full.png";
 
@@ -105,6 +109,60 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 });
+
+</script>
+<!-- 카카오 지도 api -->
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b60a9d61c7090ce24f1b5bfa7ab26622"></script>
+<style>
+   #map {
+       width: 500px;
+       height: 400px;
+   }
+</style>
+<script type="text/javascript">
+    window.onload = function() {
+        var class_map_x = "${classInfo.class_map_x}";
+        var class_map_y = "${classInfo.class_map_y}";
+        
+        var mapContainer = document.getElementById('map'); // 지도를 담을 영역의 DOM 레퍼런스
+        var mapOption = { // 지도를 생성할 때 필요한 기본 옵션
+            center: new kakao.maps.LatLng(parseFloat(class_map_x), parseFloat(class_map_y)), // 지도의 중심좌표
+            level: 4 // 지도의 레벨(확대, 축소 정도)
+        };
+
+        var map = new kakao.maps.Map(mapContainer, mapOption); // 지도 생성 및 객체 리턴
+    	
+    	
+		var imageSrc = '${pageContext.request.contextPath}/resources/images/class/map.png', // 마커이미지의 주소입니다    
+		    imageSize = new kakao.maps.Size(50, 50), // 마커이미지의 크기입니다
+		    imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+
+		// 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
+		var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
+		    markerPosition = new kakao.maps.LatLng(class_map_x, class_map_y); // 마커가 표시될 위치입니다
+
+		// 마커를 생성합니다
+		var marker = new kakao.maps.Marker({
+		  position: markerPosition,
+		  image: markerImage // 마커이미지 설정 
+		});
+
+		// 마커가 지도 위에 표시되도록 설정합니다
+		marker.setMap(map);  
+
+		// 커스텀 오버레이가 표시될 위치입니다 
+		var position = new kakao.maps.LatLng(class_map_x, class_map_y);  
+
+		// 커스텀 오버레이를 생성합니다
+		var customOverlay = new kakao.maps.CustomOverlay({
+		    map: map,
+		    position: position,
+		    content: content,
+		    yAnchor: 1 
+		});
+		
+    };
+
 </script>
 </head>
 <body>
@@ -185,10 +243,18 @@ document.addEventListener("DOMContentLoaded", function() {
         <!-- navbar content -->
         <div class="content1 col-md-9">
             <div id="section1">
-                <img src="${pageContext.request.contextPath}/resources/images/class/class1.png" class="classImg">
+<%--                 <img src="${pageContext.request.contextPath}/resources/images/class/class1.png" class="classImg"> --%>
+<%-- 				<p>클래스 위치 : ${classInfo.class_location}</p> --%>
+				<h4>클래스 위치</h4>
+				<div class="location">${classInfo.class_location}</div>
+                <div id="map" style="width: 500px; height: 400px;"></div>
+				
             </div>
             <div id="section2">
-                <div class="row reviewInfo my-2">
+            	<div class="mt-3">
+              		<h4>클래스 후기</h4>
+              	</div>
+                <div class="row reviewInfo my-3 mx-1">
                     <!-- 테이블 -->
                     <div class="card text-center">
                         <div class="card-body p-2">
@@ -216,21 +282,12 @@ document.addEventListener("DOMContentLoaded", function() {
 							                    <c:if test="${map.class_review_subject != null}">
 							                        <tr>
 							                            <td class="creator-review-subject">
-<!-- 							                                <a onclick="creatorReview()"> -->
-<%-- 							                                    ${map.class_review_subject} --%>
-<!-- 							                                </a> -->
                                                     		<a href="#" onclick="creatorReview(event, '${param.class_code}')">${map.class_review_subject}</a>
 							                            </td>
 							                            <td>
-<!-- 							                                <a onclick="creatorReview()"> -->
-<%-- 							                                    ${map.class_review_date} --%>
-<!-- 							                                </a> -->
                                                     		<a href="#" onclick="creatorReview(event, '${param.class_code}')">${map.class_review_date}</a>
 							                            </td>
 							                            <td>
-<!-- 							                                <a onclick="creatorReview()"> -->
-<%-- 							                                    ${map.member_nickname} --%>
-<!-- 							                                </a> -->
                                                     		<a href="#" onclick="creatorReview(event, '${param.class_code}')">${map.member_nickname}</a>
 							                            </td>
 							                            <td>
@@ -259,10 +316,17 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
             <!-- section2 -->
             <div id="section3">
-                <img src="${pageContext.request.contextPath}/resources/images/class/class_curri.png" class="classImg">
+            	<h4>커리큘럼</h4>
+<%--                 <img src="${pageContext.request.contextPath}/resources/images/class/class_curri.png" class="classImg"> --%>
+				<div class="">
+					<c:forEach var="classCurri" items="${classCurri}">
+						${classCurri.curri_round} - ${classCurri.curri_content}<br>
+					</c:forEach>
+				</div>
             </div>
             <div id="section4">
                 <!-- Q&A 내용 -->
+              	<h4>클래스 Q&A</h4>
                 <!-- 테이블 -->
                 <div class="card text-center my-2">
                     <div class="card-body p-2 reviewInfo">
@@ -275,7 +339,6 @@ document.addEventListener("DOMContentLoaded", function() {
                                 </tr>
                             </thead>
                             <tbody>
-<!-- <<<<<<< HEAD -->
 								<c:choose>
 						            <c:when test="${empty classInquiry}">
 						                <tr>
@@ -288,19 +351,13 @@ document.addEventListener("DOMContentLoaded", function() {
 										<c:forEach var="map" items="${classInquiry}">
 			                                <tr>
 			                                    <td class="creator-review-subject">
-<%-- 			                                        <a onclick="creatorInquiry()">${map.class_inquiry_subject}</a> --%>
                                                     <a href="#" onclick="creatorInquiry(event, '${param.class_code}')">${map.class_inquiry_subject}</a>
 			                                    </td>
 			                                    <td>
-<%-- 			                                        <a onclick="creatorInquiry()">${map.class_inquiry_date}</a> --%>
                                                     <a href="#" onclick="creatorInquiry(event, '${param.class_code}')">${map.class_inquiry_date}</a>
 			                                    </td>
 			                                    <td>
-<%-- 			                                        <a onclick="creatorInquiry()">${map.member_nickname}</a> --%>
-<%-- 		                                            <a href="#" onclick="creatorInquiry(event)" data-class-code="${map.class_code}">${map.member_nickname}</a> --%>
                                                     <a href="#" onclick="creatorInquiry(event, '${param.class_code}')">${map.member_nickname}</a>
-                                                    
-		                                            
 			                                    </td>
 			                                </tr>
 		                                </c:forEach>
@@ -360,39 +417,10 @@ document.addEventListener("DOMContentLoaded", function() {
                         </div>
                     </div>
 
-                    <div class="row"> <!-- 해시태그 시작 -->
+                    <div class="row classHashtag"> <!-- 해시태그 시작 -->
                         <div class="col-md-4">
-                            <b><a href="#">#원데이</a></b>
-                        </div>
-                        <div class="col-md-4">
-                            <b><a href="#">#클래스</a></b>
-                        </div>
-                        <div class="col-md-4">
-                            <b><a href="#">#관련</a></b>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <b><a href="#">#키워드</a></b>
-                        </div>
-                        <div class="col-md-4">
-                            <b><a href="#">#크리에이터가</a></b>
-                        </div>
-                        <div class="col-md-4">
-                            <b><a href="#">#지정가능</a></b>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <b><a href="#">#키워드</a></b>
-                        </div>
-                        <div class="col-md-4">
-                            <b><a href="#">#크리에이터가</a></b>
-                        </div>
-                        <div class="col-md-4">
-                            <b><a href="#">#지정가능</a></b>
-                        </div>
-                    </div> <!-- 해시태그 끝 -->
 
                     <div class="box3"> <!-- 좋아요, 공유버튼 -->
                         <div class="row"> 
@@ -400,19 +428,11 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <button type="button" class="btn btn-light w-100 btn-customs">
                                     <%-- <img src="${pageContext.request.contextPath}/resources/images/class/heart1.png" class="button-icon">5214 --%>
                                     <div style="display: flex; align-items: center;">
-                                        <img src="${pageContext.request.contextPath}/resources/images/profile/heart.png" id="heartOverlay" class="button-icon heart-overlay">
+                                        <img src="${pageContext.request.contextPath}/resources/images/profile/heart.png" id="heartOverlay" class="button-icon heartImg">
                                         <div class="heartCount"><span>5124</span></div>
                                     </div>
                                 </button>
                             </div>
-<!--                             <div class="col-md-4 btn mx-auto" style="display: flex; align-items: center;"> -->
-<!--                                 <button type="button" class="btn btn-light w-100 btn-customs"> -->
-<!--                                     <div style="display: flex; align-items: center;"> -->
-<%--                                         <img src="${pageContext.request.contextPath}/resources/images/class/share1.png" class="button-icon"> --%>
-<!--                                         <div class="shareClass"><span>공유하기</span></div> -->
-<!--                                     </div> -->
-<!--                                 </button> -->
-<!--                             </div> -->
                             <div class="col-md-6 btn mx-auto" style="display: flex; align-items: center;">
                                 <button type="button" class="btn btn-light w-100 btn-customs">
                                     <div style="display: flex; align-items: center;" onclick="classComplain(event, '${param.class_code}')">
@@ -451,9 +471,8 @@ document.addEventListener('DOMContentLoaded', function() {
         inline: true,
         locale: "ko" // 한글 설정
     };
-    debugger;
     var today = new Date();
-    today.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0); // 0시 0분 0초 0밀리초
 
     //오늘 날짜 들어있으면 filter
     enableDates = enableDates.filter(dateStr => {
@@ -607,6 +626,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 </script>
+
+				
 <script type="text/javascript">
 function creatorReview(event, class_code) {
     event.preventDefault(); // 기본 동작 방지 (예: href="#" 의 경우)

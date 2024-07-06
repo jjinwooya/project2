@@ -32,29 +32,30 @@
 	</select>
 	
 	<select id="selectMemberInfo" resultType="map" parameterType="map">
-		SELECT	m.member_code,
-		        m.member_email,
-		        m.member_name,
-		        m.member_img,
-		        m.member_tel,
-		        m.member_pwd,
-		        m.member_social,
-		        m.member_marketing1,
-		        m.member_marketing2,
-		        status.code_value AS member_status,
-		        m.member_addr,
-		        m.member_nickname,
-		        m.member_credit,
-		        type.code_value AS member_type,
-		        m.member_reg_date
-		FROM MEMBER m
-	    LEFT JOIN common2 status 
-	    ON m.member_status = status.common2_code 
-	    AND status.common1_code = #{params.member_status}
-	    LEFT JOIN common2 type 
-	    ON m.member_type = type.common2_code 
-	    AND type.common1_code = #{params.member_type}
-		WHERE member_code = #{params.param1}
+		SELECT m.member_code
+		     , m.member_email
+		     , m.member_name
+		     , m.member_img
+		     , m.member_tel
+		     , m.member_pwd
+		     , m.member_social
+		     , m.member_marketing1
+		     , m.member_marketing2
+		     , status.code_value AS member_status
+		     , m.member_addr
+		     , m.member_nickname
+		     , m.member_credit
+		     , type.code_value AS member_type
+		     , m.member_reg_date
+		  FROM MEMBER m
+	      LEFT JOIN common2 status 
+	        ON m.member_status = status.common2_code 
+	       AND status.common1_code = #{params.member_status}
+	      LEFT JOIN common2 type 
+	    	ON m.member_type = type.common2_code 
+	       AND type.common1_code = #{params.member_type}
+		 WHERE 1 = 1
+		   AND member_code = #{params.param1}
 	</select>
 	
 	<select id="selectColumnNames" resultType="String">
@@ -95,8 +96,7 @@
 	    SELECT 
 	        CASE 
 	            WHEN DATA_TYPE = 'varchar' THEN CONCAT(DATA_TYPE, '(', CHARACTER_MAXIMUM_LENGTH, ')')
-	            ELSE DATA_TYPE
-	        END AS DATA_TYPE_WITH_LENGTH
+	            						   ELSE DATA_TYPE END AS DATA_TYPE_WITH_LENGTH
 	    FROM INFORMATION_SCHEMA.COLUMNS
 	    WHERE TABLE_NAME = #{tableName}
 	</select>
@@ -298,7 +298,7 @@
 	
 	
 	<select id="selectWillpayChart" resultType="Integer">
-		SELECT  SUM(CAST(pay_amount AS DECIMAL(10, 2))) AS totalSales 
+		SELECT  SUM(CAST(pay_amount AS DECIMAL(10, 2))) AS totalSales
 		FROM pay
 		GROUP BY DATE_FORMAT(STR_TO_DATE(pay_datetime, '%Y-%m-%d'), '%Y-%m')
 		ORDER BY DATE_FORMAT(STR_TO_DATE(pay_datetime, '%Y-%m-%d'), '%Y-%m')
@@ -461,9 +461,8 @@
 	</select>
 	
 	<select id="selectDailyVisit" resultType="Integer">
-		SELECT IFNULL(visit_count , 0)
-		FROM daily_visit
-		WHERE DATE_FORMAT(STR_TO_DATE(visit_date, '%Y%m%d'), '%Y-%m-%d') = CURDATE()
+		SELECT count(*) 
+		FROM visit_logs
 	</select>
 	
 	<select id="selectTotalVisit" resultType="Integer">
@@ -510,4 +509,27 @@
 		#{params.event_point}
 		)
 	</insert>
+	
+	<select id="selectEventList" resultType="map">
+		SELECT *
+		FROM event
+	</select>
+	
+	<select id="selectBigCategoryClassComplain" resultType="map">
+		SELECT *
+		FROM common2
+		WHERE common1_code = "RPC"
+	</select>
+	
+	<select id="selectSmallCategoryClassComplain" resultType="map">
+		SELECT *
+		FROM common3
+		WHERE common1_code = "RPC"
+		AND   common2_code = #{categoryCode}
+	</select>
+	
+	<delete id="deleteVisitLogs">
+		DELETE FROM visit_logs
+	</delete>
+	
 </mapper>

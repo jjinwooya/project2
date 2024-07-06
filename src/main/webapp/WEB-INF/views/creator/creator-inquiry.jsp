@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link
 	href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap"
-	rel="stylesheet">``
+	rel="stylesheet">
 <!-- Icon Font Stylesheet -->
 <link rel="stylesheet"
 	href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
@@ -21,40 +21,46 @@
 	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
 	rel="stylesheet">
 
-<!-- Libraries Stylesheet -->
-<link
-	href="${pageContext.request.contextPath}/resources/lib/lightbox/css/lightbox.min.css"
-	rel="stylesheet">
-<link
-	href="${pageContext.request.contextPath}/resources/lib/owlcarousel/assets/owl.carousel.min.css"
-	rel="stylesheet">
-
-
 <!-- Customized Bootstrap Stylesheet -->
 <link
 	href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css"
 	rel="stylesheet">
 
 <!-- Template Stylesheet -->
-<link href="${pageContext.request.contextPath}/resources/css/style.css"
-	rel="stylesheet">
-<link
-	href="${pageContext.request.contextPath}/resources/css/creator/creator-main.css" rel="stylesheet">
-<link
-	href="${pageContext.request.contextPath}/resources/css/creator/creator-review.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/resources/css/style.css"	rel="stylesheet">
+<link href="${pageContext.request.contextPath}/resources/css/creator/creator-main.css" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/resources/css/creator/creator-review.css" rel="stylesheet">
+	
+	<!-- Toast UI Grid Script -->
+<link rel="stylesheet" href="https://uicdn.toast.com/tui.grid/latest/tui-grid.css">
+<!-- Toast UI Pagination CSS -->
+<link rel="stylesheet"	href="https://uicdn.toast.com/tui.pagination/latest/tui-pagination.css">
 </head>
 <body>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+	<!-- Toast UI Pagination Script -->
+	<script src="https://uicdn.toast.com/tui.pagination/latest/tui-pagination.js"></script>
+	<!-- Toast UI Grid Script -->
+	<script src="https://uicdn.toast.com/tui.grid/latest/tui-grid.js"></script>
 
 	<header>
 		<jsp:include page="/WEB-INF/views/inc/top.jsp" />
 	</header>
+
+	<!-- Spinner Start (로딩시 뜨는 동그라미)-->
+	<div id="spinner"
+		class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
+		<div class="spinner-grow text-white" role="status"></div>
+	</div>
+	<!-- Spinner End -->
 
 	<!-- Single Page Header start -->
 	<div class="container-fluid page-header py-5">
 		<h1 class="text-center text-white display-6">Creator</h1>
 		<ol class="breadcrumb justify-content-center mb-0">
 			<li class="breadcrumb-item"><a href="main">Home</a></li>
-			<li class="breadcrumb-item"><a href="creator-main">크리에이터 페이지</a></li>
+			<li class="breadcrumb-item"><a href="main">크리에이터 페이지</a></li>
 			<li class="breadcrumb-item active text-white">문의관리</li>
 		</ol>
 	</div>
@@ -73,54 +79,21 @@
 								
 								<!-- 	셀렉트박스 -->
 								<jsp:include page="/WEB-INF/views/creator/classSelect.jsp" />
-								
 								<!-- 상단 카테고리 -->
 								<div class="mt-5">
-									<button class="category-btn reviewType" value="respond">응답문의</button>
-									<button class="category-btn reviewType" value="respond">미응답문의</button>
+									<button class="category-btn inquiryTypeNo" value="N">미응답문의</button>
+									<button class="category-btn inquiryTypeYes" value="Y">응답문의</button>
 								</div>
 								<!-- 테이블 -->
-								<div class="card text-center">
-									<div class="card-body p-2">
-										<table>
-											<thead>
-												<tr>
-													<th>제목</th>
-													<th>작성일자</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td class="creator-review-subject">
-														<a onclick="creatorInquiry()">당일취소 가능한가요?</a>
-													</td>
-													<td>
-														2024-05-11
-													</td>
-												</tr>
-												
-											</tbody>
-										</table>
-									</div>
+								<div id="scheduleTableContainer" class="col-md-12">
+									<div id="grid"></div>
+									<div id="pagination"></div>
 								</div>
 
 							</div>
 
 						</div>
 					</div>
-
-
-
-					<!-- 					<div class="col-12"> -->
-					<!-- 						<div class="pagination d-flax justify-content-center mt-5"> -->
-					<!-- 							<a href="#" class="rounded">&laquo;</a> <a href="#" -->
-					<!-- 								class="active rounded">1</a> <a href="#" class="rounded">2</a> <a -->
-					<!-- 								href="#" class="rounded">3</a> <a href="#" class="rounded">4</a> -->
-					<!-- 							<a href="#" class="rounded">5</a> <a href="#" class="rounded">6</a> -->
-					<!-- 							<a href="#" class="rounded">&raquo;</a> -->
-					<!-- 						</div> -->
-					<!-- 					</div> -->
-
 				</div>
 			</div>
 		</div>
@@ -135,14 +108,15 @@
 
 	<!-- JavaScript Libraries -->
 	<script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 
 	<!-- Template Javascript -->
-	<script src="${pageContext.request.contextPath}/resources/js/main.js"></script>
+<%-- 	<script src="${pageContext.request.contextPath}/resources/js/main.js"></script> --%>
 	
 	<script type="text/javascript">
 	
 	$(function() {
+		
 		$('.category-btn').click(function() {
 			$('.category-btn').removeClass('active');
 			$(this).addClass('active');
@@ -155,32 +129,86 @@
 		    	$(this).removeClass('hover');
 		    }
 		);
-	});		
-	
-	function creatorInquiry() {
-		window.open("creator-inquiry-form", "pop", "width=700, height=700, left=700, top=50");
-	}
-	
-	$(function() {
-		$('#classSelect').change(function() {
-			// ajax로 기존 선택했던 날짜 가져오기
-			var classCode = $(
-					'#classSelect').val();
-			$.ajax({
-				url : "getEndedClass",
-				method : "get",
-				data : {
-					"classCode" : classCode
-				},
-				success : function(
-						result) {
-					$('#scheduleTableContainer').empty().append('<div id="grid"></div><div id="pagination"></div>');
-					initializeGrid(result);
+		
+		const itemsPerPage = 10;
+		let currentPage = 1;
+		const data = ${iq_list};
+		let grid;
+		let columns;
+		
+		initialGrid(data);
+		
+		function initialGrid(data) {
+			columns = [
+				{ header: '문의 제목', name: 'class_inquiry_subject', align: 'center'  },
+				{ header: '작성일', name: 'class_inquiry_date', align: 'center', width: '120' },
+				{ header: '답변여부', name: 'class_inquiry_status', align: 'center', width:'100' },
+			];
+
+			grid = new tui.Grid({
+				el: document.getElementById('grid'),
+				data: data,
+				columns: columns,
+				rowHeaders: ['rowNum'],
+				bodyHeight: 418,
+				pageOptions: {
+					useClient: true,
+					perPage: itemsPerPage
 				}
 			});
+			
+			grid.on('click', (ev) => {
+	            const rowKey = ev.rowKey;  // 클릭한 행의 키 값
+	            const rowData = grid.getRow(rowKey);  // 클릭한 행의 데이터
+	            console.log("rowKey: " + rowKey);
+	            console.log("rowData: " + rowData);
+	            debugger;
+	            window.open("creator-inquiry-form?class_inquiry_code=" + rowData.class_inquiry_code, "pop", "width=700, height=700, left=700, top=50");
+	        });
+		}
+		var classCode;
+		//클래스에 따른 후기
+		$('#classSelect').change(function() {
+			$('.category-btn').removeClass("active");
+			classCode = $('#classSelect').val();
+			$.ajax({
+				url: "getInquiryByClass",
+				method: "get",
+				data: { "classCode" : classCode },
+				success: function(data) {
+					// JSON 형태로 파싱
+					var inquiryData = JSON.parse(JSON.stringify(data));
+					$('#scheduleTableContainer').empty().append('<div id="scheduleTableContainer" class="col-md-12">'
+					 + '<div id="grid"></div><div id="pagination"></div></div></div>');
+					// 데이터 ToastUI에 넣어서 전환
+					initialGrid(inquiryData);
+					
+				}
+			});	
 		});
-	});
 		
+		$('.category-btn').click(function() {
+			var type = $(this).val();
+			console.log("type: " + type);
+			$.ajax({
+				url: "getInquiryByType",
+				method: "get",
+				data: { "classCode" : classCode,
+						"type" : type	
+				},
+				success: function(data) {
+					// JSON 형태로 파싱
+					var inquiryData = JSON.parse(JSON.stringify(data));
+					$('#scheduleTableContainer').empty().append('<div id="scheduleTableContainer" class="col-md-12">'
+					 + '<div id="grid"></div><div id="pagination"></div></div></div>');
+					// 데이터 ToastUI에 넣어서 전환
+					initialGrid(inquiryData);
+				}
+			});	
+		});	
+		
+	});	// onready 끝	
+
 	</script>
 
 

@@ -33,7 +33,7 @@
 <link
 	href="${pageContext.request.contextPath}/resources/css/creator/creator-main.css" rel="stylesheet">
 <link
-	href="${pageContext.request.contextPath}/resources/css/creator/creator-review.css" rel="stylesheet">
+	href="${pageContext.request.contextPath}/resources/css/creator/creator-qualify.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <style>
 	.creator-qualify-info{
@@ -58,7 +58,7 @@
 	border-radius: 10px;
 	}
 	.regist_account{
-		border: 1px solid black;
+/* 		border: 1px solid black; */
 		border-radius: 10px;
 		margin: 0 auto;
 	}
@@ -77,9 +77,28 @@
 			<h2 class="text-center display-6">Creator 등록</h2>
 			<hr class="text-center text-black">
 		</div>
-		<!-- Single Page Header End -->
-	
+		
 		<div class="container col-md-10">
+		
+			<div class="regist_account col-md-6 text-center py-3 mb-4">
+				<c:choose>
+					<c:when test="${token eq null}">
+						<h5 class="text-black mb-3">🪙 계좌 등록 🪙</h5>
+						<input type="button" class="col-md-3" value="+" onclick="linkAccount()">
+					</c:when>
+					<c:otherwise>
+						<h5 class="text-black mb-3">🪙 등록된 계좌 🪙</h5>
+						<table>
+							<tr>
+								<td>계좌번호</td>
+								<td>${token.account_num}</td>
+							</tr>
+						</table>
+					</c:otherwise>
+				</c:choose>
+			</div>
+			
+			
 			<div class="creator-qualify-info col-md-12 mb-5">
 				<h6>◎일정 준수 의무</h6>
 	
@@ -114,13 +133,8 @@
 			<input type="checkbox" value="여기체크박스" class="checkBox">
 		</div>
 		
-		<div class="regist_account col-md-6 text-center py-4">
-			<h6 class="text-black">계좌 등록</h6>
-			<input type="button" class="col-md-3" value="+" onclick="linkAccount()">
-		</div>
-		
 		<div align="center" class="mt-5 pb-5">
-			<button onclick="location.href='creator-regist'" class="btn btn-outline-primary btn-lg">크리에이터 등록</button>
+			<button onclick="registCreator()" class="btn btn-outline-primary btn-lg">크리에이터 등록</button>
 		</div>
 	</div>
 
@@ -128,16 +142,10 @@
 		<jsp:include page="/WEB-INF/views/inc/bottom.jsp" />
 	</footer>
 
-	<!-- JavaScript Libraries -->
-<!-- 	<script -->
-<!-- 		src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script> -->
-
-		
-
 </body>
 	<script type="text/javascript">
 		function linkAccount() {
-			sessionStorage.setItem("redirectUrl", "creator-main");
+			sessionStorage.setItem("redirectUrl", "creator-qualify");
 			// 새 창을 열어 사용자 인증 서비스 요청(금융결제원 오픈뱅킹 API 활용)
 			let authWindow = window.open("about:blank", "authWindow", "width=500, height=700, left=700, top=100");
 			authWindow.location = "https://testapi.openbanking.or.kr/oauth/2.0/authorize?"
@@ -149,5 +157,23 @@
 							+ "&auth_type=0";
 		}
 	
+		function registCreator() {
+			if(!"${token}"){
+				alert("계좌를 등록하여주십시오");
+				return;
+			} 
+			if($(".checkBox").prop("checked")){
+				debugger;
+				if(confirm("크리에이터로 등록하시겠습니까?")){
+					location.href='creator-regist';	
+				}
+			} else if(!$(".checkBox").prop("checked")){
+				alert("약관에 동의하여 주십시오");
+				$(".checkBox").focus();
+				return;
+			} 
+		}
+			
+		
 	</script>
 </html>

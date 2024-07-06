@@ -43,6 +43,7 @@ import itwillbs.p2c3.class_will.handler.WillUtils;
 import itwillbs.p2c3.class_will.service.AdminService;
 import itwillbs.p2c3.class_will.service.CscService;
 import itwillbs.p2c3.class_will.service.ExcelService;
+import itwillbs.p2c3.class_will.service.PayService;
 import itwillbs.p2c3.class_will.vo.CategoryData;
 import itwillbs.p2c3.class_will.vo.GroupedData;
 
@@ -64,6 +65,11 @@ public class AdminController {
 	
 	@Autowired
 	private AdminServiceHelper adminServiceHelper;
+	
+	@Autowired
+	private PayService payService;
+	
+	
 	
 	@GetMapping("admin")
 	public String admin(Model model) {
@@ -97,6 +103,13 @@ public class AdminController {
 		if(daily_visit == null) {
 			daily_visit = 0;
 		}
+		
+		//----------------------------------------------------
+		//adminToken 발급
+		Map adminToken = payService.getAdminAccessToken();
+		payService.registAdminToken(adminToken);
+		//----------------------------------------------------
+		
 		//총 방문자
 		Integer total_visit = adminService.getTotalVisit();
 		
@@ -569,15 +582,18 @@ public class AdminController {
     @GetMapping("registClass")
     public String registClass(String class_code,Model model) {
     	boolean isSuccess = adminService.registClass(class_code);
-    	String result = "";
-    	if(!isSuccess) {
-    		result = WillUtils.checkDeleteSuccess(WillUtils.FAIL, model, "클래스 등록 실패!", WillUtils.CLOSE);
-    		return result;
+    	
+    	StringBuilder str = new StringBuilder("클래스 등록 ");
+    	int failOrSucees = 0;
+    	if (isSuccess) {
+    		failOrSucees = WillUtils.SUCCESS;
+    		str.append("성공");
+    	} else {
+    		failOrSucees = WillUtils.FAIL;
+    		str.append("성공");
     	}
     	
-    	result = WillUtils.checkDeleteSuccess(WillUtils.SUCCESS, model, "클래스 등록 성공!", WillUtils.CLOSE);
-    	
-    	return result;
+		return WillUtils.checkDeleteSuccess(failOrSucees, model, str.toString(), WillUtils.CLOSE);
     }
     
     @GetMapping("admin-report")
@@ -625,11 +641,7 @@ public class AdminController {
     @PostMapping("cancelReport")
     public boolean cancelReport(@RequestParam Map<String, Object> params) {
     	String class_report_code = (String)params.get("class_report_code");
-    	boolean isSuccess = adminService.updateClassReportStatus(class_report_code, "cancel");
-    	if(!isSuccess) {
-    		return isSuccess;
-    	}
-    	return true;
+    	return adminService.updateClassReportStatus(class_report_code, "cancel");
     }
     
 //    @ResponseBody
@@ -673,7 +685,19 @@ public class AdminController {
     }
     
     @GetMapping("admin-event")
-    public String adminEvent() {
+    public String adminEvent(Model model) {
+    	List<Map<String, String>> list = adminService.getEventList();
+    	for(Map<String, String> event : list) {
+    		event.put("event_date", event.get("event_start_date") + " ~ " + event.get("event_end_date"));
+    	}
+		List<JSONObject> jo_list = new ArrayList<JSONObject>();
+		
+		for(Map<String, String> event : list) {
+            JSONObject jo = new JSONObject(event);
+            jo_list.add(jo);
+		}
+    	model.addAttribute("jo_list", jo_list);
+    	
     	
     	return "admin/admin_event";
     }
@@ -689,7 +713,8 @@ public class AdminController {
     public String adminEventRegistPro(@RequestParam Map<String, Object> map
     		,@RequestParam MultipartFile event_thumbFile
     		,@RequestParam MultipartFile event_imageFile
-    		,HttpSession session) {
+    		,HttpSession session
+    		,Model model) {
     	map.put("event_start_date", ((String)map.get("event_start_date")).replace("-", ""));
     	map.put("event_end_date", ((String)map.get("event_end_date")).replace("-", ""));
     	System.out.println("map : " + map);
@@ -744,9 +769,14 @@ public class AdminController {
         map.put("event_thumbnail", event_thumbFile_webUrl);
         
         boolean isSuccess = adminService.insertEvent(map);
+        String result = "";
+        if(!isSuccess) {
+        	result = WillUtils.checkDeleteSuccess(false, model, "이벤트 등록 실패!", true);
+        }
         
+        result = WillUtils.checkDeleteSuccess(true, model, "이벤트 등록 성공!", true);
         
-    	return "";
+    	return result;
     }
     
 }

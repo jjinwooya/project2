@@ -85,7 +85,7 @@ a {
 					</li>
 					<li>
 						<div class="d-flex justify-content-between fruite-name">
-							<a href="" class="h5"><i class="bi bi-person-x-fill"></i>&nbsp;
+							<a href="my-delete" class="h5"><i class="bi bi-person-x-fill"></i>&nbsp;
 								회원탈퇴</a>
 
 						</div>

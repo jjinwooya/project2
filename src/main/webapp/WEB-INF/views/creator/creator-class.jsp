@@ -139,10 +139,10 @@
 
 		function initialGrid(data) {
 			columns = [
-				{ header: '클래스제목', name: 'class_name', width: 'auto', align: 'center'  },
-				{ header: '지원상태', name: 'code_value', align: 'center'  },
-				{ header: '카테고리', name: 'cate', className: 'hide-column', align: 'center'  },
-				{ header: '공개여부', name: 'hide', className: 'hide-column', align: 'center'  },
+				{ header: '클래스제목', name: 'class_name', align: 'center'  },
+				{ header: '지원상태', name: 'code_value', align: 'center', width: '120' },
+				{ header: '카테고리', name: 'cate', className: 'hide-column', align: 'center', width: '150' },
+				{ header: '공개여부', name: 'hide', className: 'hide-column', align: 'center', width: '100' },
 			];
 
 			grid = new tui.Grid({
@@ -162,8 +162,8 @@
 	            const rowData = grid.getRow(rowKey);  // 클릭한 행의 데이터
 
 // 	            console.log('Clicked Row Data:', rowData);
-	            location.href = 'creator-classModify?class_code=' + rowData.class_code;
 // 	            console.log('class_code:' + rowData.class_code);
+	            location.href = 'creator-classModify?class_code=' + rowData.class_code;
 	        });
 		}
 		

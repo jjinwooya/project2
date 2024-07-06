@@ -33,7 +33,7 @@
         
         <script type="text/javascript">
 			document.addEventListener("DOMContentLoaded", function() {
-			    var heartOverlays = document.querySelectorAll(".heart-overlay");
+			    var heartOverlays = document.querySelectorAll(".heartImg");
 			    var originalSrc = "${pageContext.request.contextPath}/resources/images/profile/heart.png";
 			    var changeSrc = "${pageContext.request.contextPath}/resources/images/profile/heart_full.png";
 			

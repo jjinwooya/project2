@@ -46,11 +46,21 @@
 		cr.class_review_date,
 		cr.class_review_time,
 		c.class_name,
-		cr.class_review_rating
-		FROM class_review cr
+		cr.class_review_rating,
+		cr.review_reply_status
+		FROM
+		class_review cr
 		LEFT JOIN class
 		c ON cr.class_code = c.class_code
-		WHERE cr.member_code = #{member_code}
+		WHERE
+		cr.member_code = #{member_code}
+		LIMIT #{startRow2}, #{listLimit2}
+	</select>
+	<select id="countReview">
+		<!-- 페이징 처리 때문. -->
+		SELECT COUNT(*)
+		FROM class_review cr
+		WHERE member_code =  ${member_code}
 	</select>
 
 	<select id="selectReviewByCode">
@@ -83,17 +93,12 @@
 		WHERE member_nickname = #{member_nickname}
 	</select>
 	<update id="updateMemberNormal">
-		<!-- 크리에이터 회원이 일반회원으로 -->
-		<!-- 일반 회원이 크리에이터로 -->
+		<!-- 크리에이터 회원이 일반회원으로 이것만 되겠끔 바꿈 -->
+		<!-- 일반 회원이 크리에이터로 이거 종민이가 구현해서 빼버림! -->
 		UPDATE MEMBER
-		SET member_type =
-		CASE
-		WHEN member_type = 1 THEN 2
-		WHEN
-		member_type = 2 THEN 1
-		ELSE member_type
-		END
-		WHERE member_code =
+		SET member_type = 1
+		WHERE member_type = 2
+		AND member_code =
 		#{member_code}
 	</update>
 
@@ -109,19 +114,134 @@
 	<select id="selectLike">
 		<!-- 멤버코드 좋아요한 클래스 데리고 오기 -->
 		SELECT
-		c.class_name, c.class_location , c.class_price, lc.class_code, lc.member_code
-		FROM
-		class c
-		JOIN
-		like_class lc
-		ON
-		c.class_code = lc.class_code
-		WHERE
-		lc.member_code = ${member_code}
+		c.class_name, c.class_location , c.class_price, lc.class_code,
+		lc.member_code
+		FROM class c
+		JOIN like_class lc
+		ON c.class_code =
+		lc.class_code
+		WHERE lc.member_code = ${member_code}
 		ORDER BY
 		c.class_code
+		LIMIT #{startRow}, #{listLimit}
+	</select>
+
+	<select id="countLikes">
+		<!-- 페이징 처리 때문. -->
+		SELECT COUNT(*)
+		FROM like_class
+		WHERE member_code = #{member_code};
+	</select>
+
+
+	<select id="selectPossibleReview">
+		<!-- 클래스 결제 및 날짜를 기준으로 등록가능한 리뷰 클래스 데리고 오기 -->
+		<!-- 서브쿼리는 중복리뷰 작성방지를 위해 만듬. -->
+		 <![CDATA[
+		SELECT
+		p.pay_code,
+		p.pay_amount,
+		DATE(p.pay_datetime) as pay_date,
+		p.pay_type,
+		p.pay_status,
+		p.member_code,
+		p.class_schedule_code,
+		p.class_code,
+		p.use_willpay,
+		cs.class_schedule_code,
+		cs.class_code,
+		cs.class_schedule_date,
+		cs.class_round,
+		c.class_name,
+		(SELECT COUNT(*) FROM class_review cr
+     	WHERE cr.class_code = p.class_code
+        AND cr.member_code = p.member_code
+        AND cr.class_schedule_code = p.class_schedule_code) as review_count		
+		FROM
+		pay p
+		JOIN
+            class_schedule cs ON p.class_schedule_code = cs.class_schedule_code
+        JOIN
+            class c ON cs.class_code = c.class_code
+		WHERE
+		p.pay_status = 'paid'
+		AND p.member_code =  ${member_code}
+		AND cs.class_schedule_date < CURRENT_DATE
+		ORDER BY cs.class_schedule_date ASC
+		LIMIT #{startRow}, #{listLimit}
+		 ]]>
+	</select>
+
+	<select id="countPoss">
+		<!-- 페이징처리를 위해 필요 -->
+		<![CDATA[
+		   SELECT COUNT(*)
+		   FROM pay p
+		   JOIN class_schedule cs ON p.class_schedule_code = cs.class_schedule_code
+		   WHERE p.pay_status = 'paid'
+		   AND p.member_code = #{member_code}
+		   AND cs.class_schedule_date < CURRENT_DATE
+		   ]]>
 
 	</select>
+
+	<insert id="insertReview">
+		<!-- 리뷰 등록 -->
+		INSERT INTO class_review (
+		class_review_subject,
+		class_review_content,
+		class_review_date,
+		class_review_time,
+		member_code,
+		class_code,
+		class_review_rating,
+		review_reply_status,
+		class_schedule_code
+		)
+		VALUES (
+		#{class_review_subject},
+		#{class_review_content},
+		CURRENT_DATE,
+		CURRENT_TIME,
+		#{member_code},
+		#{class_code},
+		#{class_review_rating},
+		'N',
+		#{class_schedule_code}
+		)
+
+	</insert>
+
+	<update id="MemberWithdraw">
+		UPDATE MEMBER
+		SET
+		member_status = 2
+		WHERE
+		member_code =
+		#{member_code}
+	</update>
+
+	<select id="selectMemberMaster">
+		 <![CDATA[
+		SELECT
+		DATE_FORMAT(cs.class_schedule_date, '%Y-%m') as month,
+		COUNT(*) as class_count
+		FROM
+		pay p
+		JOIN
+		class_schedule cs ON p.class_schedule_code = cs.class_schedule_code
+		WHERE
+		p.pay_status = 'paid'
+		AND p.member_code = ${member_code}
+		AND cs.class_schedule_date < CURRENT_DATE
+		GROUP BY
+		DATE_FORMAT(cs.class_schedule_date, '%Y-%m')
+		ORDER BY
+		DATE_FORMAT(cs.class_schedule_date, '%Y-%m') ASC
+		 ]]>
+
+	</select>
+
 
 
 </mapper>

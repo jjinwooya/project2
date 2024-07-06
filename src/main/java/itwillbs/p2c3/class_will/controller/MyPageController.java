@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -32,6 +33,7 @@ import itwillbs.p2c3.class_will.handler.CommonUtils;
 import itwillbs.p2c3.class_will.handler.WillUtils;
 import itwillbs.p2c3.class_will.service.AdminService;
 import itwillbs.p2c3.class_will.service.ClassService;
+import itwillbs.p2c3.class_will.service.CreatorService;
 import itwillbs.p2c3.class_will.service.MemberService;
 import itwillbs.p2c3.class_will.service.MyPageService;
 import itwillbs.p2c3.class_will.vo.MemberVO;
@@ -48,11 +50,12 @@ public class MyPageController {
 
 	@Autowired
 	private AdminService adminService;
+	@Autowired
+	private CreatorService creatorService;
 
-	
 	@Autowired
 	private ClassService classService;
-	
+
 	@Autowired
 	private MyPageService myPageService;
 
@@ -65,36 +68,50 @@ public class MyPageController {
 		MemberVO member = (MemberVO) session.getAttribute("member");
 
 		if (member == null) {
-			return WillUtils.checkDeleteSuccess(false, model, "로그인이 필요한 페이지입니다", true, "member-login");
-		} else {
-			return "mypage/mypage";
+			model.addAttribute("msg", "로그인이 필요한 페이지 입니다.");
+			model.addAttribute("targetURL", "member-login");
+			return "result_process/fail";
 		}
+		int member_code = member.getMember_code();
+		MemberVO member2 = myPageService.selectMemberInfo(member_code);
+		model.addAttribute("member", member2);
+		return "mypage/mypage";
+
 	}
 
 	// 관심 클래스
 	@GetMapping("my-wish")
-	public String myWish(Model model) {
+	public String myWish(Model model, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum) {
 
 		MemberVO member = (MemberVO) session.getAttribute("member");
 		// System.out.println("리뷰쪽 시작"+member.getMember_code());
 
 		if (member == null) {
-			return WillUtils.checkDeleteSuccess(false, model, "로그인이 필요한 페이지입니다", true, "member-login");
-		} else {
-			int member_code = member.getMember_code();
-			MemberVO member2 = myPageService.selectMemberInfo(member_code);
-			List<Map<String, String>> memberLike = myPageService.getMemberLike(member.getMember_code());
-			int totalLikes = memberLike.size();
-			model.addAttribute("member", member2);
-			model.addAttribute("memberLike", memberLike);
-			model.addAttribute("total_likes", totalLikes);
-			return "mypage/mypage-wish";
+			model.addAttribute("msg", "로그인이 필요한 페이지 입니다.");
+			model.addAttribute("targetURL", "member-login");
+			return "result_process/fail";
 		}
+		int member_code = member.getMember_code();
+		MemberVO member2 = myPageService.selectMemberInfo(member_code);
+		int listLimit = 5;
+		int startRow = (pageNum - 1) * listLimit;
+		model.addAttribute("member", member2);
+		List<Map<String, String>> memberLike = myPageService.getMemberLike(member.getMember_code(), startRow, listLimit);
+		int totalLikes = myPageService.getMemberLike(member_code);
+		model.addAttribute("total_likes", totalLikes);
+		//System.out.println("전체 관심클래스 수 " + totalLikes);
+		
+		int maxPage = (int) Math.ceil((double) totalLikes / listLimit);
+		
+		//System.out.println("최대 페이지수 " + maxPage);
+		model.addAttribute("maxPage", maxPage);
+		model.addAttribute("pageNum", pageNum);
+		model.addAttribute("memberLike", memberLike);
+		return "mypage/mypage-wish";
 
 	}
-	
-	//관심클래스 취소
-	
+
+	// 관심클래스 취소
 
 //	// 마이클래스
 //	@GetMapping("my-class")
@@ -113,30 +130,91 @@ public class MyPageController {
 
 	// 내가 쓴 리뷰
 	@GetMapping("my-review")
-	public String myReview(Model model) {
+	public String myReview(Model model,@RequestParam(value = "pageNum", defaultValue = "1") int pageNum , @RequestParam(value = "pageNum2", defaultValue = "1") int pageNum2) {
 
 		MemberVO member = (MemberVO) session.getAttribute("member");
 		// System.out.println("리뷰쪽 시작"+member.getMember_code());
 
 		if (member == null) {
-			return WillUtils.checkDeleteSuccess(false, model, "로그인이 필요한 페이지입니다", true, "member-login");
-		} else {
-			List<Map<String, String>> memberReviews = myPageService.getMemberReviews(member.getMember_code());
-
-			model.addAttribute("member", member);
-			model.addAttribute("memberReviews", memberReviews);
-			// System.out.println(memberReviews);
-
-			return "mypage/mypage-review";
+			model.addAttribute("msg", "로그인이 필요한 페이지 입니다.");
+			model.addAttribute("targetURL", "member-login");
+			return "result_process/fail";
 		}
+		int member_code = member.getMember_code();
+		MemberVO member2 = myPageService.selectMemberInfo(member_code);
+		// 이건 작성 후기들
+		model.addAttribute("member", member2);
+		int listLimit2 = 5;
+		int startRow2 = (pageNum2 - 1) * listLimit2;
+		int totalPossible2 = myPageService.getMemberReviewCount(member_code);
+		int maxPage2 = (int) Math.ceil((double) totalPossible2 / listLimit2);
+		List<Map<String, String>> memberReviews = myPageService.getMemberReviews(member_code,startRow2, listLimit2);
+		model.addAttribute("memberReviews", memberReviews);
+		model.addAttribute("maxPage2", maxPage2);
+		model.addAttribute("pageNum2", pageNum2);
+		model.addAttribute("totalPossible2", totalPossible2);
+		// System.out.println(memberReviews);
+
+		// 이건 내가 결제를 해서 리뷰를 등록할 수 있는 후기들
+		int listLimit = 5;
+		int startRow = (pageNum - 1) * listLimit;
+		int totalPossible = myPageService.getMemberPoss(member_code);
+		int maxPage = (int) Math.ceil((double) totalPossible / listLimit);
+		List<Map<String, String>> possibleReview = myPageService.getPossibleReview(member_code,startRow, listLimit);
+		model.addAttribute("totalPossible", totalPossible);
+		model.addAttribute("possibleReview", possibleReview);
+		System.out.println("등록가능한 리뷰" + possibleReview);
+		model.addAttribute("maxPage", maxPage);
+		model.addAttribute("pageNum", pageNum);
+		//여기까지 1번 페이징 처리완 - 페이지 상 이게 먼저 있어서 1번임.
+		return "mypage/mypage-review";
 
 	}
 
-	// 리뷰 등록
+	// 리뷰 등록폼으로
 	@GetMapping("resist-review")
-	public String resistReview() {
+	public String resistReview(@RequestParam Map<String, String> params, Model model) {
+		MemberVO member = (MemberVO) session.getAttribute("member");
 
+		if (member == null) {
+			model.addAttribute("msg", "권한이 없습니다.");
+			model.addAttribute("targetURL", "member-login");
+			return "result_process/fail";
+		}
+		String classCode = params.get("class_code");
+		String memberCode = params.get("member_code");
+		String class_schedule_code = params.get("class_schedule_code");
+		Integer classCode2 = Integer.parseInt(classCode);
+		// 클래스 코드와 멤버 코드를 모델에 추가
+		model.addAttribute("class_code", classCode);
+		model.addAttribute("member_code", memberCode);
+		model.addAttribute("class_schedule_code", class_schedule_code);
+		Map<String, Object> classInfo = creatorService.getClassDetail(classCode2);
+		model.addAttribute("classInfo", classInfo);
+		System.out.println("클래스 정보임" + classInfo);
 		return "mypage/mypage-review-form";
+
+	}
+
+	@PostMapping("insert-review")
+	public String insertReview(@RequestParam Map<String, String> formData, Model model) {
+		MemberVO member = (MemberVO) session.getAttribute("member");
+
+		if (member == null) { // 실패
+			model.addAttribute("msg", "권한이 없습니다.");
+			model.addAttribute("targetURL", "member-login");
+			return "result_process/fail";
+		}
+
+		System.out.println("데이터 확인" + formData);
+		int insertCount = myPageService.insertReview(formData);
+		if (insertCount > 0) {
+			return "redirect:/my-review";
+		} else {
+			model.addAttribute("msg", "리뷰 등록 실패");
+			return "result_process/fail";
+		}
+
 	}
 
 	// 리뷰 수정
@@ -145,21 +223,17 @@ public class MyPageController {
 		MemberVO member = (MemberVO) session.getAttribute("member");
 
 		if (member == null) { // 실패
-
-			return "error/error_404";
-		} else {
-			model.addAttribute("member", member);
-			Map<String, String> review = myPageService.getReviewByCode(reviewCode);
-
-			// 리뷰 작성자 검증
-//	    if (!member_code.equals(String.valueOf(review.get("member_code")))) {
-//	        throw new SecurityException("리뷰를 수정할 권한이 없습니다.");
-//	    }
-
-			model.addAttribute("review", review);
-			System.out.println("이건 수정할 때 데리고 오는 특정리뷰 1건" + review);
-			return "mypage/mypage-review-modify"; // 리뷰 수정 페이지
+			model.addAttribute("msg", "권한이 없습니다.");
+			model.addAttribute("targetURL", "member-login");
+			return "result_process/fail";
 		}
+		model.addAttribute("member", member);
+		Map<String, String> review = myPageService.getReviewByCode(reviewCode);
+
+		model.addAttribute("review", review);
+		System.out.println("이건 수정할 때 데리고 오는 특정리뷰 1건" + review);
+		return "mypage/mypage-review-modify"; // 리뷰 수정 페이지
+
 	}
 
 	@PostMapping("edit-review")
@@ -168,18 +242,20 @@ public class MyPageController {
 
 		if (member == null) { // 실패
 
-			return "error/error_404";
-		} else {
-			model.addAttribute("member", member);
-			System.out.println("여기요 여기!formdata: " + formData);
-			int updateCount = myPageService.updateReview(formData);
-			if (updateCount > 0) {
-				return "redirect:/my-review";
-			} else {
-				model.addAttribute("msg", "리뷰수정 실패");
-				return "result_process/fail";
-			}
+			return WillUtils.checkDeleteSuccess(false, model, "권한이 없습니다.", true, "member-login");
 		}
+		int member_code = member.getMember_code();
+		MemberVO member2 = myPageService.selectMemberInfo(member_code);
+		model.addAttribute("member", member2);
+		System.out.println("여기요 여기!formdata: " + formData);
+		int updateCount = myPageService.updateReview(formData);
+		if (updateCount > 0) {
+			return "redirect:/my-review";
+		} else {
+			model.addAttribute("msg", "리뷰수정 실패");
+			return "result_process/fail";
+		}
+
 	}
 
 	// 리뷰삭제
@@ -187,38 +263,43 @@ public class MyPageController {
 	public String deleteReview(Model model, @RequestParam Map<String, String> map) {
 		MemberVO member = (MemberVO) session.getAttribute("member");
 		if (member == null) { // 실패
-
-			return "error/error_404";
-		} else {
-
-			model.addAttribute("member", member);
-
-			String class_review_code = map.get("review_code");
-			System.out.println(class_review_code);
-
-			int deleteCount = myPageService.deleteReview(class_review_code);
-			if (deleteCount > 0) {
-
-				return "redirect:/my-review";
-			} else {
-				model.addAttribute("msg", "삭제 실패!");
-				return "result_process/fail";
-			}
+			model.addAttribute("msg", "권한이 없습니다.");
+			model.addAttribute("targetURL", "member-login");
+			return "result_process/fail";
 		}
-	}
+		int member_code = member.getMember_code();
+		MemberVO member2 = myPageService.selectMemberInfo(member_code);
+		model.addAttribute("member", member2);
 
-	// 크레딧관련
-	@GetMapping("my-credit")
-	public String myCredit(Model model) {
-		MemberVO member = (MemberVO) session.getAttribute("member");
+		String class_review_code = map.get("review_code");
+		System.out.println(class_review_code);
 
-		if (member == null) {
-			return WillUtils.checkDeleteSuccess(false, model, "로그인이 필요한 페이지입니다", true, "member-login");
+		int deleteCount = myPageService.deleteReview(class_review_code);
+		if (deleteCount > 0) {
+
+			return "redirect:/my-review";
 		} else {
-			return "mypage/mypage-credit";
+			model.addAttribute("msg", "삭제 실패!");
+			return "result_process/fail";
 		}
 
 	}
+
+//	// 크레딧관련
+//	@GetMapping("my-credit")
+//	public String myCredit(Model model) {
+//		MemberVO member = (MemberVO) session.getAttribute("member");
+//
+//		if (member == null) {
+//			return WillUtils.checkDeleteSuccess(false, model, "로그인이 필요한 페이지입니다", true, "member-login");
+//		} else {
+//			int member_code = member.getMember_code();
+//			MemberVO member2 = myPageService.selectMemberInfo(member_code);
+//			model.addAttribute("member", member2);
+//			return "mypage/mypage-credit";
+//		}
+//
+//	}
 
 	// 이미지 업로드 관련
 	@RequestMapping("upload_image")
@@ -288,32 +369,33 @@ public class MyPageController {
 			model.addAttribute("msg", "권한이 없습니다.");
 			model.addAttribute("targetURL", "member-login");
 			return "result_process/fail";
-		} else {
-
-			member.setMember_img(null);
-			int updateCount = myPageService.updateMemberImg(member);
-
-			if (updateCount > 0) {
-				return "redirect:/my-page";
-			} else {
-				return "result_process/fail";
-			}
 		}
+
+		member.setMember_img(null);
+		int updateCount = myPageService.updateMemberImg(member);
+
+		if (updateCount > 0) {
+			return "redirect:/my-page";
+		} else {
+			return "result_process/fail";
+		}
+
 	}
 
 	// 회원정보수정으로 이동
 	@GetMapping("my-modify")
 	public String myModify(Model model) {
 		MemberVO member = (MemberVO) session.getAttribute("member");
-		
+
 		if (member == null) {
-			return WillUtils.checkDeleteSuccess(false, model, "로그인이 필요한 페이지입니다", true, "member-login");
-		} else {
-			int member_code = member.getMember_code();
-			MemberVO member2 = myPageService.selectMemberInfo(member_code);
-			model.addAttribute("member", member2);
-			return "mypage/mypage-modify";
+			model.addAttribute("msg", "권한이 없습니다.");
+			model.addAttribute("targetURL", "member-login");
+			return "result_process/fail";
 		}
+		int member_code = member.getMember_code();
+		MemberVO member2 = myPageService.selectMemberInfo(member_code);
+		model.addAttribute("member", member2);
+		return "mypage/mypage-modify";
 
 	}
 
@@ -324,40 +406,43 @@ public class MyPageController {
 		MemberVO member = (MemberVO) session.getAttribute("member");
 
 		if (member == null) { // 실패
-			return "error/error_404";
-		} else {
-			model.addAttribute("member", member);
-			// System.out.println("회원정보하는 곳임" + formData);
-			// System.out.println("평문 : " + formData.get("member_pwd"));
-
-			String addr = formData.get("member_post_code") + "/" + formData.get("member_address1") + "/"
-					+ formData.get("member_address2");
-			member.setMember_addr(addr);
-			// System.out.println(addr);
-			member.setMember_nickname(formData.get("member_nickname"));
-			String[] addrArr = member.getMember_addr().split("/");
-			member.setMember_post_code(addrArr[0]);
-			member.setMember_address1(addrArr[1]);
-			member.setMember_address2(addrArr[2]);
-
-			String plainPassword = formData.get("member_pwd");
-			if (plainPassword != null && !plainPassword.isEmpty()) {
-				// 비밀번호가 비어 있지 않으면 암호화하여 설정
-				String securePassword = passwordEncoder.encode(plainPassword);
-				member.setMember_pwd(securePassword);
-			}
-
-			int updateCount = myPageService.updateMemberInfo(member);
-			if (updateCount > 0) {
-				model.addAttribute("msg", "회원정보가 수정되었습니다");
-				model.addAttribute("targetURL", "my-page");
-				return "result_process/success";
-				// return "redirect:/my-page";
-			} else {
-				return "result_process/fail";
-			}
-
+			model.addAttribute("msg", "권한이 없습니다.");
+			model.addAttribute("targetURL", "member-login");
+			return "result_process/fail";
 		}
+		int member_code = member.getMember_code();
+		MemberVO member2 = myPageService.selectMemberInfo(member_code);
+		model.addAttribute("member", member2);
+		// System.out.println("회원정보하는 곳임" + formData);
+		// System.out.println("평문 : " + formData.get("member_pwd"));
+
+		String addr = formData.get("member_post_code") + "/" + formData.get("member_address1") + "/"
+				+ formData.get("member_address2");
+		member.setMember_addr(addr);
+		// System.out.println(addr);
+		member.setMember_nickname(formData.get("member_nickname"));
+		String[] addrArr = member.getMember_addr().split("/");
+		member.setMember_post_code(addrArr[0]);
+		member.setMember_address1(addrArr[1]);
+		member.setMember_address2(addrArr[2]);
+
+		String plainPassword = formData.get("member_pwd");
+		if (plainPassword != null && !plainPassword.isEmpty()) {
+			// 비밀번호가 비어 있지 않으면 암호화하여 설정
+			String securePassword = passwordEncoder.encode(plainPassword);
+			member.setMember_pwd(securePassword);
+		}
+
+		int updateCount = myPageService.updateMemberInfo(member);
+		if (updateCount > 0) {
+			model.addAttribute("msg", "회원정보가 수정되었습니다");
+			model.addAttribute("targetURL", "my-page");
+			return "result_process/success";
+			// return "redirect:/my-page";
+		} else {
+			return "result_process/fail";
+		}
+
 	}
 	// 회원닉네임 중복확인관련 ajax처리함
 
@@ -371,15 +456,106 @@ public class MyPageController {
 	@PostMapping("change-nomal")
 	@ResponseBody
 	public String changeNomal(Model model, @RequestParam("member_code") String member_code) {
-		try {
-			// 멤버 정보 업데이트
-			myPageService.updateNomal(member_code);
+		MemberVO member = (MemberVO) session.getAttribute("member");
 
-			return "success";
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "error"; // 실패했을 경우 클라이언트에게 error 반환
+		if (member == null) { // 실패
+			return "error/error_404";
+		} else {
+			try {
+				// 멤버 정보 업데이트
+				myPageService.updateNomal(member_code);
+				int member_code2 = member.getMember_code();
+				MemberVO member2 = myPageService.selectMemberInfo(member_code2);
+				model.addAttribute("member", member2);
+				return "success";
+			} catch (Exception e) {
+				e.printStackTrace();
+				return "error"; // 실패했을 경우 클라이언트에게 error 반환
+			}
 		}
+	}
+
+	// 회원 탈퇴
+	@GetMapping("my-delete")
+	public String deleteMember(Model model,@RequestParam(value = "pageNum2", defaultValue = "1") int pageNum2) {
+		MemberVO member = (MemberVO) session.getAttribute("member");
+		if (member == null) { // 실패
+			model.addAttribute("msg", "권한이 없습니다.");
+			model.addAttribute("targetURL", "member-login");
+			return "result_process/fail";
+		}
+		int member_code2 = member.getMember_code();
+		MemberVO member2 = myPageService.selectMemberInfo(member_code2);
+		model.addAttribute("member", member2);
+
+		int listLimit2 = 5;
+		int startRow2 = (pageNum2 - 1) * listLimit2;
+		int totalReview = myPageService.getMemberReviewCount(member_code2);
+		int maxPage2 = (int) Math.ceil((double) totalReview / listLimit2);
+		List<Map<String, String>> memberReviews = myPageService.getMemberReviews(member_code2,startRow2, listLimit2);
+		model.addAttribute("memberReviews", memberReviews);
+		model.addAttribute("maxPage2", maxPage2);
+		model.addAttribute("pageNum2", pageNum2);
+		model.addAttribute("totalReview", totalReview);
+		
+		
+		
+		return "mypage/mypage-delete";
+
+	}
+
+	@PostMapping("member-quit")
+	public String quitMember(Model model, BCryptPasswordEncoder passwordEncoder,
+			@RequestParam("member_pwd") String password) {
+		MemberVO member = (MemberVO) session.getAttribute("member");
+
+		if (member == null) { // 실패
+			model.addAttribute("msg", "권한이 없습니다.");
+			model.addAttribute("targetURL", "member-login");
+			return "result_process/fail";
+		}
+		int member_code2 = member.getMember_code();
+		MemberVO member2 = myPageService.selectMemberInfo(member_code2);
+
+		if (member2 != null && passwordEncoder.matches(password, member2.getMember_pwd())) { // 비번이 같을 때
+
+			int updateCount = myPageService.withdrawMember(member);
+			// 로그인 정보 제거하기 위해 세션 초기화 후 메인페이지로 리다이렉트
+			if (updateCount > 0) { // 탈퇴 성공 시
+				session.invalidate();
+				model.addAttribute("msg", "그 동안 클래스윌을 이용해주셔서 감사합니다.");
+				model.addAttribute("targetURL", "./");
+				return "result_process/fail";
+			} else { // 실패시
+				model.addAttribute("msg", "탈퇴에 실패했습니다");
+				model.addAttribute("targetURL", "my-delete");
+				return "result_process/fail";
+			}
+		} else { // 비번이 일치하지 않을 경우
+			model.addAttribute("msg", "비밀번호가 일치하지 않습니다");
+			model.addAttribute("targetURL", "my-delete");
+			return "result_process/fail";
+
+		}
+
+	}
+
+	@GetMapping("my-powerup")
+	public String myPower(Model model) {
+		MemberVO member = (MemberVO) session.getAttribute("member");
+		if (member == null) { // 실패
+			model.addAttribute("msg", "권한이 없습니다.");
+			model.addAttribute("targetURL", "member-login");
+			return "result_process/fail";
+		}
+		int member_code2 = member.getMember_code();
+		MemberVO member2 = myPageService.selectMemberInfo(member_code2);
+		List<Map<String, String>> memberMaster = myPageService.getMemberMaster(member_code2);
+		model.addAttribute("memberMaster", memberMaster);
+	
+		System.out.println("멤버가 마스터한 클래스" + memberMaster);
+		
+		return "mypage/mypage-power";
 	}
 
 }

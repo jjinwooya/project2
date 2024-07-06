@@ -208,6 +208,7 @@
         });
 		
 	    function updateChart(data) {
+	    	debugger;
 	        var ctx = document.getElementById("myAreaChart").getContext('2d');
 	        var currentMonth = new Date().getMonth(); // 0부터 시작하므로, 0은 1월, 1은 2월 ...
 			

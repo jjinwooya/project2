@@ -31,8 +31,8 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
 <!-- Libraries Stylesheet -->
-<link href="${pageContext.request.contextPath}/resources/lib/lightbox/css/lightbox.min.css" rel="stylesheet">
-<link href="${pageContext.request.contextPath}/resources/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+<%-- <link href="${pageContext.request.contextPath}/resources/lib/lightbox/css/lightbox.min.css" rel="stylesheet"> --%>
+<%-- <link href="${pageContext.request.contextPath}/resources/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet"> --%>
 
 
 <!-- Customized Bootstrap Stylesheet -->
@@ -112,14 +112,14 @@
 					<div class="card-body">
 						<h5 class="card-title text-success">연락처</h5>
 						<p class="card-text">
-							<c:set var="phoneNumber" value="${payInfo.member_tel }" />
+							<c:set var="phoneNumber" value="${memberInfo.member_tel }" />
 							<c:set var="formatPhoneNumber" value="${phoneNumber.substring(0, 3)}-${phoneNumber.substring(3, 7)}-${phoneNumber.substring(7)}" />
 							${formatPhoneNumber }
 						</p>
 						<h5 class="card-title text-success">이메일</h5>
-						<p class="card-text">${payInfo.member_email }</p>
+						<p class="card-text">${memberInfo.member_email }</p>
 						<h5 class="card-title text-success">이름(닉네임)</h5>
-						<p class="card-text">${payInfo.member_nickname }</p>
+						<p class="card-text">${memberInfo.member_nickname }</p>
 					</div>
 				</div>
 			</div>
@@ -131,7 +131,7 @@
 						<div class="accordion-item">
 							<h2 class="accordion-header">
 								<button class="accordion-button rounded-bottom" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" >
-									취소 및 환불 안내
+									클래스 취소 및 환불 안내
 								</button>
 							</h2>
 							<div id="collapseOne" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
@@ -139,6 +139,7 @@
 									<span>날짜 별 취소 및 환불 정책</span><br>
 									<ul>
 										<li>클래스 시작 3일 전 취소 : 100% 환불</li>
+										<li>클래스 시작 3일 이내 취소 : 50% 환불</li>
 										<li>클래스 시작 당일 이후 취소 : 환불 불가</li>
 									</ul>
 								</div>
@@ -199,11 +200,11 @@
 					<hr>
 						<p class="card-text text-end">
 							총 결제 금액: 
-							<span class="font_color" id="total"></span>만원
+							<span class="font_color" id="total"></span>원
 						</p>
 						<div class="row">
 							<div class="col d-flex justify-content-center">
-								<a href="javascript:void(0);" class="btn btn-dark w-100" onclick="myFunction()">결제하기</a>
+								<a href="javascript:void(0);" class="btn btn-dark w-100" onclick="paymentValidation()">결제하기</a>
 							</div>
 						</div>
 					</div>
@@ -217,6 +218,9 @@
 </footer>
 <script>
 $(function() {
+	$('.accordion-button').off('mouseenter mouseleave');
+   
+	
 	let subtotalText = $("#subtotal").text().trim(); //trim()으로 앞뒤 공백 제거
 	let subtotal = parseInt(subtotalText.replace(/,/g, ''), 10);
 	$("#total").text(subtotal.toLocaleString());
@@ -240,7 +244,7 @@ $(function() {
 			url: "will-pay-all",
 			type: "GET",
 			data: {
-				member_code: "${payInfo.member_code}"
+				member_code: "${memberInfo.member_code}"
 			},
 			dataType: 'json',
 			success: function(data) {
@@ -248,7 +252,7 @@ $(function() {
 				
 	            if (credit == 0) {
 	                $('#will_pay_input').val(0);
-	                $('#memberCredit').prop("disabled", true);
+	                $('#will_btnCredit').prop("disabled", true);
 	            }
 				
 				if(credit > subtotal) {
@@ -271,7 +275,15 @@ $(function() {
 			}
 		});
 	});
-	//---------------------------------------------------
+	//-----------------------------------------------------------------------
+	let totalWillpay = ${payInfo.member_credit};
+	if(totalWillpay == 0) {
+		$('#will_pay_input').val(0);
+		$('#will_pay_input').prop("readonly", true);
+		
+		$('#will_btnCredit').prop("disabled", true);
+	}
+	
 	//total 관련 자바스크립트
 	$("#will_pay_input").on("input", function() {
 		let payInput = parseInt($("#will_pay_input").val());
@@ -328,10 +340,10 @@ $(function() {
     });
 });
 //-------------------------------------------------------------------------------------------------
-function myFunction() {
+function paymentValidation() {
 	//결제 전 유효성 체크
 	let willPayCredit = $("#will_pay_input").val();
-	let regex = /^\d+0$/;
+	let regex = /^\d*0$/;
 	
 	if(!regex.test(willPayCredit) && willPayCredit != "") {
 		alert("10원 단위로 입력해 주세요.");
@@ -351,12 +363,11 @@ function myFunction() {
 	let pg = "kcp.AO09C";
 	let className = "${payInfo.class_name}";
 	
-	
 	let amount = $("#total").text().replace(/,/g, '');
 	let parsedAmount = parseInt(amount, 10);
-	let member_email = "${payInfo.member_email}";
-	let member_name = "${payInfo.member_name}";
-	let member_tel = "${payInfo.member_tel}";
+	let member_email = "${memberInfo.member_email}";
+	let member_name = "${memberInfo.member_name}";
+	let member_tel = "${memberInfo.member_tel}";
 	
 	let IMP = window.IMP;   // 생략 가능
 	IMP.init("imp00262041"); //imp00262041
@@ -387,7 +398,7 @@ function myFunction() {
 		            	class_schedule_date : "${payInfo.class_schedule_date}",
 		            	pay_headcount: "${payInfo.headcount }",
 		            	use_willpay: use_willpay,
-		            	member_code: "${payInfo.member_code}",
+		            	member_code: "${memberInfo.member_code}",
 		            	class_schedule_code: "${payInfo.class_schedule_code}"
 		            }),
 					contentType: "application/json",
@@ -420,16 +431,14 @@ function myFunction() {
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-<script
-	src="${pageContext.request.contextPath}/resources/lib/easing/easing.min.js"></script>
-<script
-	src="${pageContext.request.contextPath}/resources/lib/waypoints/waypoints.min.js"></script>
-<script
-	src="${pageContext.request.contextPath}/resources/lib/lightbox/js/lightbox.min.js"></script>
-<script
-	src="${pageContext.request.contextPath}/resources/lib/owlcarousel/owl.carousel.min.js"></script>
+<!-- <script -->
+<%-- 	src="${pageContext.request.contextPath}/resources/lib/easing/easing.min.js"></script> --%>
+<!-- <script -->
+<%-- 	src="${pageContext.request.contextPath}/resources/lib/waypoints/waypoints.min.js"></script> --%>
+<!-- <script -->
+<%-- 	src="${pageContext.request.contextPath}/resources/lib/lightbox/js/lightbox.min.js"></script> --%>
+<!-- <!-- <script -->
+<%-- 	src="${pageContext.request.contextPath}/resources/lib/owlcarousel/owl.carousel.min.js"></script> --%>
 
-<!-- Template Javascript -->
-<script src="${pageContext.request.contextPath}/resources/js/main.js"></script>
 </body>
 </html>

@@ -122,7 +122,6 @@
 	</div>
 <script>
 	window.addEventListener('load', () => {
-		console.log("${registType}");
 		const forms = document.getElementsByClassName('validation-form');
 	
 		Array.prototype.filter.call(forms, (form) => {
@@ -186,7 +185,7 @@ function uploadImage(file) {
             console.log(imageUrl);
             $('#summernote').summernote('insertImage', imageUrl, function ($image) {
                 $image.attr('src', imageUrl);
-                $image.attr('class', 'img-responsive');
+                $image.attr('class', 'img-responsive');	
             });
         }
     });

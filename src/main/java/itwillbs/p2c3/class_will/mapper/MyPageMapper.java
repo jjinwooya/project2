@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import itwillbs.p2c3.class_will.vo.MemberVO;
 
@@ -12,7 +13,7 @@ public interface MyPageMapper {
 
 	int updateMemberImg(MemberVO member);
 
-	List<Map<String, String>> selectMemberReview(int member_code);
+	List<Map<String, String>> selectMemberReview(@Param("member_code")int member_code, @Param("startRow2")int startRow2 , @Param("listLimit2")int listLimit2);
 
 	Map<String, String> selectReviewByCode(String reviewCode);
 
@@ -28,6 +29,21 @@ public interface MyPageMapper {
 
 	MemberVO selectMember(int member_code);
 
-	List<Map<String, String>> selectLike(int member_code);
+	List<Map<String, String>> selectLike(@Param("member_code")int member_code, @Param("startRow")int startRow, @Param("listLimit")int listLimit);
+	
+
+	List<Map<String, String>> selectPossibleReview(@Param("member_code")int member_code,@Param("startRow")int startRow,  @Param("listLimit")int listLimit);
+
+	int insertReview(Map<String, String> formData);
+
+	int MemberWithdraw(MemberVO member);
+
+	List<Map<String, String>> selectMemberMaster(int member_code2);
+
+	int countLikes(int member_code);
+
+	int countPoss(int member_code);
+
+	int countReview(int member_code);
 	
 }

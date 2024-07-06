@@ -128,7 +128,7 @@ th, td {
 												style="width: 150px;">참여 가능 인원 : </label> <input
 												type="number" name="class_total_headcount"
 												id="class_total_headcount" class="form-control my-1" min="1"
-												style="width: 100px;" required />
+												style="width: 100px;" />
 										</div>
 
 										<div class="container creator-plan-time mt-3 mb-5">
@@ -245,6 +245,47 @@ th, td {
 			let currentPage = 1;
 
 			initializeGrid(data);
+			
+			class ButtonRenderer {
+                constructor(props) {
+                    const el = document.createElement('button');
+                    el.className = 'btn btn-primary btn-sm';
+                    el.innerText = '삭제';
+                    el.addEventListener('click', () => {
+                    	event.preventDefault();
+                        const rowKey = props.grid.getIndexOfRow(props.rowKey);
+                        const rowData = props.grid.getRow(rowKey);
+                        const class_code = rowData.class_code;
+                        const class_schedule_code = rowData.class_schedule_code;
+                        console.log("rowKey: " + rowKey);
+                        console.log("rowData: " + rowData);
+                        console.log("class_code: " + class_code);
+                        console.log("class_schedule_code: " + class_schedule_code);
+        				if(confirm("일정을 삭제하시겠습니까?")){
+        			      $.ajax({
+        			          url: "deleteSchedule",
+        			          method: "get",
+        			          data: { "classScheduleCode": class_schedule_code },
+        			          success: function(data) {
+        			        	alert(data.answer);
+        			        	location.reload();
+        			          }
+        			      });
+        				} else{
+        					return;
+        				}
+                    });
+                    this.el = el;
+                }
+                getElement() {
+                    return this.el;
+                }
+                render(props) {
+                    this.el.dataset.rowKey = props.rowKey;
+                    this.el.dataset.columnName = props.columnName;
+                    this.el.value = props.value;
+                }
+            }
 
 			function initializeGrid(data) {
 				const gridContainer = document
@@ -275,7 +316,16 @@ th, td {
 								name : 'attend_count',
 								align: "center"
 							},
+							{
+		                        header: '삭제',
+		                        name: 'action',
+		                        renderer: {
+		                            type: ButtonRenderer
+		                        },
+		                        width : 'auto'
+		                    }
 						],
+						rowHeaders : [ 'rowNum' ],
 						bodyHeight : 418,
 						pageOptions : {
 							useClient : true,
@@ -304,22 +354,16 @@ th, td {
 				            }
 				        });
 						
-// 						<div id="scheduleTableContainer" class="col-md-12">
-// 							<div class="row">
-// 								<div class="col-md-12">
-// 									<div id="grid"></div>
-// 									<div id="pagination"></div>
-// 								</div>
-// 							</div>
-// 						</div>
-						
 						selectedDates = [...new Set(selectedDates)];
 						$('#scheduleTableContainer').empty();
 						if(selectedDates.length > 0){ // 등록된 일정이 있다면 달력 안보이기
 							$('.creator-plan-bottom').addClass('hidden');
 							$('#datepicker').addClass('hidden');
 							$('#scheduleTableContainer').empty().append('<div id="scheduleTableContainer" class="col-md-12"><div id="grid"></div><div id="pagination"></div></div>'
-							 + '<div align="center"><button type="button" class="btn btn-outline-primary btn-lg my-2" onclick="location.href=\'creator-class\'">돌아가기</button></div>');
+							 + '<div align="center">'
+							 + '<button type="button" class="btn btn-outline-primary btn-lg my-2" onclick="location.href=\'creator-class\'">돌아가기</button>'
+							 + '<button type="button" class="btn btn-outline-danger btn-lg mw-2 mx-2 deleteAllBtn">전체삭제</button>'
+				 			 + '</div>');
 							initializeGrid(data);
 							
 						} else{ // 일정이 등록된게 없으면 보이기
@@ -331,29 +375,6 @@ th, td {
 					}
 				});	
 			});
-			
-			// 이벤트 위임을 사용하여 동적으로 생성된 버튼에 이벤트 바인딩
-			$(document).on('click', '.scheduleBtn', function() {
-			    var classScheduleCode = $(this).data('class-schedule-code');
-			    deleteSchedule(classScheduleCode);
-			});
-			
-			window.deleteSchedule = function(classScheduleCode) {
-				var classCode = $('#classSelect').val();
-				if(confirm("일정을 삭제하시겠습니까?")){
-			      $.ajax({
-			          url: "deleteSchedule",
-			          method: "get",
-			          data: { "classScheduleCode": classScheduleCode },
-			          success: function(data) {
-			        	alert(data.answer);
-			        	location.reload();
-			          }
-			      });
-				} else{
-					return;
-				}
-			}
 
 			$(document).on('click', '.deleteAllBtn', function() {
 			    deleteAllSchedule();

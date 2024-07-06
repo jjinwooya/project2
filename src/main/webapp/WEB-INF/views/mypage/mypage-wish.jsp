@@ -149,14 +149,35 @@ th:nth-child(2), td:nth-child(2) {
 													<td>${memberLike.class_name}</td>
 													<td>${memberLike.class_location}</td>
 													<c:set var="credit" value="${memberLike.class_price}" />
-													<td><fmt:formatNumber value="${credit}" type="number" pattern="#,##0" /> 원</td>
-													<td><a href="class-detail?class_code=${memberLike.class_code}" class="btn btn-primary">상세보기</a></td>
+													<td><fmt:formatNumber value="${credit}" type="number"
+															pattern="#,##0" /> 원</td>
+													<td><a
+														href="class-detail?class_code=${memberLike.class_code}"
+														class="btn btn-primary">상세보기</a></td>
 													<td><button class="btn btn-danger"
-														onclick="cancelLike('${memberLike.class_code}', '${member.member_code}')">취소</button></td>
+															onclick="cancelLike('${memberLike.class_code}', '${member.member_code}')">취소</button></td>
 												</tr>
 											</c:forEach>
 										</tbody>
 									</table>
+									<div id="pageList">
+										<input type="button" value="이전"
+											onclick="location.href='my-wish?pageNum=${pageNum - 1}'"
+											<c:if test="${pageNum == 1}">disabled</c:if> />
+										<c:forEach var="i" begin="1" end="${maxPage}">
+											<c:choose>
+												<c:when test="${pageNum == i}">
+													<b>${i}</b>
+												</c:when>
+												<c:otherwise>
+													<a href="my-wish?pageNum=${i}">${i}</a>
+												</c:otherwise>
+											</c:choose>
+										</c:forEach>
+										<input type="button" value="다음"
+											onclick="location.href='my-wish?pageNum=${pageNum + 1}'"
+											<c:if test="${pageNum == maxPage or maxPage == 0}">disabled</c:if> />
+									</div>
 								</div>
 
 							</div>
@@ -175,40 +196,45 @@ th:nth-child(2), td:nth-child(2) {
 		<jsp:include page="/WEB-INF/views/inc/bottom.jsp" />
 	</footer>
 	<script>
-	 function cancelLike(classCode, memberCode) {
-		// 사용자에게 확인을 받기 위한 confirm 창 표시
-		    var confirmCancel = confirm("관심 클래스를 취소하시겠습니까?");
-		    
-		    // 사용자가 확인을 선택한 경우
-		    if (confirmCancel) {
-		        var data = JSON.stringify({ 
-		            heart_status: false, 
-		            class_code: classCode, 
-		            member_code: memberCode 
-		        });
-		        var xhr = new XMLHttpRequest();
-		        xhr.open("POST", "${pageContext.request.contextPath}/update-heart-status", true);
-		        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+		function cancelLike(classCode, memberCode) {
+			// 사용자에게 확인을 받기 위한 confirm 창 표시
+			var confirmCancel = confirm("관심 클래스를 취소하시겠습니까?");
 
-		        xhr.onreadystatechange = function() {
-		            if (xhr.readyState === 4) {
-		                if (xhr.status === 200) {
-		                    if (xhr.responseText === "success") {
-		                        alert('관심 클래스가 취소되었습니다.');
-		                        location.reload(); // 페이지를 새로고침하여 변경사항을 반영
-		                    } else {
-		                        alert('취소하는 도중 오류가 발생했습니다.');
-		                    }
-		                } else {
-		                    alert('서버와의 통신에 실패했습니다.');
-		                }
-		            }
-		        };
+			// 사용자가 확인을 선택한 경우
+			if (confirmCancel) {
+				var data = JSON.stringify({
+					heart_status : false,
+					class_code : classCode,
+					member_code : memberCode
+				});
+				var xhr = new XMLHttpRequest();
+				xhr
+						.open(
+								"POST",
+								"${pageContext.request.contextPath}/update-heart-status",
+								true);
+				xhr.setRequestHeader("Content-Type",
+						"application/json;charset=UTF-8");
 
-		        xhr.send(data);
-		    }
+				xhr.onreadystatechange = function() {
+					if (xhr.readyState === 4) {
+						if (xhr.status === 200) {
+							if (xhr.responseText === "success") {
+								alert('관심 클래스가 취소되었습니다.');
+								location.reload(); // 페이지를 새로고침하여 변경사항을 반영
+							} else {
+								alert('취소하는 도중 오류가 발생했습니다.');
+							}
+						} else {
+							alert('서버와의 통신에 실패했습니다.');
+						}
+					}
+				};
+
+				xhr.send(data);
+			}
 		}
-</script>
+	</script>
 	<!-- JavaScript Libraries -->
 	<script
 		src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>

@@ -43,5 +43,70 @@
 	    WHERE ${type}_hide = 'N'
 	</select>
 	
+	<select id="selectEventDetail" resultType="map">
+		SELECT *
+		FROM event
+		WHERE event_code = #{event_code}
+	</select>
+	
+	<select id="selectInviteFriendInfo" resultType="map">
+		SELECT member_code
+		      ,friend_code
+		      ,invite_code
+		 FROM invite_friend
+	    WHERE member_code = #{member_code}
+	</select>
+	
+	<select id="selectInviteFriendInfoByCode" resultType="map">
+		SELECT member_code
+		      ,friend_code
+		      ,invite_code
+		 FROM invite_friend
+	    WHERE invite_code = #{invite_code}
+	</select>
+	
+	<insert id="insertInviteCode">
+		INSERT INTO invite_friend
+		(member_code, invite_code, friend_code)
+		VALUES
+		(#{member_code}, #{invite_code}, null)
+	</insert>
+	
+	<select id="selectInviteMail">
+		SELECT *
+		FROM invite_friend_mail
+		WHERE member_email = #{friend_email}
+		AND  invite_code = #{invite_code}
+	</select>
 		
+	<insert id="insertInviteMailInfo">
+		INSERT INTO invite_friend_mail
+		(member_email, invite_code)
+		VALUES
+		(#{friend_email}, #{invite_code})
+	</insert>
+	
+	<update id="updateInviteMailInfo">
+		UPDATE invite_friend_mail
+		SET    member_email = #{friend_email}
+		WHERE  invite_code = #{invite_code}
+	</update>
+	
+	<update id="updateFriendCode">
+		UPDATE invite_friend
+		SET friend_code = #{friend_code}
+		WHERE invite_code = #{invite_code}
+	</update>	
+	
+	<update id="updateMemberCredit">
+		UPDATE MEMBER
+		SET member_credit = member_credit + 5000
+		WHERE member_code = #{member_code}
+	</update>
+	
+	<select id="selectMemberByCode">
+		SELECT *
+		FROM MEMBER
+		WHERE member_code = #{member_code}
+	</select>
 </mapper>

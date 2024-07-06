@@ -164,9 +164,7 @@
 												onclick="location.href='creator-qualify'">크리에이터 신청하기</button>
 										</c:when>
 										<c:when test="${member.member_type eq 2}">
-											<button class="btn btn-primary btn-lg btn-block"
-												id="change-member-btn"
-												data-member-code="${member.member_code}">일반회원 전환하기</button>
+<%-- 										잠시보류	<button class="btn btn-primary btn-lg btn-block" id="change-member-btn" data-member-code="${member.member_code}">일반회원 전환하기</button>  --%>
 										</c:when>
 										<c:otherwise>
 											관리자님..

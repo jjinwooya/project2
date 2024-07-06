@@ -58,9 +58,15 @@
 	</update>
 
 	<select id="selectBankInfo" resultType="map">
-		SELECT access_token, user_seq_no
+		SELECT *
 		FROM bank_user_info
 		WHERE member_code = #{member_code}
+	</select>
+	
+	<select id="selectMemberTel" resultType="string">
+		SELECT member_tel
+		FROM MEMBER
+		WHERE member_tel = #{member_tel}
 	</select>
 	
 

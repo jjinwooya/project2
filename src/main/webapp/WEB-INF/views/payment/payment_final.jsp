@@ -64,7 +64,7 @@
 </style>
 <script type="text/javascript">
     window.history.pushState(null, null, location.href);
-    window.onpopstate = function () {
+    window.onpopstate = function () {  //onpopstate 뒤로가기 버튼
         history.go(1);
     };
 </script>
@@ -134,7 +134,7 @@
 				</div> <!-- row -->
 				<div class="row mt-5">
 					<div class="d-flex justify-content-center bg-secondary-subtle rounded-bottom p-2">
-						<button class="btn btn-dark mx-2" type="button" onclick="location.href='myp_reservation'">예매 내역 확인</button>
+						<button class="btn btn-dark mx-2" type="button" onclick="location.href='my-class'">결제 내역 확인</button>
 						<button class="btn btn-dark mx-2" type="button" onclick="location.href='./'">클래스윌 메인</button>
 					</div>
 				</div>

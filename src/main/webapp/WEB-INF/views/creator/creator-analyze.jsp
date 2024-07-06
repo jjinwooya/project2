@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -21,15 +22,6 @@
 	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
 	rel="stylesheet">
 
-<!-- Libraries Stylesheet -->
-<link
-	href="${pageContext.request.contextPath}/resources/lib/lightbox/css/lightbox.min.css"
-	rel="stylesheet">
-<link
-	href="${pageContext.request.contextPath}/resources/lib/owlcarousel/assets/owl.carousel.min.css"
-	rel="stylesheet">
-
-
 <!-- Customized Bootstrap Stylesheet -->
 <link
 	href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css"
@@ -40,6 +32,14 @@
 	rel="stylesheet">
 <link href="${pageContext.request.contextPath}/resources/css/creator/creator-main.css" rel="stylesheet">
 <link href="${pageContext.request.contextPath}/resources/css/creator/creator-analyze.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<style>
+#myChart{
+	height: 400px;
+}
+
+</style>
 </head>
 <body>
 
@@ -76,44 +76,29 @@
 						<div class="col-lg-9 creator-body">
 						<!-- 	셀렉트박스 -->
 						<jsp:include page="/WEB-INF/views/creator/classSelect.jsp" />
-<!-- 							<div class="col-md-12 d-flex justify-content-center mb-5"> -->
-<!-- 								<div class="col-xl-8"> -->
-<!-- 									<div class="bg-light rounded py-2 d-flex justify-content-center mb-4"> -->
-<!-- 										<select id="fruits" -->
-<!-- 											name="fruitlist" class="border-0 form-select-sm bg-light me-3 selectClass" -->
-<!-- 											form="fruitform"> -->
-<!-- 											<option value="volvo">Nothing</option> -->
-<!-- 											<option value="saab">Populari</option> -->
-<!-- 											<option value="opel">Organic</option> -->
-<!-- 											<option value="audi">Fantastic</option> -->
-<!-- 										</select> -->
-<!-- 									</div> -->
-<!-- 									<hr> -->
-<!-- 								</div> -->
-<!-- 							</div> -->
 							<div class="admin_dashboard" align="center">
-								<div class="admin_main_center_card" onclick="location.href='#'">
+								<div class="admin_main_center_card" onclick="location.href='creator-class-last'">
 									<div class="admin_main_card" align="left">진행한강의</div>
 									<div align="right" class="card_num">
-										<a href="#">0건</a>
+										<a href="#">${analyzeList.classCount}건</a>
 									</div>
 								</div>
-								<div class="admin_main_center_card" onclick="location.href='#'">
+								<div class="admin_main_center_card" onclick="location.href='creator-class-last'">
 									<div class="admin_main_card" align="left">참여회원수</div>
 									<div align="right" class="card_num">
-										<a href="#">0건</a>
+										<a href="#">${analyzeList.attendCount}건</a>
 									</div>
 								</div>
-								<div class="admin_main_center_card" onclick="location.href='#'">
+								<div class="admin_main_center_card" onclick="location.href='creator-review'">
 									<div class="admin_main_card" align="left">총 후기수</div>
 									<div align="right" class="card_num">
-										<a href="#">0건</a>
+										<a href="#">${analyzeReviewList.reviewCount}건</a>
 									</div>
 								</div>
-								<div class="admin_main_center_card" onclick="location.href='#'">
-									<div class="admin_main_card" align="left">누적예약 수</div>
+								<div class="admin_main_center_card" onclick="location.href='creator-class'">
+									<div class="admin_main_card" align="left">회당 평균참여수</div>
 									<div align="right" class="card_num">
-										<a href="#">0건</a>
+										<a href="#">${analyzeList.avgAttendCount}건</a>
 									</div>
 								</div>
 							</div>
@@ -143,65 +128,101 @@
 		src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath}/resources/lib/easing/easing.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath}/resources/lib/waypoints/waypoints.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath}/resources/lib/lightbox/js/lightbox.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath}/resources/lib/owlcarousel/owl.carousel.min.js"></script>
 
 	<!-- Template Javascript -->
 	<script src="${pageContext.request.contextPath}/resources/js/main.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 	
-		<script type="text/javascript">
+	<script type="text/javascript">
 		var ctx = document.getElementById("myChart").getContext('2d');
-		/*
-		- Chart를 생성하면서, 
-		- ctx를 첫번째 argument로 넘겨주고, 
-		- 두번째 argument로 그림을 그릴때 필요한 요소들을 모두 넘겨줍니다. 
-		 */
 		
 		// 랜덤색상 생성 
-// 		function getRandomColor() {
-// 			const rColor = Math.floor(Math.random() * 128 + 128);
-// 		    const gColor = Math.floor(Math.random() * 128 + 128);
-// 		    const bColor = Math.floor(Math.random() * 128 + 128);
-// 		    return 'rgba(' + rColor + ',' + gColor + ',' + bColor + ', 0.3)';
-// 		}
-
-// 		var chartColors = function() {
-// 		    return getRandomColor();
-// 		};
-		 
-		var myChart = new Chart(ctx,
-			{
-				type : 'line',
-				data : {
-					labels : ['1월', '2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
-					datasets : [ {
-						label : '월간 매출 데이터',
-						data : [2000, 3000, 2500, 2000, 2500, 3100, 2000, 3000, 2500, 2000, 2500, 3100],
-// 						backgroundColor : chartColors,
-// 						borderColor : chartColors,
-						borderColor : 'rgb(192, 20, 20)',
-// 						borderWidth : 1
-						tension: 0.01
-					} ]
-				},
-				options : {
-					maintainAspectRatio : true, // default value. false일 경우 포함된 div의 크기에 맞춰서 그려짐.
-					scales : {
-						y : [ {
-							ticks : {
-								beginAtZero : true
-							}
-						} ]
-					}
+		function getRandomColor() {
+			const rColor = Math.floor(Math.random() * 128 + 128);
+		    const gColor = Math.floor(Math.random() * 128 + 128);
+		    const bColor = Math.floor(Math.random() * 128 + 128);
+		    return 'rgba(' + rColor + ',' + gColor + ',' + bColor + ', 1)';
+		}
+	
+		var chartColors = function() {
+		    return getRandomColor();
+		};
+		
+		// 데이터 변수 선언
+		var MonthList = [
+			 <c:forEach var="monthList" items="${GraphDataList}">
+	         	"${monthList.month}월" ,
+	         </c:forEach>
+		 ];
+		var SumList = [
+			 <c:forEach var="sumList" items="${GraphDataList}">
+	         	"${sumList.total_sum}" ,
+	         </c:forEach>
+		 ];
+		
+		$('#classSelect').change(function() {
+			classCode = $('#classSelect').val();
+			$.ajax({
+				url: "graphByClass",
+				method: "get",
+				data: { "classCode" : classCode },
+				success: function(data) {
+					 var TheaterList = [
+						 <c:forEach var="theater" items="${theaterList}">
+				         	"${theater.theater_name}" ,
+				         </c:forEach>
+					 ];
 				}
-			});
+			});	
+		});
+		 
+		var myChart = new Chart(ctx, {
+		    type: 'bar', // 기본적으로 바 차트 설정
+		    data: {
+		        labels: MonthList,
+		        datasets: [{
+		            label: '월간 매출 데이터',
+		            data: [2300, 3000, 2500, 2100, 2500, 3100, 1900, 3000, 2500, 2000, 2500, 3100],
+		            backgroundColor: chartColors,
+		            borderColor: 'rgb(192, 20, 20)',
+		            borderWidth: 2,
+		            yAxisID: 'bar-y-axis' // 바 차트를 위한 y축 ID
+		        }]
+		    },
+		    options: {
+		        maintainAspectRatio: false,
+		        scales: {
+		            yAxes: [{
+		                id: 'bar-y-axis', // 바 차트용 y축
+		                type: 'linear',
+		                position: 'left',
+		                ticks: {
+		                    beginAtZero: true
+		                }
+		            }, {
+		                id: 'line-y-axis', // 라인 차트용 y축
+		                type: 'linear',
+		                position: 'right',
+		                ticks: {
+		                    beginAtZero: true
+		                }
+		            }]
+		        }
+		    }
+		});
+	
+		// 라인 차트 추가
+		myChart.data.datasets.push({
+		    label: '월간 매출 데이터 (전체)',
+		    data: SumList,
+		    borderColor: 'rgb(256, 0, 0)',
+		    borderWidth: 2,
+		    fill: false,
+		    yAxisID: 'line-y-axis' // 라인 차트를 위한 y축 ID
+		});
+	
+		// 차트 업데이트
+		myChart.update();
 	</script>
 
 </body>

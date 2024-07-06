@@ -130,7 +130,7 @@ public class AdminService {
 	public List<Integer> getWillpayChart() {
 		return adminMapper.selectWillpayChart();
 	}
-
+	
 	public List<Map<String, Object>> getRewardData() {
 		return adminMapper.selectRewardData();
 	}
@@ -199,6 +199,22 @@ public class AdminService {
 
 	public boolean insertEvent(Map<String, Object> map) {
 		return adminMapper.insertEvent(map) > 0 ? true : false;
+	}
+
+	public List<Map<String, String>> getEventList() {
+		return adminMapper.selectEventList();
+	}
+
+	public List<Map<String, Object>> getBigCategoryClassComplain() {
+		return adminMapper.selectBigCategoryClassComplain();
+	}
+
+	public List<Map<String, Object>> getSmallCategoryClassComplain(Integer categoryCode) {
+		return adminMapper.selectSmallCategoryClassComplain(categoryCode);
+	}
+
+	public void deleteVisitLogs() {
+		adminMapper.deleteVisitLogs();
 	}
 
 	

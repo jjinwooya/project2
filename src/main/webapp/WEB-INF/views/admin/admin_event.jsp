@@ -103,7 +103,19 @@
         document.addEventListener('DOMContentLoaded', function () {
     	    const itemsPerPage = 10;
     	    let currentPage = 1;
-//     	    const data = ${jo_list};
+    	    const data = ${jo_list};
+    	    let type = "event";
+    	    
+    	    
+    	    // 버튼 색깔 변경
+    	    const buttons = document.querySelectorAll('.category-btn');
+    	    buttons.forEach(button => {
+    	        if (button.getAttribute('data-category') === type) {
+    	            button.classList.add('btn-primary');
+    	        } else {
+    	            button.classList.remove('btn-primary');
+    	        }
+    	    });
     	    
     	    
     	    $('#btn-apply').on('click', function () {
@@ -208,7 +220,7 @@
                 data: data,
                 columns: [
                     { header: '제목', name: 'event_subject' , editor: 'text'},
-                    { header: '카테고리', name: 'event_category' , editor: 'text'},
+                    { header: '작성일', name: 'event_reg_date' , editor: 'text'},
                     { header: '이벤트 기간', name: 'event_date' , editor: 'text'},
                     { header: '지급 포인트', name: 'event_point' , editor: 'text'},
                     {

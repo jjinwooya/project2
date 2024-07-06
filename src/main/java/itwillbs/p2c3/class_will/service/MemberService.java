@@ -55,6 +55,12 @@ public class MemberService {
 	public Map<String, String> selectBankInfo(int member_code) {
 		return memberMapper.selectBankInfo(member_code);
 	}
+	
+	//  전화번호 인증 시 기존 회원 여부 조회
+	public String selectMemberTel(String member_tel) {
+		System.out.println(">>>>>>>>>>>>>>>>service / member_tel : " + member_tel);
+		return memberMapper.selectMemberTel(member_tel);
+	}
 
 
 	

@@ -5,11 +5,11 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>부기무비 이벤트</title>
+<title>클래스윌 이벤트</title>
 <!-- 부트스트랩 CSS, JS -->
 <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css" type="text/css"> --%>
 <%-- <script src="${pageContext.request.contextPath}/resources/js/bootstrap.bundle.min.js"></script> --%>
-<%-- <script src="${pageContext.request.contextPath}/resources/js/jquery-3.7.1.js"></script> --%>
+<script src="${pageContext.request.contextPath}/resources/js/jquery-3.7.1.js"></script>
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <meta content="" name="keywords">
 <meta content="" name="description">
@@ -40,11 +40,7 @@ body {
   font-family: "Nanum Gothic", sans-serif;
   font-weight: 400;
   font-style: normal;
-  
-  
 }
-
-
 
 main {
 	width: 1400px;
@@ -197,6 +193,7 @@ body {
   background-color: #007bff;
   color: #fff;
 }
+
 </style>
 </head>
 <body>
@@ -208,19 +205,23 @@ body {
 		<h1 class="display-6 text-white">이벤트</h1>
 	</div>
 	<div class="row event_flow">
-<%-- 		<c:forEach var="eventList" items="${eventList}" > --%>
-			<c:forEach begin="1" end="10">
-<%-- 			<div class="item movie-event" onclick="event_detail(${eventList.event_num})"> --%>
-			<div class="item movie-event" onclick="event_detail()">
+			<div class="item movie-event" onclick="event_detail(0)">
 				<div class="imgBox">
-<%-- 					<img src="${pageContext.request.contextPath}/resources/upload/${eventList.event_thumbnail}" alt="썸네일"/> --%>
-					<img src="${pageContext.request.contextPath}/resources/img/best-product-6.jpg" alt="썸네일"/>
+					<img src="${pageContext.request.contextPath}/resources/images/event/invite_friend_cut.png" alt="썸네일"/>
 				</div>
 				<div class="textBox">
-<%-- 					<p class="textBox_name">${eventList.event_subject}</p> --%>
-					<p class="textBox_name">11111111111</p>
-<%-- 					<p class="textBox_price">${eventList.event_start}  ~  ${eventList.event_end}</p> --%>
-					<p class="textBox_price">2024-06-01  ~  2024-06-30</p>
+					<p class="textBox_name">클래스윌 친구초대 이벤트!</p>
+					<p class="textBox_price">2024-07-01  ~  무기한</p>
+				</div>
+			</div>
+		<c:forEach var="eventList" items="${list}" >
+			<div class="item movie-event" onclick="event_detail(${eventList.event_num})">
+				<div class="imgBox">
+					<img src="${pageContext.request.contextPath}/${eventList.event_thumbnail}" alt="썸네일"/>
+				</div>
+				<div class="textBox">
+					<p class="textBox_name">${eventList.event_subject}</p>
+					<p class="textBox_price">${eventList.event_start_date}  ~  ${eventList.event_end_date}</p>
 				</div>
 			</div>
 		</c:forEach>
@@ -245,8 +246,8 @@ body {
 // 	function event_detail(event_num) {
 // 		location.href='eventDetail?event_num=' + event_num;
 // 	} 
-	function event_detail() {
-		location.href='eventDetail';
+	function event_detail(event_code) {
+		location.href='eventDetail?event_code=' + event_code;
 	} 
 	
 	$(function() {
@@ -297,10 +298,7 @@ body {
 // 			});
 // 		});
 		
-		
-		
 	});
-		
 </script>
 
 </body>

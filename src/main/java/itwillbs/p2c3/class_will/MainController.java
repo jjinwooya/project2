@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,30 +27,11 @@ public class MainController {
 	private MainService mainService;
 	
 	// 메인으로
-	@GetMapping("main")
-	public String main() {
-		
-		return "main";
-	}
-	
-	// chackout으로
-	@GetMapping("chackout")
-	public String chackout() {
-		return "chackout";
-	}
-	
-	// shop으로
-	@GetMapping("shop")
-	public String shop() {
-		return "shop";
-	}
-	
-	// shop-detail으로
-	@GetMapping("shop-detail")
-	public String shopDetail() {
-		return "shop-detail";
-	}
-
+//	@GetMapping("main")
+//	public String main(HttpServletRequest request) {
+//		
+//		return "main";
+//	}
 	
 	// top-분야 카테고리
 	@ResponseBody
@@ -91,10 +74,10 @@ public class MainController {
 	        	json.add("children", children);
 	        	System.out.println("json : " + json);
 	        }
+	        
 	        fieldCateList.add(json);
 	        System.out.println("fieldCateList : " + fieldCateList);
 	    }
-		
 		
 		return fieldCateList.toString();
 	}
@@ -111,8 +94,12 @@ public class MainController {
 		
 		
 		for(Map<String, Object> lcm : localCateMap) {
+			Integer common2_code_obj = (Integer) lcm.get("common2_code");
+			int common2_code = (common2_code_obj != null) ? common2_code_obj.intValue() : 0;
 			JsonObject jo = new JsonObject();
 			jo.addProperty("local_name", (String) lcm.get("code_value"));
+			jo.addProperty("local_code", common2_code);
+			
 			System.out.println("jo : " + jo);
 			localCateList.add(jo);
 		}
@@ -142,8 +129,12 @@ public class MainController {
 		mainService.checkKeyword(keyword, searchDateTime);
 		
 		
-		return "redirect:/class-list";
+		return "redirect:/class-list?";
 	} // searchKeyword()
+	
+	
+	
+	
 	
 
 }

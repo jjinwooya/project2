@@ -31,9 +31,131 @@
 		VALUES(#{keyword}, #{searchDateTime})
 	</insert>
 	
+	<select id="selectTop10Class">
+		SELECT 
+			c.class_code,
+		    c.class_name, 
+		    c.class_thumnail, 
+		    c.class_hashtag, 
+		    c.class_price, 
+		    c2.code_value AS big_category, 
+		    c3.code_value AS small_category, 
+		    m.member_nickname, 
+		    m.member_img 
+		FROM (
+		    SELECT 
+		        p.class_code, 
+		        COUNT(*) AS count
+		    FROM pay p
+		    JOIN class c ON p.class_code = c.class_code
+		    WHERE c.class_active = 'Y'
+		      AND c.class_regist_status = '2'
+		      AND c.class_hide = '1'
+		    GROUP BY p.class_code
+		    ORDER BY count DESC
+		    LIMIT 10
+		) AS top_classes
+		JOIN class c ON c.class_code = top_classes.class_code
+		JOIN common2 c2 ON c.class_big_category = c2.common2_code AND c2.common1_code = 'CLC'
+		JOIN common3 c3 ON c.class_small_category = c3.common3_code AND c3.common2_code = c2.common2_code AND c3.common1_code = 'CLC'
+		JOIN MEMBER m ON c.member_code = m.member_code;
+	</select>
 	
-<!-- 	<select id="selectKeyword" resultType="map"> -->
-<!-- 		SELECT  -->
-<!-- 	</select> -->
+	<select id="selectTop10Local">
+		SELECT 
+			c.class_code,
+		    c2.code_value AS local_name 
+		FROM (
+		    SELECT 
+		        p.class_code, 
+		        COUNT(*) AS count
+		    FROM pay p
+		    JOIN class c ON p.class_code = c.class_code
+		    WHERE c.class_active = 'Y'
+		      AND c.class_regist_status = '2'
+		      AND c.class_hide = '1'
+		    GROUP BY p.class_code
+		    ORDER BY count DESC
+		    LIMIT 10
+		) AS top_classes
+		JOIN class c ON c.class_code = top_classes.class_code
+		JOIN common2 c2 ON c.common2_code = c2.common2_code AND c2.common1_code = 'LC';
+	</select>
+	
+	<select id="selectNewClass">
+		SELECT 
+			c.class_code,
+		    c.class_name, 
+		    c.class_thumnail, 
+		    c.class_hashtag, 
+		    c.class_price, 
+		    c2.code_value AS big_category, 
+		    c3.code_value AS small_category, 
+		    m.member_nickname, 
+		    m.member_img 
+		FROM class c 
+		JOIN common2 c2 ON c.class_big_category = c2.common2_code AND c2.common1_code = 'CLC'
+		JOIN common3 c3 ON c.class_small_category = c3.common3_code AND c3.common2_code = c2.common2_code AND c3.common1_code = 'CLC'
+		JOIN MEMBER m ON c.member_code = m.member_code
+		WHERE c.class_active = 'Y'
+		AND c.class_regist_status = '2'
+		AND c.class_hide = '1'
+		ORDER BY class_code DESC 
+		LIMIT 8;
+	</select>
+	
+	<select id="selectNewLocal">
+		SELECT 
+			c.class_code,
+		    c2.code_value AS local_name 
+		FROM class c  
+		JOIN common2 c2 ON c.common2_code = c2.common2_code AND c2.common1_code = 'LC'
+		WHERE c.class_active = 'Y'
+		AND c.class_regist_status = '2'
+		AND c.class_hide = '1'
+		ORDER BY class_code DESC 
+		LIMIT 8;
+	</select>
+	
+	<select id="selectVisitIp" resultType="map">
+		SELECT visit_date, ip_address
+		FROM   visit_logs
+		WHERE  visit_date = #{visitDate}
+          AND  ip_address = #{ip}
+	</select>
 
+	<insert id="insertVisitIp">
+		INSERT INTO visit_logs(visit_date, ip_address)
+		VALUES (#{visitDate}, #{ip})
+	</insert>
+	
+	
+	<select id="selectToday" resultType="map">
+		SELECT *
+		FROM daily_visit
+		WHERE visit_date = #{visitDate}
+	</select>
+	
+	<insert id="insertDailyVisit">
+		INSERT INTO daily_visit(visit_date, visit_count)
+		VALUES (#{visitDate}, 1) 
+	</insert>
+	
+	<update id="updateDailyVisit">
+		<selectKey keyProperty="visit_count" resultType="int" order="BEFORE">
+			SELECT IFNULL(visit_count, 0)  -- visit_count 최대값 조회(null 이면 기본값 0 지정) 
+			FROM daily_visit
+			WHERE visit_date = #{visit_date}
+		</selectKey> 
+		UPDATE daily_visit
+		SET visit_count = #{visit_count} + 1
+		WHERE visit_date = #{visit_date}
+	</update>
+	
+	<select id="selectLikeClass" resultType="map">
+		SELECT *
+		FROM like_class
+		WHERE member_code = #{member_code}
+	</select>
+	
 </mapper>

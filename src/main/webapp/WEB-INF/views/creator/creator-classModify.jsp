@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -24,8 +25,7 @@
 
 <!-- Customized Bootstrap Stylesheet -->
 <link
-	href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css"
-	rel="stylesheet">
+	href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css" rel="stylesheet">
 
 <!-- Template Stylesheet -->
 <link href="${pageContext.request.contextPath}/resources/css/style.css"
@@ -35,7 +35,7 @@
 <link
 	href="${pageContext.request.contextPath}/resources/css/creator/creator-classReg.css" rel="stylesheet">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
 <!-- 썸머노트 cdn -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script> -->
@@ -90,7 +90,8 @@
 
 						<div class="col-lg-9 creator-body" >
 							<div class="creator-main-table col-xl-8 mb-5 ">
-								<form class="validation-form" novalidate action="creator-classRegPro" name="fr" method="post" onsubmit="return confirm('클래스를 등록하시겠습니까?');">
+								<form class="validation-form" novalidate action="ClassModifyPro" name="fr" method="post" onsubmit="return confirm('클래스를 수정하시겠습니까?');">
+									<input type="hidden" name="class_code" value="${classDetail.class_code}">
 									<!-- 	셀렉트박스 -->
 									<div class="col-md-12 mb-2" align="center">
 										<div class="col-xl-6 mb-5">
@@ -103,22 +104,18 @@
 									</div>
 									<div class="classReg-basic">
 										<div class="h4">클래스 기본정보</div>
-										<div class="h6 d-flex justify-content-start mt-4">
-											<p>작성상태 :</p>
-											<p>&nbsp;작성중</p>
-										</div>
 										<div class="classReg-basic-form">
-											<div class="col-md-6 mt-2 mb-4">
+											<div class="col-md-6 mt-1 mb-4">
 												<label for="class_show" class="h6">공개여부</label> 
 												<select name="class_hide" id="class_show" class="form-control" required>
-													<option value="1">공개</option>
-													<option value="2">비공개</option>
+													<option value="1" <c:if test="${classDetail.class_hide eq 1}">selected</c:if>>공개</option>
+													<option value="2" <c:if test="${classDetail.class_hide eq 2}">selected</c:if>>비공개</option>
 												</select>
 												<div class="invalid-feedback">카테고리를 입력해주세요.</div>
 											</div>
 											<div class="col-md-12 mt-2 my-4">
 												<label for="class_name" class="h6">클래스 제목</label> 
-												<input type="text" name="class_name" id="class_name" class="form-control" required />
+												<input type="text" name="class_name" id="class_name" class="form-control" value="${classDetail.class_name}" required />
 												<div class="invalid-feedback">클래스명을 입력해주세요.</div>
 											</div>
 											<div class="row"> 
@@ -126,7 +123,7 @@
 													<label for="class_big_category" class="h6">카테고리</label> 
 													<select name="class_big_category" id="class_big_category" class="form-control" required>
 														<c:forEach var="category" items="${categoryList}">
-															<option value="${category.common2_code}">${category.code_value}</option>
+															<option value="${category.common2_code}" <c:if test="${classDetail.class_big_category eq category.common2_code}">selected</c:if>>${category.code_value}</option>
 														</c:forEach>
 													</select>
 													<div class="invalid-feedback">카테고리를 선택해주세요.</div>
@@ -137,46 +134,95 @@
 													<div class="invalid-feedback">카테고리를 입력해주세요.</div>
 												</div>
 											</div>
+											<input type="hidden" id="selected_small_category" value="${classDetail.class_small_category}" />
 											
 											<div class="my-4">
 												<label for="class_hashtag" class="h6">해쉬태그 선택</label>
 												<div id="item-list" class="d-flex">
 													<c:forEach var="hashtag" items="${hashtagList}">
-														<button type="button" class="item" data-value="#${hashtag.hash_tag_name}">#${hashtag.hash_tag_name}</button>
+														<button type="button" class="hashtag" data-value="#${hashtag.hash_tag_name}">#${hashtag.hash_tag_name}</button>
 													</c:forEach>
 											    </div>
-											    <input type="hidden" id="selected-items" name="class_hashtag" value=""> 
+											    <input type="hidden" id="selected-items" name="class_hashtag" value="${classDetail.class_hashtag}"> 
 											</div>
 											<div class="col-md-12 my-4">
 												<label for="class_thumnail" class="h6">커버이미지</label> 
-												<input type="file" name="class_thumnail" id="class_thumnail" class="form-control" required />
+<!-- 												<input type="file" name="class_thumnail" id="class_thumnail" class="form-control" required /> -->
+												<div class="thumnail" id="thumnailArea">
+													<c:choose>
+														<c:when test="${not empty thumnailFile}">
+<%-- 															<c:set var="thumnailFile" value="${thumnailFile}" /> --%>
+															<c:set var="originalThumnailName" value="${fn:substringAfter(thumnailFile, '_')}" />
+															${originalThumnailName}
+															<a href="${pageContext.request.contextPath}/resources/upload/${thumnailFile}" download="${originalThumnailName}">
+																<input type="button" value="다운로드">
+															</a>
+															<a href="javascript:deleteThumnailFile(${classDetail.class_code}, '${thumnailFile}')">
+																<img src = "${pageContext.request.contextPath}/resources/images/delete-icon.png" title="파일삭제" width="15px">
+															</a>
+														</c:when>
+														<c:otherwise>
+															<input type="file" name="class_thumnail">
+														</c:otherwise>
+													</c:choose>
+												</div>
 												<div class="invalid-feedback">커버이미지 입력해주세요.</div>
 											</div>
+											
 											<div class="col-md-12 my-4">
 												<label for="class_image" class="h6">본문이미지</label> 
-												<input type="file" name="class_image" id="class_image" class="form-control" required />
-												<div class="invalid-feedback">본문이미지를 입력해주세요.</div>
+<!-- 												<input type="file" name="class_image" id="class_image" class="form-control" required /> -->
+												<c:forEach var="fileName" items="${fileNames}" varStatus="status">
+													<div class="file" id="fileItemArea${status.count}">
+														<c:choose>
+															<c:when test="${not empty fileName}">
+																<c:set var="originalFileName" value="${fn:substringAfter(fileName,'_')}" />
+																${originalFileName}
+																<a href="${pageContext.request.contextPath}/resources/upload/${fileName}" download="${originalFileName}">
+																<input type="button" value="다운로드"></a>
+																<a href="javascript:deleteFile(${classDetail.class_code}, '${fileName}', ${status.count})">
+																	<img src = "${pageContext.request.contextPath}/resources/images/delete-icon.png" title="파일삭제" width="15px">
+																</a>
+															</c:when>
+															<c:otherwise>
+																<input type="file" name="file${status.count}">
+															</c:otherwise>
+														</c:choose>
+													</div>
+												</c:forEach>
+<!-- 												<div class="invalid-feedback">본문이미지를 입력해주세요.</div> -->
 											</div>
+											
 											<div class="my-4">
 												<label for="summernote" class="h6">클래스 소개</label> 
-												<textarea name="class_ex" id="summernote" maxlength="3000" cols="30" rows="5" placeholder="내용을 입력해주세요" class="with-border"></textarea>
+												<textarea name="class_ex" id="summernote" maxlength="3000" cols="30" rows="5" placeholder="내용을 입력해주세요" class="with-border">${classDetail.class_ex}</textarea>
 												<div class="invalid-feedback">내용을 입력해주세요.</div>
 											</div>
 											<div class="col-md-12 my-4">
 												<label for="postCode" class="h6">주소</label><br>
 												<div class="d-flex justify-content-between">
 													<div class="col-md-3">
-											    		<input type="text" id="post_code" name="post_code" class="form-control my-1" size="6" readonly onclick="search_address()" placeholder="우편번호">
+											    		<input type="text" value="${classDetail.post_code}" id="post_code" name="post_code" class="form-control my-1" size="6" readonly onclick="search_address()" placeholder="우편번호">
 													</div>
 													<div class="col-md-9">
-														<input type="text" id="address1" name="address1" class="form-control my-1" placeholder="클릭 시 주소검색" size="25" readonly onclick="search_address()">
+														<input type="text" value="${classDetail.address1}" id="address1" name="address1" class="form-control my-1" placeholder="클릭 시 주소검색" size="25" readonly onclick="search_address()">
 													</div>
 												</div>
-												<input type="text" id="address2" name="address2" class="form-control" placeholder="상세주소" size="25" pattern="^.{2,20}$" maxlength="20">
+												<input type="text" value="${classDetail.address2}" id="address2" name="address2" class="form-control" placeholder="상세주소" size="25" pattern="^.{2,20}$" maxlength="20">
+												
+												<!-- 주소지의 x y 좌표 -->
+												<div class="d-flex justify-content-between">
+													<div class="col-md-6">
+											    		<input type="text" id="location_x" name="location_x" placeholder="X좌표" class="form-control my-1" readonly>
+													</div>
+													<div class="col-md-6">
+														<input type="text" id="location_y" name="location_y" placeholder="Y좌표" class="form-control my-1" readonly>
+													</div>
+												</div>
 											</div>
 											<div class="col-md-12 my-4">
 												<label for="class_price" class="h6">회당 클래스가격(원)</label> 
-												<input type="text" name="class_price" id="class_price" class="form-control my-1" onKeyup="this.value=this.value.replace(/[^-0-9]/g,'');" required />
+												<input type="text" value="${classDetail.class_price}" name="class_price" id="class_price" class="form-control my-1" onKeyup="this.value=this.value.replace(/[^-0-9]/g,'');" required />
 												<div class="invalid-feedback">클래스명을 입력해주세요.</div>
 											</div>
 										</div>
@@ -208,13 +254,15 @@
 										<div class="classReg-creator-info-form">
 											<div class="col-md-12 mt-2 mb-5">
 												<label for="class_creator_explain" class="h6">크리에이터 소개</label> 
-												<input type="text" name="class_creator_explain" class="class_creator_explain" class="form-control" required />
+												<textarea name="class_creator_explain" class="class_creator_explain" maxlength="3000" cols="30" rows="5" placeholder="내용을 입력해주세요" class="with-border">${classDetail.class_creator_explain}</textarea>
+<!-- 												<input type="text" name="class_creator_explain" class="class_creator_explain" class="form-control" required /> -->
+												
 												<div class="invalid-feedback">크리에이터 소개를 입력해주세요.</div>
 											</div>
 											<div class="mt-5 mb-3" align="center">
-												<button type="submit" value="1" name="class_regist_status" class="btn btn-outline-primary btn-lg">제출하기</button>
-												<button type="submit" value="3" name="class_regist_status" class="btn btn-outline-primary btn-lg" >저장하기</button>
+												<button type="submit" value="1" name="class_regist_status" class="btn btn-outline-primary btn-lg">수정하기</button>
 												<input type="button" value="돌아가기" class="btn btn-outline-primary btn-lg" onclick="history.back()">
+												<button type="button" value="삭제" name="deleteClass" class="btn btn-outline-danger btn-lg" >삭제하기</button>
 												<hr class="mb-4">
 											</div>
 										</div>
@@ -238,25 +286,96 @@
 	<script src="${pageContext.request.contextPath}/resources/js/main.js"></script>
 	
 	<script type="text/javascript">	
-	
-		$(function() {
-			// 카테고리 선택시 상세카테
-			$("#class_big_category").change(function() {
-				var big_category = $("#class_big_category").val();
+		// ajax 로 업로드된 이미지 파일 삭제 
+		function deleteFile(class_code, class_file1, index){
+			if(confirm(index + "번 파일을 삭제하시겠습니까?")){
 				$.ajax({
-					url: "getCategoryDetail",
-					method: "get",
-					data: { "big_category" : big_category },
-					success: function(data) {
-						$("#class_small_category").empty();
-						$.each(data, function(index, item) {
-							$("#class_small_category").append(
-								$('<option></option>').val(item.common3_code).text(item.code_value)	
+					type: "GET",
+					url: "ClassDeleteFile",
+					dataType: "JSON",
+					data: {
+						class_code : class_code,
+						class_file1: class_file1
+					},
+					success: function(result) {
+						if(result){ // 성공
+	 						console.log($(".file").eq(index-1).html())
+	 						console.log($("#fileItemArea" + index).html())
+							$(".file").eq(index-1).html(
+									'<input type="file" name="file' + index + '">'
 							);
-						});
+						} else {
+							console.log("삭제 실패");
+						} 
+						
+					},
+					error: function() {
 					}
-				});		
-			});
+				});
+			}	
+		}
+		// 썸네일 이미지파일 삭제
+			function deleteThumnailFile(class_code, class_file1){
+				if(confirm("썸네일 파일을 삭제하시겠습니까?")){
+					$.ajax({
+						type: "GET",
+						url: "ClassDeleteFile",
+						dataType: "JSON",
+						data: {
+							class_code : class_code,
+							class_file1: class_file1
+						},
+						success: function(result) {
+							if(result){ // 성공
+								$(".thumnail").html(
+										'<input type="file" name="class_thumnail">'
+								);
+							} else {
+								console.log("삭제 실패");
+							} 
+							
+						},
+						error: function() {
+						}
+					});
+				}	
+			}
+		
+			$(function() {
+				
+				// 페이지가 로드되면 큰 카테고리에 해당하는 작은 카테고리 목록을 불러옵니다.
+			    loadSmallCategory();
+				
+				// 카테고리 선택시 상세카테
+				$("#class_big_category").change(function() {
+					loadSmallCategory();
+				});
+				
+				function loadSmallCategory() {
+					var big_category = $("#class_big_category").val();
+					var selectedSmallCategory = $('#selected_small_category').val();
+					$.ajax({
+						url: "getCategoryDetail",
+						method: "get",
+						data: { "big_category" : big_category },
+						success: function(data) {
+							$("#class_small_category").empty();
+							$.each(data, function(index, category) {
+								var option = $('<option></option>')
+		                        .attr('value', category.common3_code)
+		                        .text(category.code_value);
+	
+			                    // 옵션이 선택된 작은 카테고리라면 선택 상태로
+			                    if (category.common3_code == selectedSmallCategory) {
+			                        option.attr('selected', 'selected');
+			                    }
+			                    $("#class_small_category").append(option);
+							});
+						}
+					});	
+				}
+				
+		
 			
 			// 회차 추가 및 데이터 전달
 			let roundCount = 1;
@@ -295,10 +414,9 @@
 	                    $(this).find('td:first').html(index + '차시 <span class="delete-btn">&times;</span>');
 	                }
 	            });
-// 	            debugger;
 	        }
 			
-		});
+			});
 		
 		// 썸머노트 설정
 		$('#summernote').summernote({
@@ -339,14 +457,23 @@
 					fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72']
 		          
 		});
+	
 		
 		// 해쉬태그 다중선택
 		document.addEventListener('DOMContentLoaded', () => {
-		    const items = document.querySelectorAll('.item');
+		    const items = document.querySelectorAll('.hashtag');
 		    const form = document.querySelector('.validation-form');
 		    const selectedItemsInput = document.getElementById('selected-items');
-	
+		    const initialSelectedItems = selectedItemsInput.value.split(',');
+			debugger;
 		    items.forEach(item => {
+		    	const dataValue = item.getAttribute('data-value').trim();
+		        console.log('Data Value:', dataValue); // 데이터 값 확인용 로그
+		        if (initialSelectedItems.includes(dataValue)) {
+		            item.classList.add('selected');
+		            console.log('Item Selected:', item); // 선택된 항목 로그
+		        }
+		    	
 		        item.addEventListener('click', () => {
 		            item.classList.toggle('selected');
 		            updateSelectedItems();
@@ -363,7 +490,6 @@
 		            .map(item => item.getAttribute('data-value'));
 	
 		        selectedItemsInput.value = selectedItems.join(',');
-		        debugger;
 		    }
 		    
 		});
@@ -376,14 +502,35 @@
 	            oncomplete: function(data) {
 	                console.log(data);
 	                document.fr.post_code.value = data.zonecode;
-	        		let address = data.address; // 기본주소 변수에 저장
+	        		let address = data.roadAddress; // 기본주소 변수에 저장
 	        		if(data.buildingName != "") {
 	        			address += " (" + data.buildingName + ")";
 	        		}
+	        		document.fr.sido.value = data.sido;
 	        		// 기본주소 출력
 	        		document.fr.address1.value = address;
 	        		// 상세주소 입력 항목에 커서 요청
 	        		document.fr.address2.focus();
+	        		let location = address.replace(/\s+/g, '');// 공백 제거
+	        		
+	        		 $.ajax({
+	    		        url: 'geocode',
+	    		        type: 'GET',
+	    		        data: { address: address },
+	    		        success: function(response) {
+	    		            console.log('Coordinates:', response);
+	    		            // XML 파싱 및 좌표 추출
+	    		            var parser = new DOMParser();
+	    		            var xmlDoc = parser.parseFromString(response, "text/xml");
+	    		            var x = xmlDoc.getElementsByTagName("x")[0].childNodes[0].nodeValue;
+	    		            var y = xmlDoc.getElementsByTagName("y")[0].childNodes[0].nodeValue;
+							$("#location_x").val(y);
+							$("#location_y").val(x);
+	    		        },
+	    		        error: function(error) {
+	    		            console.log('Error:', error);
+	    		        }
+	    		    });
 	            }
 	        }).open();
 	    }

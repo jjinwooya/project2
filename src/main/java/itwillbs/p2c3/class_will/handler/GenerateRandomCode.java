@@ -1,5 +1,7 @@
 package itwillbs.p2c3.class_will.handler;
 
+import java.security.SecureRandom;
+
 import org.apache.commons.lang3.RandomStringUtils;
 
 // 특정 길이의 난수 생성에 사용할 클래스 정의
@@ -43,12 +45,26 @@ public class GenerateRandomCode {
 //		
 //		System.out.println(strNum);
 		
+		
+		
+		
+		
 		return RandomStringUtils.randomAlphanumeric(length);
 		
 		
 		
-		
 	}
+	
+	
+	public static String getAuthCode() {
+		
+		SecureRandom r = new SecureRandom();
+		int rNum = r.nextInt(100000);
+		String strNum = String.format("%05d", rNum);
+		
+		return strNum;
+	}
+	
 }
 
 

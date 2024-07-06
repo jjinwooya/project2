@@ -18,23 +18,29 @@ public class WillUtils {
 	
 	
 	public static String checkDeleteSuccess(boolean isSuccess, Model model, String msg, boolean isClose) {
-		System.out.println("checkDeleteSuccess-로딩");
-		if(isSuccess) {
-			model.addAttribute("msg", msg);
-			
-			if(isClose) {
-				model.addAttribute("isClose", "true");
-			}
-			return "result_process/success";
-		}else {
-			model.addAttribute("msg", msg);
-			
-			if(isClose) {
-				model.addAttribute("isClose", "true");
-			}
-			return "result_process/fail";
+//		if(isSuccess) {
+//			model.addAttribute("msg", msg);
+//			
+//			if(isClose) {
+//				model.addAttribute("isClose", "true");
+//			}
+//			return "result_process/success";
+//		}else {
+//			model.addAttribute("msg", msg);
+//			
+//			if(isClose) {
+//				model.addAttribute("isClose", "true");
+//			}
+//			return "result_process/fail";
+//		}
+		
+		String result = "result_process/";
+		result += isSuccess ? "success" : "fail";
+		model.addAttribute("msg", msg);
+		if(isClose) {
+			model.addAttribute("isClose", "true");
 		}
-		 
+		return result;
 	}
 	
 	public static String checkDeleteSuccess(int isSuccess, Model model, String msg, int isClose) {

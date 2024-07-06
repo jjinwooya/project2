@@ -35,6 +35,7 @@ public class PayController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(PayController.class);
 	
+	
 	//ajax 호출
 	@ResponseBody
 	@GetMapping("date-changed")
@@ -49,9 +50,15 @@ public class PayController {
 	@GetMapping("will-pay-all")
 	public Map<String, String> willPayAll(@RequestParam Map<String, String> map) {
 		Map<String, String> credit = payService.getCredit(map);
-		System.out.println("크레딧!!!:" + credit.get("member_credit"));
+//		System.out.println("크레딧!!!:" + credit.get("member_credit"));
 		
 		return credit;
+	}
+	
+	//popUp - agreeTerms
+	@GetMapping("refund-agreeTerms")
+	public String agreeTerms() {
+		return "payment/refund_agreeTerms";
 	}
 	
 	
@@ -59,16 +66,31 @@ public class PayController {
 	@PostMapping("payment")
 	public String paymentPro(Model model, @RequestParam Map<String, String> map, HttpSession session) {
 		MemberVO member= (MemberVO)session.getAttribute("member");
+		String result = "";
 		if(member == null) {
-			model.addAttribute("msg", "로그인 후 이용바랍니다");
-			return "result_process/fail";
+			result = WillUtils.checkDeleteSuccess(false, model, "로그인 후 이용바립니다.", false);
+			return result;
 		}
+		//고객정보 가져오기
+		Map<String, Object> memberInfo = payService.getMemberInfo(member);
+		
+		//형변환
+		Object memberCode = memberInfo.get("member_code");
+		if(memberCode instanceof Integer) {
+			String member_code = Integer.toString((int)memberCode);
+			//payInfo에 쓰일 파라미터
+			map.put("member_code", member_code);
+			//memberInfo에 쓰일 파라미터
+			memberInfo.put("member_code", member_code);
+		}
+		model.addAttribute("memberInfo", memberInfo);
 		
 		
 		String[] splitTime = map.get("select_time").split("~");
 		map.put("class_st_time", splitTime[0]);
 		map.put("class_ed_time", splitTime[1]);
 		Map<String, String> payInfo = payService.getPayInfo(map);
+		System.out.println("payInfo!!!!" + payInfo);
 		
 		
 		if(payInfo == null) {
@@ -79,8 +101,8 @@ public class PayController {
 		payInfo.put("headcount", map.get("selected_headcount"));
 		
 		//고객 멤버코드 
-		String member_code = Integer.toString(member.getMember_code()); 
-		payInfo.put("member_code", member_code);
+//		String member_code = memberInfo.get("member_code"); 
+//		payInfo.put("member_code", member_code);
 		
 		//소계
 		int price = Integer.parseInt(payInfo.get("class_price"));
@@ -96,7 +118,7 @@ public class PayController {
 	@ResponseBody
 	@PostMapping("verify")
 	public Map<String, Object> verify(@RequestBody Map<String, Object> map) {
-		
+		System.out.println(map);
 		Map<String, Object> response = payService.verifyPayment(map);
 		
 		return response;
@@ -145,9 +167,9 @@ public class PayController {
 			List<Map<String, Integer>> packageInfo = payService.getPackageInfo();
 			logger.info("@@@@ packageInfo:" + packageInfo);
 			
-			model.addAttribute("packageInfo", packageInfo);
-			model.addAttribute("packageInfoJson", jsonArray);
+			model.addAttribute("bankInfoJson", jsonArray);
 			model.addAttribute("bankUserInfo", bankUserInfo);
+			model.addAttribute("packageInfo", packageInfo);
 		}
 		
 		return "payment/will_pay_charge";
@@ -164,14 +186,14 @@ public class PayController {
 			return result1;
 		}
 		
-		//토큰 가져와서 넣기
+		//member_code - put()
+		int member_code = member.getMember_code();
+		map.put("member_code", member_code);
+		
+		//session에서 토큰 가져오기
 		Map<String, String> token = (Map<String, String>)session.getAttribute("token");
 		map.put("access_token", token.get("access_token"));
 		map.put("user_seq_no", token.get("user_seq_no"));
-		
-		String stringMemberCode = Integer.toString(member.getMember_code());
-		int member_code = Integer.parseInt(stringMemberCode);
-		map.put("member_code", member_code);
 		
 		Map withdrawResult = payService.withdraw(map);
 		
@@ -180,28 +202,6 @@ public class PayController {
 			result2 = WillUtils.checkDeleteSuccess(false, model, "충전에 실패하였습니다", false);
 			return result2;
 		}
-		
-		//willpay 결제 성공 시 member_credit - update -> select
-		int member_credit = payService.updateWillPay(map);
-		
-		String date = ((String)withdrawResult.get("api_tran_dtm")).substring(0, 14);
-		DateTimeFormatter parsedDate = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-		LocalDateTime datetime = LocalDateTime.parse(date, parsedDate);
-		
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		String payAc_date = datetime.format(dtf);
-		
-		
-		withdrawResult.put("member_credit", member_credit);
-		withdrawResult.put("payAc_amount", withdrawResult.get("tran_amt"));
-		withdrawResult.put("tran_amt_total", map.get("tran_amt_total"));
-		withdrawResult.put("payAc_fintech_use_num", withdrawResult.get("fintech_use_num"));
-		withdrawResult.put("payAc_bank_name", withdrawResult.get("bank_name"));
-		withdrawResult.put("member_code", member_code);
-		withdrawResult.put("payAc_date", payAc_date);
-		withdrawResult.put("payAc_product_type", map.get("payAc_type"));
-		
-		payService.registPayAccountInfo(withdrawResult);
 		
 		model.addAttribute("withdrawResult", withdrawResult);
 		
@@ -227,11 +227,11 @@ public class PayController {
 		}
 		map.put("member_code", member_code);
 		
-		Map<String, String> bank_info = new HashMap<String, String>();
-		bank_info.put("access_token", (String)map.get("access_token"));
-		bank_info.put("user_seq_no", (String)map.get("user_seq_no"));
+		Map<String, String> token = new HashMap<String, String>();
+		token.put("access_token", (String)map.get("access_token"));
+		token.put("user_seq_no", (String)map.get("user_seq_no"));
 		// 세션에 엑세스토큰(access_token)과 사용자번호(user_seq_no) 저장
-		session.setAttribute("token", bank_info);
+		session.setAttribute("token", token);
 		
 		// access_token db저장
 		payService.registAccessToken(map);
@@ -256,12 +256,104 @@ public class PayController {
 		if (member == null) {
 			return WillUtils.checkDeleteSuccess(false, model, "로그인이 필요한 페이지입니다", false, "member-login");
 		}
+		int member_code = member.getMember_code();
+		Map<String, Object> memberCode = new HashMap<String, Object>();
+		memberCode.put("member_code", member_code);
+		List<Map<String, String>> payInfoList = payService.getPayInfoList(memberCode);
+		System.out.println(payInfoList);
 		
 		
-		
-		
+		model.addAttribute("payInfoList", payInfoList);
 		return "mypage/mypage-class";
 	}
+	
+	@ResponseBody
+	@PostMapping("refund")
+	public boolean refund(@RequestBody Map<String, Object> map, HttpSession session, Model model) {
+		System.out.println("refund-map값: " + map);
+		boolean isSuccess = false;
+		
+		MemberVO member = (MemberVO)session.getAttribute("member");
+		String result = "";
+		if(member == null) {
+			WillUtils.checkDeleteSuccess(false, model, "로그인 후 이용바랍니다.", false);
+		}
+		int memberCode = member.getMember_code();
+		map.put("member_code", memberCode);
+		
+		//결제 날짜를 비교하여 환불금액 결정
+		int refund_amt = payService.getRefundAmt(map);
+		map.put("refund_amt", refund_amt);
+		
+		//환불 요청
+		try {
+			isSuccess = payService.refundPay(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return isSuccess;
+	}
+	
+	// 크레딧관련
+	@GetMapping("my-credit")
+	public String myCredit(Model model, HttpSession session) {
+		MemberVO member = (MemberVO) session.getAttribute("member");
+		String result = "";
+		if (member == null) {
+			result = WillUtils.checkDeleteSuccess(false, model, "로그인이 필요한 페이지입니다", false, "member-login");
+			return result;
+		}
+		int member_code = member.getMember_code();
+		List<Map<String, Object>> willpayChargeInfoList = payService.getWillpayChargeList(member_code);
+		System.out.println("!willpayChargeInfoList: " + willpayChargeInfoList);
+		
+		model.addAttribute("willpayChargeInfoList", willpayChargeInfoList);
+		return "mypage/mypage-credit";
+	}
+	
+	@ResponseBody
+	@PostMapping("refund-willpay")
+	public boolean refundWillpay(@RequestBody Map<String, Object> map, HttpSession session, Model model) {
+		boolean isRefund = false;
+		MemberVO member = (MemberVO) session.getAttribute("member");
+		
+		int member_code = member.getMember_code();
+		String user_name = member.getMember_name();
+		
+		System.out.println("refundWillpay: " + map);
+//		Map<String , Object> willpayParams = new HashMap<String, Object>();
+//		willpayParams.put("will_pay_date", map.get("will_pay_date"));
+		map.put("member_code", member_code);
+		map.put("user_name", user_name);
+		
+		int validateWillpay = payService.getWillpayDate(map);
+		System.out.println("validatgWillpay: " + validateWillpay);
+		
+		if(validateWillpay == 0) {
+			return isRefund;
+		} else {
+			Map<String, Object> token = (Map<String, Object>)session.getAttribute("token");
+			//고객의 access_token, fintech_use_num 
+			map.put("fintech_use_num", token.get("fintech_use_num"));
+			map.put("access_token", token.get("access_token"));
+			map.put("used_willpay", validateWillpay);
+			
+			Object result = payService.deposit(map);
+			//사용 willpay 금액이 결제 금액보다 많은 경우
+			if(result instanceof Boolean) {
+				isRefund = (boolean)result;
+				return isRefund;
+			}
+			System.out.println("결과!!!:" + result.toString());
+			
+			isRefund = true;
+		}
+		
+		
+		return isRefund;
+	}
+	
 	
 	
 }

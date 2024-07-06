@@ -1,12 +1,21 @@
 package itwillbs.p2c3.class_will.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
@@ -20,8 +29,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import itwillbs.p2c3.class_will.handler.WillUtils;
 import itwillbs.p2c3.class_will.service.CreatorService;
 import itwillbs.p2c3.class_will.service.MemberService;
 import itwillbs.p2c3.class_will.vo.ClassTimeVO;
@@ -34,8 +45,8 @@ public class CreatorController {
 	@Autowired
 	private CreatorService creatorService;
 	
-	@Autowired
-	private MemberService memberService;
+	// 이미지 업로드 디렉토리
+	String uploadDir = "/resources/upload";
 
 	// creator-main으로
 	@GetMapping("creator-main")
@@ -70,18 +81,28 @@ public class CreatorController {
 			model.addAttribute("targetURL", "member-login");
 			return "result_process/fail";
 		}
-		
-		model.addAttribute("bank_info", bank_info);
+		if(Integer.parseInt(member.getMember_type()) == 2 && Integer.parseInt(member.getMember_type()) == 3) {
+			model.addAttribute("msg", "잘못된 접근입니다!");
+			model.addAttribute("targetURL", "creator-main");
+			return "result_process/fail";
+		}
+		System.out.println(">>>>>>>token: " + bank_info);
+		model.addAttribute("token", bank_info);
 		
 		return "creator/creator-qualify";
 	}
 
 	// creator-regist PRO 
 	@GetMapping("creator-regist")
-	public String creatorRegist(HttpSession session){
+	public String creatorRegist(HttpSession session, Model model){
 		MemberVO member = (MemberVO)session.getAttribute("member");
+		if(Integer.parseInt(member.getMember_type()) == 2) {
+			model.addAttribute("msg", "이미 크리에이터로 등록된 회원입니다!");
+			model.addAttribute("targetURL", "creator-main");
+			return "result_process/fail";
+		}
 		creatorService.updateMemberType(member);
-		return "redirect:/creator-main";
+		return "creator-main";
 	}
 	
 	//=================================================================================
@@ -144,6 +165,7 @@ public class CreatorController {
 		return "creator/creator-classReg";
 	}
 	
+	// geocode api 코드
     @Value("${vworld.api.key}")
     private String vworldApiKey;
 
@@ -222,11 +244,54 @@ public class CreatorController {
 		List<Map<String, String>> hashtagList = creatorService.getHashtag();
 		Map<String, Object> classDetail = creatorService.getClassDetail(class_code);
 		
+		String location = (String)classDetail.get("class_location");
+		if(location.contains("/")) {
+			String[] locationArr = location.split("/");
+			classDetail.put("post_code", locationArr[0]);
+			classDetail.put("address1", locationArr[1]);
+			classDetail.put("address2", locationArr[2]);
+		}
+		
+		String[] arrFileNames = {
+               (String) classDetail.get("class_image"),
+               (String) classDetail.get("class_image2"),
+               (String) classDetail.get("class_image3"),
+	    };
+		String thumnailFile = (String) classDetail.get("class_thumnail");
+		
+	    model.addAttribute("fileNames", arrFileNames);
+	    model.addAttribute("thumnailFile", thumnailFile);
+		
 		model.addAttribute("categoryList", categoryList);
 		model.addAttribute("hashtagList", hashtagList);
 		model.addAttribute("classDetail", classDetail);
 		
 		return "creator/creator-classModify";
+	}
+	
+	@ResponseBody
+	@GetMapping("ClassDeleteFile")
+	public String ClassDeleteFile(@RequestParam Map<String, Object> map, HttpSession session) {
+		System.out.println(">>>map: " + map);
+		int removeCount = creatorService.removeClassFile(map);
+		
+		if(removeCount > 0) {
+			// 서버에 업로드된 파일 삭제
+			String saveDir = session.getServletContext().getRealPath(uploadDir);
+			if(!map.get("class_file1").equals("")) {
+				Path path = Paths.get(saveDir + "/" + map.get("class_file1"));
+				try {
+					Files.deleteIfExists(path);
+					// 삭제성공시 true 값 리턴
+					return "true";
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+			}
+		}
+		
+		return "false";
 	}
 	
 	// ajax로 카테고리 처리
@@ -240,7 +305,9 @@ public class CreatorController {
 
 	// creater-class 등록
 	@PostMapping("creator-classRegPro")
-	public String createrClassRegPro(@RequestParam Map<String, Object> map, HttpSession session, Model model) {
+	public String createrClassRegPro(@RequestParam Map<String, Object> map,  @RequestParam Map<String, MultipartFile> files, HttpSession session, HttpServletRequest request, Model model) {
+		System.out.println(">>>>>>>>regPro map: " + map);
+		System.out.println(">>>>>>>>regPro files: " + files);
 		
 		MemberVO member = (MemberVO)session.getAttribute("member");
 		if(member == null) {
@@ -249,7 +316,7 @@ public class CreatorController {
 			return "result_process/fail";
 		}
 		map.put("member_code", member.getMember_code());
-		map.put("class_location", "" + map.get("post_code") + map.get("address1") + map.get("address2"));
+		map.put("class_location", map.get("post_code") + "/" + map.get("address1") + "/" + map.get("address2"));
 		
 		List<CurriVO> curriList = new ArrayList<CurriVO>();
 		
@@ -261,14 +328,121 @@ public class CreatorController {
             	curriList.add(curri);
             }
         }
-		
-		System.out.println(">>>>>>>>>map: " + map);
-		System.out.println(">>>>>>>>>curriList: " + curriList);
-		
-		creatorService.createrClassRegPro(map, curriList);
+
+        String uploadDir = "/resources/upload";
+        String saveDir = request.getServletContext().getRealPath(uploadDir);
+
+        LocalDate today = LocalDate.now();
+        String datePattern = "yyyy/MM/dd";
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(datePattern);
+        String subDir = today.format(dtf);
+        saveDir += "/" + subDir;
+
+        Path path = Paths.get(saveDir);
+        try {
+            Files.createDirectories(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        for (Map.Entry<String, MultipartFile> entry : files.entrySet()) {
+            String paramName = entry.getKey();
+            MultipartFile file = entry.getValue(); // mfile
+            if (file != null && !file.getOriginalFilename().equals("")) {
+                String fileName = UUID.randomUUID().toString().substring(0, 8) + "_" + file.getOriginalFilename();
+                try {
+                    // DB에 파일 이름 저장
+                    if (paramName.equals("class_thumnail")) {
+                        map.put("class_thumnail", subDir + "/" + fileName);
+                    } else if (paramName.equals("file1")) {
+                        map.put("class_image", subDir + "/" + fileName);
+                    } else if (paramName.equals("file2")) {
+                        map.put("class_image2", subDir + "/" + fileName);
+                    } else if (paramName.equals("file3")) {
+                        map.put("class_image3", subDir + "/" + fileName);
+                    }
+                    file.transferTo(new File(saveDir, fileName));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        System.out.println(">>>>> map 파일저장 이후 " + map);
+        creatorService.createrClassRegPro(map, curriList);
 		
 		return "redirect:/creator-class";
 	}
+	
+	// creater-class 등록
+	@PostMapping("ClassModifyPro")
+	public String ClassModifyPro(@RequestParam Map<String, Object> map,  @RequestParam Map<String, MultipartFile> files, HttpSession session, HttpServletRequest request, Model model) {
+		System.out.println(">>>>>>>modifyPro map: " + map);
+		System.out.println(">>>>>>>>modifyPro files: " + files);
+		
+		MemberVO member = (MemberVO)session.getAttribute("member");
+		if(member == null) {
+			model.addAttribute("msg", "잘못된 접근입니다!");
+			model.addAttribute("targetURL", "./");
+			return "result_process/fail";
+		}
+		map.put("member_code", member.getMember_code());
+		map.put("class_location", map.get("post_code") + "/" + map.get("address1") + "/" + map.get("address2"));
+		
+		List<CurriVO> curriList = new ArrayList<CurriVO>();
+		
+		for (Map.Entry<String, Object> entry : map.entrySet()) {
+			CurriVO curri = new CurriVO();
+			if (entry.getKey().contains("차시")) {
+				curri.setCurri_round(entry.getKey());
+				curri.setCurri_content((String)entry.getValue());
+				curriList.add(curri);
+			}
+		}
+		
+//		String uploadDir = "/resources/upload";
+		String saveDir = request.getServletContext().getRealPath(uploadDir);
+		
+		LocalDate today = LocalDate.now();
+		String datePattern = "yyyy/MM/dd";
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern(datePattern);
+		String subDir = today.format(dtf);
+		saveDir += "/" + subDir;
+		
+		Path path = Paths.get(saveDir);
+		try {
+			Files.createDirectories(path);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		for (Map.Entry<String, MultipartFile> entry : files.entrySet()) {
+			String paramName = entry.getKey();
+			MultipartFile file = entry.getValue(); // mfile
+			if (file != null && !file.getOriginalFilename().equals("")) {
+				String fileName = UUID.randomUUID().toString().substring(0, 8) + "_" + file.getOriginalFilename();
+				try {
+					// DB에 파일 이름 저장
+					if (paramName.equals("class_thumnail")) {
+						map.put("class_thumnail", subDir + "/" + fileName);
+					} else if (paramName.equals("file1")) {
+						map.put("class_image", subDir + "/" + fileName);
+					} else if (paramName.equals("file2")) {
+						map.put("class_image2", subDir + "/" + fileName);
+					} else if (paramName.equals("file3")) {
+						map.put("class_image3", subDir + "/" + fileName);
+					}
+					file.transferTo(new File(saveDir, fileName));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		System.out.println(">>>>> map 파일저장 이후 " + map);
+		creatorService.createrClassModifyPro(map, curriList);
+		
+		return "redirect:/creator-class";
+	}
+	
 	
 	// creater-class 일정등록 페이지로
 	@GetMapping("creator-class-plan")
@@ -441,15 +615,66 @@ public class CreatorController {
 			return "result_process/fail";
 		}
 		
-		List<Map<String, Object>> classList = creatorService.getCertifiedClassInfo(member);
+		List<Map<String, Object>> classList = creatorService.getClassByReview(member);
+		List<Map<String, Object>> classReviewList = creatorService.getReviewInfo(member);
+		
+		List<JSONObject> rw_list = new ArrayList<JSONObject>(); 
+		
+		for(Map<String, Object> clas : classReviewList) {
+            JSONObject cl = new JSONObject(clas);
+            rw_list.add(cl);
+		}
+		
 		model.addAttribute("classList", classList);
+		model.addAttribute("rw_list", rw_list);
 		
 		return "creator/creator-review";
 	}
+	
+	@ResponseBody
+	@GetMapping("getReviewByClass")
+	public List<Map<String, Object>> getReviewByClass(@RequestParam(defaultValue = "0") int classCode, HttpSession session){
+		MemberVO member =  (MemberVO)session.getAttribute("member");
+		int member_code = member.getMember_code();
+		List<Map<String, Object>> reviewListByClass = creatorService.getReviewByClass(classCode, member_code);
+		return reviewListByClass;
+	}
+
+	@ResponseBody
+	@GetMapping("getReviewByType")
+	public List<Map<String, Object>> getReviewByType(@RequestParam(defaultValue = "0") int classCode
+													, @RequestParam(defaultValue = "N") String type, HttpSession session){
+		MemberVO member =  (MemberVO)session.getAttribute("member");
+		int member_code = member.getMember_code();
+		List<Map<String, Object>> reviewListByType = creatorService.getReviewByType(classCode, type, member_code);
+		return reviewListByType;
+	}
+	
 	// creater-review-form으로
 	@GetMapping("creator-review-form")
-	public String createrReviewForm() {
+	public String createrReviewForm(@RequestParam(defaultValue = "0") int class_review_code, Model model) {
+		Map<String, Object> review = creatorService.getReviewByReviewCode(class_review_code);
+		Map<String, Object> reply = creatorService.getReplyByReviewCode(class_review_code);
+		model.addAttribute("review", review);
+		model.addAttribute("reply", reply);
+		
 		return "creator/creator-review-form";
+	}
+	
+	@ResponseBody
+	@GetMapping("insertReviewReply")
+	public void insertReviewReply(@RequestParam(defaultValue = "0") int reviewCode
+								, @RequestParam(defaultValue = "0") String reviewReply
+								, @RequestParam(defaultValue = "0") String reviewStatus) {
+		
+		creatorService.insertReviewReply(reviewCode, reviewReply, reviewStatus);
+	}
+
+	@ResponseBody
+	@GetMapping("deleteReviewReply")
+	public void deleteReviewReply(@RequestParam(defaultValue = "0") int reviewCode) {
+		
+		creatorService.deleteReviewReply(reviewCode);
 	}
 	
 	//======================================================
@@ -464,15 +689,65 @@ public class CreatorController {
 			return "result_process/fail";
 		}
 		
-		List<Map<String, Object>> classList = creatorService.getinquiryClassInfo(member);
+		List<Map<String, Object>> classList = creatorService.getClassByInquiry(member);
+		
+		List<Map<String, Object>> classInquiryList = creatorService.getInquiryClassInfo(member);
+		List<JSONObject> iq_list = new ArrayList<JSONObject>(); 
+		
+		for(Map<String, Object> clas : classInquiryList) {
+            JSONObject cl = new JSONObject(clas);
+            iq_list.add(cl);
+		}
 		model.addAttribute("classList", classList);
+		model.addAttribute("iq_list", iq_list);
 		
 		return "creator/creator-inquiry";
 	}
+	
+	@ResponseBody
+	@GetMapping("getInquiryByClass")
+	public List<Map<String, Object>> getInquiryByClass(@RequestParam(defaultValue = "0") int classCode, HttpSession session){
+		MemberVO member =  (MemberVO)session.getAttribute("member");
+		int member_code = member.getMember_code();
+		List<Map<String, Object>> inquiryListByClass = creatorService.getInquiryByClass(classCode, member_code);
+		return inquiryListByClass;
+	}
+
+	@ResponseBody
+	@GetMapping("getInquiryByType")
+	public List<Map<String, Object>> getInquiryByType(@RequestParam(defaultValue = "0") int classCode
+													, @RequestParam(defaultValue = "N") String type, HttpSession session){
+		MemberVO member =  (MemberVO)session.getAttribute("member");
+		int member_code = member.getMember_code();
+		List<Map<String, Object>> inquiryListByType = creatorService.getInquiryByType(classCode, type, member_code);
+		return inquiryListByType;
+	}
+	
 	// creater-inquiry-form으로
 	@GetMapping("creator-inquiry-form")
-	public String createrInquiryForm() {
+	public String createrInquiryForm(@RequestParam(defaultValue = "0") int class_inquiry_code, Model model) {
+		Map<String, Object> inquiry = creatorService.getInquiryByInquiryCode(class_inquiry_code);
+		Map<String, Object> reply = creatorService.getReplyByInquiryCode(class_inquiry_code);
+		model.addAttribute("inquiry", inquiry);
+		model.addAttribute("reply", reply);
+		
 		return "creator/creator-inquiry-form";
+	}
+	
+	@ResponseBody
+	@GetMapping("insertInquiryReply")
+	public void insertInquiryReply(@RequestParam(defaultValue = "0") int inquiryCode
+								, @RequestParam(defaultValue = "0") String inquiryReply
+								, @RequestParam(defaultValue = "0") String inquiryStatus) {
+		
+		creatorService.insertInquiryReply(inquiryCode, inquiryReply, inquiryStatus);
+	}
+
+	@ResponseBody
+	@GetMapping("deleteInquiryReply")
+	public void deleteInquiryReply(@RequestParam(defaultValue = "0") int inquiryCode) {
+		
+		creatorService.deleteInquiryReply(inquiryCode);
 	}
 	
 	
@@ -487,13 +762,28 @@ public class CreatorController {
 			model.addAttribute("targetURL", "./");
 			return "result_process/fail";
 		}
+		Map<String, Object> analyzeList = creatorService.getAnalyzeList(member);
+		List<Map<String, Object>> classList = creatorService.getAnalyzeClassInfo(member);
+		List<Map<String, Object>> GraphDataList = creatorService.getGraphDataList(member);
 		
-		List<Map<String, Object>> classList = creatorService.getCertifiedClassInfo(member);
+		
 		model.addAttribute("classList", classList);
+		model.addAttribute("analyzeList", analyzeList.get("analyzeList"));
+		model.addAttribute("analyzeReviewList", analyzeList.get("analyzeReviewList"));
+		model.addAttribute("GraphDataList", GraphDataList);
 		
 		return "creator/creator-analyze";
 	}
 	
+	@ResponseBody
+	@GetMapping
+	public String graphByClass() {
+		return "";
+	}
+	
+	
+	
+	//======================================================
 	// creater-cost로
 	@GetMapping("creator-cost")
 	public String createrCost(HttpSession session, Model model) {
@@ -506,7 +796,6 @@ public class CreatorController {
 		
 		String settlementDate = creatorService.getsettlementDate(member);
 		Map<String, String> SumSettlement = creatorService.getSumSettlement(member, settlementDate);
-		
 		model.addAttribute("settlementDate", settlementDate);
 		model.addAttribute("SumSettlement", SumSettlement);
 		
@@ -535,9 +824,10 @@ public class CreatorController {
 		}
 		creatorService.settlementPro(member, total_sum);
 		
-		return "creator/creator-cost";
+		creatorService.depositSettlement(member, total_sum);
+		
+		return WillUtils.checkDeleteSuccess(true, model, "정산 처리 완료", false, "creator-cost");
 	}
-	
 	
 
 }

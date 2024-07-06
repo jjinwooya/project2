@@ -1,9 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>	
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<title>리뷰 수정하기</title>
+<title>리뷰 등록하기</title>
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <meta content="" name="keywords">
@@ -136,10 +139,8 @@ th:nth-child(2), td:nth-child(2) {
 							<!-- 크리에이터 인사 문구 -->
 							<!-- 크리에이터 이벤트 -->
 							<div class="creator-event mt-5">
-								<div class="col-md-12 text-center h2 mb-5">리뷰 등록하기</div>
-								<form action="edit-review" method="post">
-									<input type="hidden" name="class_review_code"
-										value="">
+								<div class="col-md-12 text-center h2 mb-5">${classInfo.class_name}리뷰 등록하기</div>
+								<form action="insert-review" method="post" id="reviewForm">
 									<div class="form-group">
 										<label for="subject">제목</label> <input type="text"
 											class="form-control" id="subject" name="class_review_subject"
@@ -148,7 +149,7 @@ th:nth-child(2), td:nth-child(2) {
 									<div class="form-group">
 										<label for="content">내용</label>
 										<textarea class="form-control" id="content"
-											name="class_review_content" rows="5" required>내용</textarea>
+											name="class_review_content" rows="5" required></textarea>
 									</div>
 									<div class="form-group">
 										<label for="rating">별점</label>
@@ -159,6 +160,9 @@ th:nth-child(2), td:nth-child(2) {
 										</div>
 										<input type="hidden" id="rating" name="class_review_rating"
 											value="" required>
+										 <input type="hidden" name="class_code" value="${class_code}">
+        								 <input type="hidden" name="member_code" value="${member_code}">	
+        								 <input type="hidden" name="class_schedule_code"  value="${class_schedule_code}">
 									</div>
 									<button type="submit" class="btn btn-primary">등록</button>
 									<button type="button"  class="btn btn-primary" onclick="window.history.back()">뒤로가기</button>
@@ -198,7 +202,9 @@ th:nth-child(2), td:nth-child(2) {
 	document.addEventListener('DOMContentLoaded', function () {
         const stars = document.querySelectorAll('#star-rating span');
         const ratingInput = document.getElementById('rating');
-
+        const form = document.getElementById('reviewForm');
+        
+        
         function updateStars(rating) {
             stars.forEach((star, index) => {
                 star.classList.toggle('selected', index < rating);
@@ -215,6 +221,13 @@ th:nth-child(2), td:nth-child(2) {
 
         // 초기 별점 설정
         updateStars(parseInt(ratingInput.value));
+        
+        form.addEventListener('submit', function (event) {
+            if (ratingInput.value === '') {
+                event.preventDefault(); // 폼 제출 막기
+                alert('별점을 선택해주세요.'); // 경고 메시지 표시
+            }
+        });
     });
     </script>
 </body>

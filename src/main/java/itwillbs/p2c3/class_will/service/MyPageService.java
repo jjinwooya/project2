@@ -30,8 +30,8 @@ public class MyPageService {
 	
 	
 	//멤버가 작성한 리뷰들 가지고 오기 (리스트임)
-	public List<Map<String, String>> getMemberReviews(int member_code) {
-		return  myPageMapper.selectMemberReview(member_code);
+	public List<Map<String, String>> getMemberReviews(int member_code,int startRow2, int listLimit2) {
+		return  myPageMapper.selectMemberReview(member_code,startRow2, listLimit2);
 	}
 	
 	//멤버가 작성한 특성리뷰 1개 가지고 오기
@@ -72,9 +72,44 @@ public class MyPageService {
 	}
 	
 	//멤버가 관심있는 클래스
-	public List<Map<String, String>> getMemberLike(int member_code) {
+	public List<Map<String, String>> getMemberLike(int member_code, int startRow, int listLimit) {
 		
-		return myPageMapper.selectLike(member_code);
+		return myPageMapper.selectLike(member_code,startRow,listLimit);
+	}
+	
+	//리뷰를 작성할 수 있는 클래스(결제하고 수료일까지 지난 상태임)
+	public List<Map<String, String>> getPossibleReview(int member_code,int startRow, int listLimit) {
+		
+		return myPageMapper.selectPossibleReview(member_code, startRow, listLimit);
+	}
+	//리뷰 등록
+	public int insertReview(Map<String, String> formData) {
+		
+		return myPageMapper.insertReview(formData);
+	}
+
+	public int withdrawMember(MemberVO member) {
+		// TODO Auto-generated method stub
+		return myPageMapper.MemberWithdraw(member);
+	}
+
+	public List<Map<String, String>> getMemberMaster(int member_code2) {
+	
+		return myPageMapper.selectMemberMaster(member_code2);
+	}
+
+	public int getMemberLike(int member_code) {
+		return myPageMapper.countLikes(member_code);
+	}
+
+	public int getMemberPoss(int member_code) {
+		// TODO Auto-generated method stub
+		return myPageMapper.countPoss(member_code);
+	}
+
+	public int getMemberReviewCount(int member_code) {
+		
+		return myPageMapper.countReview(member_code);
 	}
 
 	

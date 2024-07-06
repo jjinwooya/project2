@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 @Component
@@ -96,7 +97,7 @@ public class BankApi {
 	}
 
 	public Map requestWithdraw(Map<String, Object> map) {
-		//String으로 형변환
+		//String으로 형변환 - req_client_num
 		String member_code = Integer.toString((int) map.get("member_code"));
 		
 		HttpHeaders headers = new HttpHeaders();
@@ -147,6 +148,105 @@ public class BankApi {
 		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<Map> responseEntity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, Map.class);
 		logger.info(">>>>>>>>>> 출금 이체 요청 결과: " + responseEntity.getBody());
+		
+		return responseEntity.getBody();
+	}
+	
+	public Map requestDeposit(Map<String, Object> map) {
+		String member_code = (String)map.get("member_code");
+		
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.setBearerAuth((String)map.get("access_token"));
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		
+		// 2. 요청에 필요한 URI 정보 생성 => 문자열로 바로 생성
+		String url = base_url + "/v2.0/transfer/deposit/fin_num";
+		
+		Gson gson = new Gson();
+		
+		JsonObject joReq = new JsonObject();
+		joReq.addProperty("tran_no", 1);
+		joReq.addProperty("bank_tran_id", bankValueGenerator.getBankTranId());
+		
+		joReq.addProperty("fintech_use_num", (String)map.get("fintech_use_num"));
+		joReq.addProperty("print_content", "아이티윌_입금");
+		joReq.addProperty("tran_amt", (String)map.get("tran_amt"));
+		
+		joReq.addProperty("req_client_name", (String)map.get("user_name"));
+		joReq.addProperty("req_client_fintech_use_num", (String)map.get("fintech_use_num"));
+		joReq.addProperty("req_client_num", member_code);
+		joReq.addProperty("transfer_purpose", "TR");
+		
+		JsonArray jaReqList = new JsonArray();
+		jaReqList.add(joReq);
+		
+		//이용기관 정보
+		JsonObject jo = new JsonObject();
+		jo.addProperty("cntr_account_type", "N"); // 약정 계좌/계정 구분("N" : 계좌)
+		jo.addProperty("cntr_account_num", cntr_account_num); // 약정 계좌/계정 번호(핀테크 서비스 기관 계좌)
+		jo.addProperty("wd_pass_phrase", "NONE");
+		jo.addProperty("wd_print_content", "NONE");
+		jo.addProperty("name_check_option", "on"); // 거래금액
+		jo.addProperty("tran_dtime", bankValueGenerator.getTranDTime()); // 요청일시
+		jo.addProperty("req_cnt", 1); // 요청고객핀테크이용번호(출금계좌)
+		
+//		jo.addProperty("bank_tran_id", bankValueGenerator.getBankTranId()); // 거래고유번호(참가기관)
+//		jo.addProperty("dps_print_content", "CLASS-WILL" + "_환불"); // 입금계좌인자내역(입금되는 계좌에 출력할 메세지)
+//		
+//		// ---------- 요청 고객(출금 계좌) 정보 ----------
+//		jo.addProperty("fintech_use_num", (String)map.get("fintech_use_num")); // 출금계좌 핀테크이용번호 
+//		jo.addProperty("wd_print_content", (String)map.get("user_name") + "_송금"); // 출금계좌인자내역(출금되는 계좌에 출력할 메세지)
+//		jo.addProperty("tran_dtime", bankValueGenerator.getTranDTime()); // 요청고객성명(출금계좌)
+//		jo.add("req_list", jaReqList);
+//		// => 요청고객 계좌번호 미사용 시 핀테크 이용번호 설정 필수!
+//		jo.addProperty("req_client_num", member_code); // 요청고객회원번호(아이디처럼 사용) => 영문자 모두 대문자 변환 
+//		jo.addProperty("transfer_purpose", "ST"); // 이체 용도(송금 : TR, 결제 : ST 등) 
+		
+		// 최종 요청 파라미터 확인
+		logger.info(">>>>>>>> 입금이체 요청 JSON 데이터 : " + gson.toJson(jo));
+		
+		
+		HttpEntity<String> httpEntity = new HttpEntity<String>(gson.toJson(jo), headers);
+		logger.info(">>>>>>>> httpEntity.getHeaders() : " + httpEntity.getHeaders());
+		logger.info(">>>>>>>> httpEntity.getBody() : " + httpEntity.getBody());
+		
+		
+		// 5. RESTful API 요청을 위한 RestTemplate 객체의 exchange() 메서드 호출하여
+		//    POST 방식 HTTP 요청 수행
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<Map> responseEntity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, Map.class);
+		logger.info(">>>>>>>> 입금 이체 요청 결과 : " + responseEntity.getBody());
+		
+		return responseEntity.getBody();
+	}
+	
+	//adminAccessToken 발급
+	public Map requestAdminAccessToken() {
+		URI uri = UriComponentsBuilder
+				.fromUriString("https://testapi.openbanking.or.kr/oauth/2.0/token")
+				.encode() // 주소 인코딩
+				.build() // UriComponents 타입 객체 생성
+				.toUri(); //URI 타입 객체로 변환
+		LinkedMultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
+	//	parameters.add("client_id", "4066d795-aa6e-4720-9383-931d1f60d1a9");
+	//	parameters.add("client_secret", "36b4a668-94ba-426d-a291-771405e498e4");
+		parameters.add("client_id", client_id);
+		parameters.add("client_secret", client_secret);
+		parameters.add("scope", "oob");
+		parameters.add("grant_type", "client_credentials");
+		
+		HttpEntity<LinkedMultiValueMap<String, String>> httpEntity = 
+						new HttpEntity<LinkedMultiValueMap<String,String>>(parameters);
+		
+		
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<Map> responseEntity = 
+				restTemplate.exchange(uri, HttpMethod.POST, httpEntity, Map.class);
+		//응답 정보를 확인을 위해 ResponseEntity 객체의 메서드 활용
+		logger.info("응답 코드: " + responseEntity.getStatusCode());
+		logger.info("응답 헤더: " + responseEntity.getHeaders());
+		logger.info("응답 본문: " + responseEntity.getBody());
 		
 		return responseEntity.getBody();
 	}

@@ -75,8 +75,25 @@ label{
     border-radius: 10px;
     line-height: 30px;
 }
+.hashtag {
+/*     flex: 0 1 calc(20% - 10px); 5개를 한 줄에 표시, 사이 간격을 고려하여 크기 조정 */
+    box-sizing: border-box; /* 패딩과 테두리를 포함하여 크기를 계산 */
+    padding: 0px 10px;
+    margin: 5px;
+/*     border: 1px solid #ddd; */
+    border: none;
+    cursor: pointer;
+    user-select: none; /* Prevent text selection on double click */
+    display: inline-block;
+    text-align: center;
+    border-radius: 10px;
+    line-height: 30px;
+}
 
 .item.selected {
+    background-color: #b3d4fc;
+}
+.hashtag.selected {
     background-color: #b3d4fc;
 }
  .form-group {

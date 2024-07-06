@@ -29,7 +29,7 @@
 	href="${pageContext.request.contextPath}/resources/lib/owlcarousel/assets/owl.carousel.min.css"
 	rel="stylesheet">
 
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- Customized Bootstrap Stylesheet -->
 <link
 	href="${pageContext.request.contextPath}/resources/css/bootstrap.min.css"

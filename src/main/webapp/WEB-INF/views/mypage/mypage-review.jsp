@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ page import="java.time.LocalDate"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -118,6 +119,7 @@ th:nth-child(2), td:nth-child(2) {
 		<jsp:include page="/WEB-INF/views/inc/top.jsp" />
 	</header>
 
+
 	<!-- Spinner Start (로딩시 뜨는 동그라미)-->
 	<div id="spinner"
 		class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
@@ -145,34 +147,68 @@ th:nth-child(2), td:nth-child(2) {
 									${member.member_name}님</div>
 								<!-- 								여기부터 토스트 ui -->
 								<div class="table-responsive">
-									<h2>후기를 적을 수 있는 클래스가 ? 개 있습니다.</h2>
+									<h2>등록 가능한 클래스 후기가 ${totalPossible}개 있습니다.</h2>
 									<p>클래스 정보</p>
 									<table class="table table-hover">
 										<thead>
 											<tr>
 												<th>클래스 이름</th>
+												<th>결제일</th>
 												<th>결제 상태</th>
 												<th>교육 일정</th>
+												<th>회차</th>
 												<th>수료 여부</th>
 												<th>등록하기</th>
 											</tr>
 										</thead>
 										<tbody>
-											<tr>
-												<td>1</td>
-												<td>2</td>
-												<td>3</td>
-												<td>4</td>
-												<td>
-													<a href="resist-review" style="">등록하기</a>
-												</td>
-											</tr>
+											<c:forEach var="possibleReview" items="${possibleReview}"
+												varStatus="loop">
+												<tr>
+													<td>${possibleReview.class_name}</td>
+													<td>${possibleReview.pay_date}</td>
+													<td>결제 완료</td>
+													<td>${possibleReview.class_schedule_date}</td>
+													<td>${possibleReview.class_round}</td>
+													<td>수료 완료</td>
+													<td><c:choose>
+															<c:when test="${possibleReview.review_count == 0}">
+																<!-- 리뷰 작성 가능한 경우 -->
+																<a
+																	href="resist-review?class_code=${possibleReview.class_code}&member_code=${member.member_code}&class_schedule_code=${possibleReview.class_schedule_code}"
+																	class="btn btn-primary">등록하기</a>
+															</c:when>
+															<c:otherwise>
+																<!-- 이미 리뷰를 작성한 경우 -->
+																<button class="btn btn-secondary" disabled>작성	완료</button>
+															</c:otherwise>
+														</c:choose></td>
+												</tr>
+											</c:forEach>
 										</tbody>
 									</table>
+										<div id="pageList">
+										<input type="button" value="이전"
+											onclick="location.href='my-review?pageNum=${pageNum - 1}'"
+											<c:if test="${pageNum == 1}">disabled</c:if> />
+										<c:forEach var="i" begin="1" end="${maxPage}">
+											<c:choose>
+												<c:when test="${pageNum == i}">
+													<b>${i}</b>
+												</c:when>
+												<c:otherwise>
+													<a href="my-review?pageNum=${i}">${i}</a>
+												</c:otherwise>
+											</c:choose>
+										</c:forEach>
+										<input type="button" value="다음"
+											onclick="location.href='my-review?pageNum=${pageNum + 1}'"
+											<c:if test="${pageNum == maxPage or maxPage == 0}">disabled</c:if> />
+									</div>
 								</div>
 								<div class="table-responsive">
-									<h2>클래스 후기</h2>
-									<p>클래스 정보</p>
+									<h2>작성한 클래스 후기들</h2>
+									<p>내가 적은 총 리뷰 수 ${totalPossible}개</p>
 									<table class="table table-hover">
 										<thead>
 											<tr>
@@ -180,6 +216,7 @@ th:nth-child(2), td:nth-child(2) {
 												<th>리뷰 제목</th>
 												<th>리뷰 별점</th>
 												<th>작성 날짜</th>
+												<th>답변 여부</th>
 												<th>수정</th>
 												<th>삭제</th>
 											</tr>
@@ -211,7 +248,18 @@ th:nth-child(2), td:nth-child(2) {
 									                // 결과 출력
 									                document.write(stars${loop.index});
 									            </script></td>
-													<td>${review.class_review_date}</td>
+													<td><c:choose>
+															<c:when test="${review.review_reply_status eq 'N'}">
+																<button>미응답</button>
+															</c:when>
+															<c:when test="${review.review_reply_status eq 'Y'}">
+																<button>응답</button>
+															</c:when>
+															<c:otherwise>
+																<button>상태 불명</button>
+															</c:otherwise>
+														</c:choose></td>
+													<td>${review.class_name}</td>	
 													<td>
 														<button class="btn btn-primary"
 															onclick="location.href='edit-review-page?review_code=${review.class_review_code}'">수정</button>
@@ -224,6 +272,24 @@ th:nth-child(2), td:nth-child(2) {
 											</c:forEach>
 										</tbody>
 									</table>
+									<div id="pageList">
+										<input type="button" value="이전"
+											onclick="location.href='my-review?pageNum2=${pageNum2 - 1}'"
+											<c:if test="${pageNum2 == 1}">disabled</c:if> />
+										<c:forEach var="i" begin="1" end="${maxPage2}">
+											<c:choose>
+												<c:when test="${pageNum2 == i}">
+													<b>${i}</b>
+												</c:when>
+												<c:otherwise>
+													<a href="my-review?pageNum2=${i}">${i}</a>
+												</c:otherwise>
+											</c:choose>
+										</c:forEach>
+										<input type="button" value="다음"
+											onclick="location.href='my-review?pageNum2=${pageNum2 + 1}'"
+											<c:if test="${pageNum2 == maxPage2 or maxPage2 == 0}">disabled</c:if> />
+									</div>
 								</div>
 
 							</div>

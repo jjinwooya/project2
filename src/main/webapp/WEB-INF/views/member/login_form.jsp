@@ -63,10 +63,11 @@
 	
 	@media (min-width: 992px) {
 		.login-form {
-			width: 800px;
+			width: 900px;
 		}
 	    
 	}
+	
 	.social{
 		margin-bottom: 20px;
 	}
@@ -142,7 +143,7 @@
 							</div>
 						</form>
 						<div align="center" >
-							클래스윌이 처음이신가요? <a href="member-join" style="color: white;" ><u><b>가입하기</b></u></a>
+							클래스윌이 처음이신가요?&nbsp; &nbsp;<a href="member-join" style="color: white;" ><u><b>가입하기</b></u></a>
 						</div>			
 					</div><!-- col -->
 					<div class="col-lg-6 col-md-12 login-social">

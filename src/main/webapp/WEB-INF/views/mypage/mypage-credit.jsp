@@ -95,111 +95,157 @@ th:nth-child(2), td:nth-child(2) {
 	width: 130px;
 	text-align: center;
 }
+.refundBtn {
+	display: none;
+}
 </style>
 </head>
 <body>
 
-	<header>
-		<jsp:include page="/WEB-INF/views/inc/top.jsp" />
-	</header>
+<header>
+	<jsp:include page="/WEB-INF/views/inc/top.jsp" />
+</header>
 
-	<!-- Spinner Start (로딩시 뜨는 동그라미)-->
-	<div id="spinner"
-		class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
-		<div class="spinner-grow text-white" role="status"></div>
-	</div>
-	<!-- Spinner End -->
+<!-- Spinner Start (로딩시 뜨는 동그라미)-->
+<div id="spinner"
+	class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50  d-flex align-items-center justify-content-center">
+	<div class="spinner-grow text-white" role="status"></div>
+</div>
+<!-- Spinner End -->
 
-	<!-- Single Page Header start -->
-	<div class="container-fluid page-header py-5">
-		<h1 class="text-center text-white display-6">
-			마이페이지<i class="bi bi-wallet"></i>윌페이
-		</h1>
+<!-- Single Page Header start -->
+<div class="container-fluid page-header py-5">
+	<h1 class="text-center text-white display-6">
+		마이페이지<i class="bi bi-wallet"></i>윌페이
+	</h1>
 
-	</div>
+</div>
 
-	<div class="container-fluid fruite">
-		<div class="container">
-			<div class="row g-4">
-				<div class="col-lg-12">
-					<div class="row g-4">
-						<jsp:include page="/WEB-INF/views/mypage/sideBar.jsp" />
+<div class="container-fluid fruite">
+	<div class="container">
+		<div class="row g-4">
+			<div class="col-lg-12">
+				<div class="row g-4">
+					<jsp:include page="/WEB-INF/views/mypage/sideBar.jsp" />
 
-						<div class="col-lg-9 creator-body">
-							<!-- 크리에이터 인사 문구 -->
+					<div class="col-lg-9 creator-body">
+						<!-- 크리에이터 인사 문구 -->
 
-							<!-- 크리에이터 이벤트 -->
-							<div class="creator-event mt-5">
-								<div class="col-md-12 text-center h2 mb-5">윌페이 사용 내역</div>
-								<div class="container">
-									<c:set var="credit" value="${member.member_credit}" />
-									
-									<h2>윌페이 잔액 <fmt:formatNumber value="${credit}" type="number" pattern="#,##0" /> 원</h2>
-									<a href="will-pay-charge" class="btn btn-primary">계좌 등록 및
-										충전</a>
-									<p>사용 내역</p>
-									<table class="table table-hover">
-										<thead>
+						<!-- 크리에이터 이벤트 -->
+						<div class="creator-event mt-5">
+							<div class="col-md-12 text-center h2 mb-5">윌페이 사용 내역</div>
+							<div class="container">
+								<c:forEach begin="1" end="1" var="credit" items="${willpayChargeInfoList }">
+									<h2>윌페이 잔액 <fmt:formatNumber value="${credit.member_credit}" type="number" pattern="#,###" /> 원</h2>
+								</c:forEach>
+								<a href="will-pay-charge" class="btn btn-primary">계좌 등록 및 충전</a>
+								<button class="btn btn-light" onclick="openPopUp()">환불 정책 동의</button>
+								
+								<p style="margin-top:10px;">충전 내역</p>
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th>WILL-PAY</th>
+											<th>결제된 금액</th>
+											<th>충전된 WILL-PAY</th>
+											<th>충전 일시</th>
+											<th>은행(계좌번호)</th>
+											<th></th>
+										</tr>
+									</thead>
+									<tbody>
+										<c:forEach var="chargeInfo" items="${willpayChargeInfoList }">
 											<tr>
-												<th>신청 클래스</th>
-												<th>강의 진도</th>
-												<th>결제 상태</th>
-
+												<td>${chargeInfo.pay_type }</td>
+												<td>
+													<fmt:formatNumber var="amt" value="${chargeInfo.will_pay_amount }"  pattern="#,###"/>
+													${amt}원
+												</td>
+												<td>
+													<fmt:formatNumber var="willpay_amt" value="${chargeInfo.will_pay_get_pay }"  pattern="#,###"/>
+													${willpay_amt} WILL-PAY
+												</td>
+												<td>${chargeInfo.will_pay_date }</td>
+												<td>${chargeInfo.will_pay_bank_name }(${chargeInfo.will_pay_account })</td>
+												<td>
+													<button class="btn btn-dark refundBtn" 
+														onclick="refundWillpay('${chargeInfo.will_pay_amount}', '${chargeInfo.will_pay_get_pay}', '${chargeInfo.will_pay_code}', '${chargeInfo.will_pay_date}')">환불하기</button>
+												</td>
 											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td>라면</td>
-												<td>면 꼬들</td>
-												<td>john@example.com</td>
-
-											</tr>
-											<tr>
-												<td>짜파게티</td>
-												<td>국물없게</td>
-												<td>mary@example.com</td>
-											</tr>
-											<tr>
-												<td>삼양불닭</td>
-												<td>너무 매움</td>
-												<td>july@example.com</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-
+										</c:forEach>
+									</tbody>
+								</table>
 							</div>
 						</div>
-
 					</div>
+
 				</div>
 			</div>
 		</div>
 	</div>
-	<!-- Fruits Shop End-->
+</div>
+<!-- Fruits Shop End-->
 
 
 
-	<footer>
-		<jsp:include page="/WEB-INF/views/inc/bottom.jsp" />
-	</footer>
+<footer>
+	<jsp:include page="/WEB-INF/views/inc/bottom.jsp" />
+</footer>
+<script>
+	function openPopUp() {
+		window.open("refund-agreeTerms", "agree", "width=544, height=532, top=270, left=700");			
+	}
+	
+	function showRefundBtn() {
+		$('.refundBtn').show();
+	}
+	
+	function refundWillpay(param_pay_amt, param_get_willpay, param_willpay_code, param_willpay_date) {
+		let will_pay_amt = param_pay_amt;
+		let will_pay_get_pay = param_get_willpay;
+		let will_pay_code = param_willpay_code;
+		let will_pay_date = param_willpay_date;
+		
+		let params = {
+			will_pay_amt : will_pay_amt,
+			will_pay_get_pay : will_pay_get_pay,
+			will_pay_code : will_pay_code,
+			will_pay_date : will_pay_date,
+		};
+		
+		$.ajax({
+			url: "refund-willpay",
+			type: "POST",
+			data : JSON.stringify(params),
+			contentType: "application/json",
+			dataType: "json",
+			success: function(res) {
+				console.log(res);
+			},
+			error: function() {
+				alert("호출 실패");
+			}
+		});
+		
+	}	
+</script>
 
-	<!-- JavaScript Libraries -->
-	<script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath}/resources/lib/easing/easing.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath}/resources/lib/waypoints/waypoints.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath}/resources/lib/lightbox/js/lightbox.min.js"></script>
-	<script
-		src="${pageContext.request.contextPath}/resources/lib/owlcarousel/owl.carousel.min.js"></script>
+<!-- JavaScript Libraries -->
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/resources/lib/easing/easing.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/resources/lib/waypoints/waypoints.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/resources/lib/lightbox/js/lightbox.min.js"></script>
+<script
+	src="${pageContext.request.contextPath}/resources/lib/owlcarousel/owl.carousel.min.js"></script>
 
-	<!-- Template Javascript -->
-	<script src="${pageContext.request.contextPath}/resources/js/main.js"></script>
+<!-- Template Javascript -->
+<script src="${pageContext.request.contextPath}/resources/js/main.js"></script>
 
 </body>
 </html>

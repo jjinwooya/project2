@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import itwillbs.p2c3.class_will.mapper.CscMapper;
+import itwillbs.p2c3.class_will.vo.MemberVO;
 
 @Service
 public class CscService {
@@ -28,5 +29,47 @@ public class CscService {
 
 	public int getBoardCountHide(String type) {
 		return cscMapper.selectBoardCountHide(type);
+	}
+
+	public Map<String, String> getEventDetail(int event_code) {
+		return cscMapper.selectEventDetail(event_code);
+	}
+
+	public Map<String, Object> getInviteFriendInfo(int member_code) {
+		return cscMapper.selectInviteFriendInfo(member_code);
+	}
+
+	public boolean insertInviteCode(int member_code, String invite_code) {
+		return cscMapper.insertInviteCode(member_code, invite_code);
+	}
+
+	public Map<String, Object> getInviteMailInfo(String invite_code, String friend_email) {
+		return cscMapper.selectInviteMail(invite_code, friend_email);
+	}
+
+	public void insertInviteMailInfo(String invite_code, String friend_email) {
+		cscMapper.insertInviteMailInfo(invite_code, friend_email);
+	}
+
+	public void updateInviteMailInfo(String invite_code, String friend_email) {
+		cscMapper.updateInviteMailInfo(invite_code, friend_email);
+	}
+
+	public Map<String, Object> getInviteFriendInfoByCode(String invite_code) {
+		return cscMapper.selectInviteFriendInfoByCode(invite_code);
+	}
+
+
+	public void updateFriendCode(String invite_code, int friend_code) {
+		cscMapper.updateFriendCode(invite_code, friend_code);
+		
+	}
+
+	public void updateMemberCredit(int member_code) {
+		cscMapper.updateMemberCredit(member_code);
+	}
+
+	public MemberVO selectMemberByCode(MemberVO friend) {
+		return cscMapper.selectMemberByCode(friend);
 	}
 }

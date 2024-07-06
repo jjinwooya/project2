@@ -171,7 +171,7 @@ th:nth-child(2), td:nth-child(2) {
 										<h6 class="card-title"><i class="bi bi-sunrise-fill"></i>&nbsp;나의 성장 확인 </h6>
 										<div class="d-flex justify-content-between card-content">
 											<p class="card-text" style="color:black;" >나는 이렇게 성장했어요!</p>
-											<a href="#" class="btn btn-primary">상세보기</a>
+											<a href="my-powerup" class="btn btn-primary">상세보기</a>
 										</div>
 									</div>
 								</div>
@@ -188,8 +188,8 @@ th:nth-child(2), td:nth-child(2) {
 									<div class="card-body">
 										<h6 class="card-title"><i class="bi bi-person-x-fill"></i>&nbsp;회원탈퇴</h6>
 										<div class="d-flex justify-content-between card-content">
-											<p class="card-text" style="color:black;" >신규 서비스, 101 School에 참여하세요!</p>
-											<a href="#" class="btn btn-primary">상세보기</a>
+											<p class="card-text" style="color:black;">회원 탈퇴를 할 수 있는 곳입니다.</p>
+											<a href="my-delete" class="btn btn-primary">상세보기</a>
 										</div>
 									</div>
 								</div>

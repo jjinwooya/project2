@@ -103,7 +103,13 @@ public interface AdminMapper {
 
 	int insertEvent(@Param("params") Map<String, Object> map);
 
+	List<Map<String, String>> selectEventList();
 
+	List<Map<String, Object>> selectBigCategoryClassComplain();
+
+	List<Map<String, Object>> selectSmallCategoryClassComplain(Integer categoryCode);
+
+	void deleteVisitLogs();
 	
 
 }
