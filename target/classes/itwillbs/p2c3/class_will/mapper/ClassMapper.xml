@@ -142,12 +142,12 @@
 	<!-- 리뷰 별점 순 정렬 -->
 	<select id="selectStarList">
 		SELECT 
-		    AVG(cr.class_review_rating) AS avg_rating,
-		    cr.class_code
-		FROM class_review cr
-		JOIN class c ON cr.class_code = c.class_code 
+		    IFNULL(AVG(cr.class_review_rating), 0) AS avg_rating,
+		    c.class_code
+		FROM class c
+		LEFT JOIN class_review cr ON cr.class_code = c.class_code
 		WHERE c.class_regist_status = '2'
-		GROUP BY cr.class_code
+		GROUP BY c.class_code
 		ORDER BY avg_rating DESC
 	</select>
 	
@@ -214,19 +214,28 @@
 		LEFT JOIN common3 c3 ON c.class_small_category = c3.common3_code AND c3.common2_code = c2.common2_code AND c3.common1_code = 'CLC'
 		JOIN MEMBER m ON c.member_code = m.member_code
 	    <where>
-			c.class_regist_status = 2
-			AND c.class_active = 'Y'
-	        <if test="big_category != null and !big_category.isEmpty()">
-	           AND c2.common2_code = #{big_category}
+				c.class_regist_status = 2 AND c.class_active = 'Y'
+			<if test="big_category != null and !big_category.isEmpty()">
+				AND c2.common2_code = #{big_category}
 	        </if>
-	        <if test="small_category != null and !small_category.isEmpty()">
-	           AND c3.common3_code = #{small_category}
-	        </if>
+			<if test="small_category != null and !small_category.isEmpty()">
+				AND c3.common3_code = #{small_category}
+			</if>
 	        <if test="local != null and !local.isEmpty()">
-	           AND c.common2_code = #{local}
+				AND c.common2_code = #{local}
 	        </if>
 	        <if test="hashtag != null and !hashtag.isEmpty()">
-	           AND c.class_hashtag LIKE CONCAT('%', #{hashtag}, '%')
+				AND c.class_hashtag LIKE CONCAT('%', #{hashtag}, '%')
+	        </if>
+	        <if test="class_codes != null and !class_codes.isEmpty()">
+				AND c.class_code IN
+            <foreach item="classCode" collection="class_codes" open="(" separator="," close=")">
+                #{classCode}
+            </foreach>
+            ORDER BY FIELD(c.class_code,
+            <foreach item="classCode" collection="class_codes" separator=",">
+                #{classCode}
+            </foreach>)
 	        </if>
 		</where>
 	</select>

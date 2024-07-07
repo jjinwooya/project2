@@ -257,6 +257,30 @@
 					<span class="send-time">오후 5:03</span>
 				</div>
 			</div> <!-- chat-list -->
+			<div class="chat-list row">
+				<div class="receiver_img_area col-2">
+					<img src="${pageContext.request.contextPath}/resources/images/class/pic.png" class="receiver_img">
+				</div>
+				<div class="d-flex flex-column col-7">
+					<span class="receiver_name d-flex flex-row">호야</span>
+					<span class="last_msg d-flex flex-row">네네 감사합니다~ </span>
+				</div>
+				<div class="send-time-area col-3 ">
+					<span class="send-time">오후 5:03</span>
+				</div>
+			</div> <!-- chat-list -->
+			<div class="chat-list row">
+				<div class="receiver_img_area col-2">
+					<img src="${pageContext.request.contextPath}/resources/images/class/pic.png" class="receiver_img">
+				</div>
+				<div class="d-flex flex-column col-7">
+					<span class="receiver_name d-flex flex-row">호야</span>
+					<span class="last_msg d-flex flex-row">네네 감사합니다~ </span>
+				</div>
+				<div class="send-time-area col-3 ">
+					<span class="send-time">오후 5:03</span>
+				</div>
+			</div> <!-- chat-list -->
 			
 		</div> <!-- chat-list-content -->
 		

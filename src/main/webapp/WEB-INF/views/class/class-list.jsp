@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -301,212 +303,175 @@ body {
 </header>
 
 <div class="container1">
-<!--    <div class="col-md-2"> -->
-
-<!--    </div> -->
    <div class="col-md-12">
 	<!-- 카테고리 바 -->   
-	<div class="row">
-		<div class="categoryBar">
-			<div class="row justify-content-center"> <!-- 가운데 정렬 -->
-				<div class="categoryBarBox col-md-12">
-				
-					<!-- 셀렉트박스 리스트 -->
-					<div class="row rowCenter">
-
-					<!-- 카테고리바 카테고리 시작 -->
-	<!-- 							<div class="row">  -->
-						<div class="col-md-3">
-							<label for="class_big_category" class="h6">카테고리</label> 
-							<select name="class_big_category" id="class_big_category" class="form-control"  onchange="updateCategory()">
-									<option value="bigCategoryAll" id="class_big_category_all">전체</option>
-								<c:forEach var="bigCategoryList" items="${bigCategoryList}">
-									<option value="${bigCategoryList.common2_code}">${bigCategoryList.code_value}</option>
-								</c:forEach>
-							</select>
-						</div>
+		<div class="row">
+			<div class="categoryBar">
+				<div class="row justify-content-center"> <!-- 가운데 정렬 -->
+					<div class="categoryBarBox col-md-12">
+						<!-- 셀렉트박스 리스트 -->
+						<div class="row rowCenter">
+						<!-- 카테고리바 카테고리 시작 -->
+							<div class="col-md-3">
+								<label for="class_big_category" class="h6">카테고리</label> 
+								<select name="class_big_category" id="class_big_category" class="form-control"  onchange="updateCategory()">
+										<option value="bigCategoryAll" id="class_big_category_all">전체</option>
+									<c:forEach var="bigCategoryList" items="${bigCategoryList}">
+										<option value="${bigCategoryList.common2_code}">${bigCategoryList.code_value}</option>
+									</c:forEach>
+								</select>
+							</div>
+							
+							<div class="col-md-3">
+								<label for="class_small_category" class="h6">상세분류</label> 
+								<select name="class_small_category" id="class_small_category" class="form-control"  onchange="updateSmallCategory()">
+									<option value="smallCategoryAll" id="class_small_category_all">전체</option>
+								</select>
+							</div>
+						<!-- 카테고리바 카테고리 끝 -->
 						
-						<div class="col-md-3">
-							<label for="class_small_category" class="h6">상세분류</label> 
-							<select name="class_small_category" id="class_small_category" class="form-control"  onchange="updateSmallCategory()">
-								<option value="smallCategoryAll" id="class_small_category_all">전체</option>
-							</select>
+						<!-- 카테고리바 지역 시작 -->
+							<div class="col-md-3">
+								<label for="class_local" class="h6">지역</label> 
+								<select name="class_local" id="class_local" class="form-control" onchange="updateLocal()">
+									<option value="classLocalAll" id="class_local_all">전체</option>
+									<c:forEach var="localList" items="${localList}">
+										<option value="${localList.common2_code}">${localList.code_value}</option>
+									</c:forEach>
+								</select>
+							</div>
+	<!-- 					카테고리바 지역 끝 -->
+							
+							<!-- 셀렉트 검색 버튼 -->
+							<div class="btnSearchDiv col mt-4">
+								<div class="w-100 btnDiv">
+									<button type="button" class="btn btn-outline-light btnSearch">검색</button>
+								</div>
+							</div>
+							<!-- 셀렉트 검색 버튼 -->
+							
+							<!-- 셀렉트 초기화 버튼 -->
+							<div class="btnResetDiv col mt-4">
+								<div class="w-100 btnDiv">
+									<button type="button" class="btn btn-outline-light btnReset" onclick="resetCategory()">초기화</button>
+								</div>
+							</div>
+							<!-- 셀렉트 초기화 버튼 -->
 						</div>
-	<!-- 							</div> -->
-					<!-- 카테고리바 카테고리 끝 -->
-					
-					<!-- 카테고리바 지역 시작 -->
-						<div class="col-md-3">
-							<label for="class_local" class="h6">지역</label> 
-							<select name="class_local" id="class_local" class="form-control" onchange="updateLocal()">
-								<option value="classLocalAll" id="class_local_all">전체</option>
-								<c:forEach var="localList" items="${localList}">
-									<option value="${localList.common2_code}">${localList.code_value}</option>
-								</c:forEach>
-							</select>
-						</div>
-<!-- 					카테고리바 지역 끝 -->
+						<!-- 셀렉트박스 리스트 끝 -->
 						
-						<!-- 셀렉트 검색 버튼 -->
-						<div class="btnSearchDiv col mt-4">
-							<div class="w-100 btnDiv">
-								<button type="button" class="btn btn-outline-light btnSearch">검색</button>
+						<!-- 해시태그 리스트 -->
+						<div class="row">
+							<hr>
+							<div class="col hashtagDiv">
+								<div class="form form1 d-flex flex-wrap">
+									<c:forEach var="hashtag" items="${hashtagList}">
+	<!-- 									<button type="button" class="item" data-value="#${hashtag.hash_tag_name}">#${hashtag.hash_tag_name}</button> -->
+										<input type="text" class="form-control form-inputs hashtag" data-value="#${hashtag.hash_tag_name}" value="#${hashtag.hash_tag_name}" readonly>
+									</c:forEach>
+								</div>
 							</div>
 						</div>
-						<!-- 셀렉트 검색 버튼 -->
-						
-						<!-- 셀렉트 초기화 버튼 -->
-						<div class="btnResetDiv col mt-4">
-							<div class="w-100 btnDiv">
-								<button type="button" class="btn btn-outline-light btnReset" onclick="resetCategory()">초기화</button>
-							</div>
-						</div>
-						<!-- 셀렉트 초기화 버튼 -->
+						<!-- 해시태그 리스트 -->
 					</div>
-					<!-- 셀렉트박스 리스트 끝 -->
-					
-					<!-- 해시태그 리스트 -->
-					<div class="row">
-						<hr>
-						<div class="col hashtagDiv">
-							<div class="form form1 d-flex flex-wrap">
-								<c:forEach var="hashtag" items="${hashtagList}">
-<!-- 									<button type="button" class="item" data-value="#${hashtag.hash_tag_name}">#${hashtag.hash_tag_name}</button> -->
-									<input type="text" class="form-control form-inputs hashtag" data-value="#${hashtag.hash_tag_name}" value="#${hashtag.hash_tag_name}" readonly>
-								</c:forEach>
-							</div>
-						</div>
-					</div>
-					<!-- 해시태그 리스트 -->
 				</div>
 			</div>
 		</div>
-	</div>
-	<!-- 카테고리 바 -->
+		<!-- 카테고리 바 -->
 	
-	<!-- 클래스 개수 시작 -->
-	<c:set var="classCount" value="${fn:length(classList)}" />
-<!-- 	<div class="row"> -->
-<!-- 		<div class="col-6"> -->
-<!-- 			<div class="classCount"> -->
-<%-- 				<p>${classCount}개의 클래스</p> --%>
-<!-- 			</div> -->
-<!-- 		</div> -->
-<!-- 		<div class="col-6 box11"> -->
-<!-- 			<div class="row"> -->
-<!-- 				<div class="col-6"> -->
-<!-- 					<p> -->
-<!-- 						<a class="btn btn-outline-light btnLocation mt-3 mr-0" data-bs-toggle="collapse"  onclick="getCurrentLocation()" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"> -->
-<!-- 							내 위치 지도 보기 -->
-<!-- 						</a> -->
-<!-- 					</p> -->
-<!-- 				</div> -->
-<!-- 	<!-- 			<div class="col-md-5 w-75 classList ml-2"> -->
-<!-- 				<div class="col-6 classList mr-0 mt-3"> -->
-<!-- 	<!-- 			<div class="pl-1"> --> 
-<!-- 					<select id="classListSelect" class="form-select selectBox1 w-100" aria-label="Default select example"> -->
-<!-- 						<option value="lowPrice" selected>낮은 가격순</option> -->
-<!-- 						<option value="highPrice">높은 가격순</option> -->
-<!-- 						<option value="starList">별점순</option> -->
-<!-- 						<option value="reviewList">후기순</option> -->
-<!-- 					</select> -->
-<!-- 	<!-- 			</div> -->
-<!-- 				</div> -->
-<!-- 			</div> -->
-<!-- 		</div> -->
-<!-- 	</div> row -->
-	<div class="row">
-		<div class="col-6">
-			<div class="classCount">
-				<h5>${classCount}개의 클래스</h5>
-			</div>
-		</div>
-		<div class="col-6 box11">
+		<!-- 클래스 개수 시작 -->
+		<c:set var="classCount" value="${fn:length(classList)}" />
+		<div class="row">
 			<div class="col-6">
-				<p>
-					<a class="btn btn-outline-light btnLocation mt-3 mr-0" data-bs-toggle="collapse"  onclick="getCurrentLocation()" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-						내 위치 지도 보기
-					</a>
-				</p>
+				<div class="classCount">
+					<h5>${classCount}개의 클래스</h5>
+				</div>
 			</div>
-			<div class="col-6 classList mr-0 mt-3">
-				<select id="classListSelect" class="form-select selectBox1 w-100" aria-label="Default select example">
-					<option value="lowPrice" selected>낮은 가격순</option>
-					<option value="highPrice">높은 가격순</option>
-					<option value="starList">별점순</option>
-					<option value="reviewList">후기순</option>
-				</select>
+			<div class="col-6 box11">
+				<div class="col-6">
+					<p>
+						<a class="btn btn-outline-light btnLocation mt-3 mr-0" data-bs-toggle="collapse"  onclick="getCurrentLocation()" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+							내 위치 주변 클래스 찾기
+						</a>
+					</p>
+				</div>
+				<div class="col-6 classList mr-0 mt-3">
+					<select id="classListSelect" class="form-select selectBox1 w-100" aria-label="Default select example">
+						<option value="lowPrice" selected>낮은 가격순</option>
+						<option value="highPrice">높은 가격순</option>
+						<option value="starList">별점순</option>
+						<option value="reviewList">후기순</option>
+					</select>
+				</div>
+			</div>
+		</div> <!-- row -->
+		<!-- 클래스 개수 끝 -->
+	
+		<!-- 지도 보이는 영역 -->
+		<div class="collapse" id="collapseExample">
+			<div class="card card-body col-md-10 mapPop">
+		        <div id="collapseMapContainer" style="width:100%;height:400px;"></div> <!-- 이 div에 지도를 표시 -->
 			</div>
 		</div>
-	</div> <!-- row -->
-	<!-- 클래스 개수 끝 -->
+		<!-- 지도 보이는 영역 -->
 	
-	<!-- 지도 보이는 영역 -->
-	<div class="collapse" id="collapseExample">
-		<div class="card card-body col-md-10 mapPop">
-	        <div id="collapseMapContainer" style="width:100%;height:400px;"></div> <!-- 이 div에 지도를 표시 -->
-		</div>
-	</div>
-	<!-- 지도 보이는 영역 -->
-	
-      <!-- 첫번째 줄 -->
-      <div class="row pb-4 mb-4 d-flex flex-wrap" id="classListContainer">
-	      <c:forEach var="classList" items="${classList}">
-	         <div class="col-lg-3 col-md-6 mb-4 mb-lg-0 d-flex classCard">
-	            <div class="card shadow-sm border-0 rounded flex-fill mb-4">
-	               <div class="card-body p-0 position-relative card-body1 position-relative1">
-						<a href="class-detail?class_code=${classList.class_code}">
-						<img src="${pageContext.request.contextPath}/resources/images/products/s4.jpg"  class="w-100 card-img-top classPic"></a>
-<%-- 						<img src="${pageContext.request.contextPath}/resources/images/profile/heart.png"  id="heartOverlay" class="heart-overlay" data-class-code="${classList.class_code}" data-member-code="${classList.member_code}"> --%>
-						
-						<!-- 라이크 클래스 하트 이미지 변경-->
-						<c:choose>
-							<c:when test="${not empty likeClassCode}"> <!-- likeClassList 존재 -->
-								<c:set var="isLiked" value="false"/> <!-- 삭제 -->
-								<c:forEach var="likeClassCode" items="${likeClassCode}">
-									<c:if test="${likeClassCode.class_code == classList.class_code}">
-										<c:set var="isLiked" value="true"/> <!-- 추가 -->
-									</c:if>
-								</c:forEach>
-								<c:if test="${isLiked}">
+		<!-- 첫번째 줄 -->
+		<div class="row pb-4 mb-4 d-flex flex-wrap" id="classListContainer">
+			<c:forEach var="classList" items="${classList}">
+				<div class="col-lg-3 col-md-6 mb-4 mb-lg-0 d-flex classCard">
+					<div class="card shadow-sm border-0 rounded flex-fill mb-4">
+						<div class="card-body p-0 position-relative card-body1 position-relative1">
+							<a href="class-detail?class_code=${classList.class_code}">
+							<img src="${pageContext.request.contextPath}/resources/images/products/s4.jpg"  class="w-100 card-img-top classPic"></a>
+	<%-- 						<img src="${pageContext.request.contextPath}/resources/images/profile/heart.png"  id="heartOverlay" class="heart-overlay" data-class-code="${classList.class_code}" data-member-code="${classList.member_code}"> --%>
+							<!-- 라이크 클래스 하트 이미지 변경-->
+							<c:choose>
+								<c:when test="${not empty likeClassCode}"> <!-- likeClassList 존재 -->
+									<c:set var="isLiked" value="false"/> <!-- 삭제 -->
+									<c:forEach var="likeClassCode" items="${likeClassCode}">
+										<c:if test="${likeClassCode.class_code == classList.class_code}">
+											<c:set var="isLiked" value="true"/> <!-- 추가 -->
+										</c:if>
+									</c:forEach>
+									<c:if test="${isLiked}">
 									<img src="${pageContext.request.contextPath}/resources/images/profile/heart_full.png" id="heartOverlay" class="heartImg" data-class-code="${classList.class_code}" data-member-code="${classList.member_code}">
-								</c:if>
-								<c:if test="${not isLiked}">
+									</c:if>
+									<c:if test="${not isLiked}">
 									<img src="${pageContext.request.contextPath}/resources/images/profile/heart.png" id="heartOverlay" class="heartImg" data-class-code="${classList.class_code}" data-member-code="${classList.member_code}">
-								</c:if>
-							</c:when>
-							<c:otherwise> <!-- likeClassList 존재 X -->
-								<img src="${pageContext.request.contextPath}/resources/images/profile/heart.png" id="heartOverlay" class="heartImg" data-class-code="${classList.class_code}" data-member-code="${classList.member_code}">
-							</c:otherwise>
-						</c:choose>
-						<!-- 라이크 클래스 하트 이미지 변경 -->
-						
-						<div class="card-bodys d-flex flex-column">
-							<div class="classCategory col-md-10">
-								<button type="button" class="btn btn-outline-secondary btn-sm category btn1">${classList.class_big_category}</button>
-								<button type="button" class="btn btn-outline-secondary btn-sm category btn1">${classList.class_small_category}</button>
-							</div>
-							<div class="createrName d-flex align-items-center">
-								<img src="${pageContext.request.contextPath}/resources/images/class/pic.png">
-								<p class="mb-0 ml-2">${classList.member_nickname}</p>
-							</div>
-							<div class="className">
-							   <a href="class-detail"><h6>${classList.class_name}</h6></a>
-							</div>
-							<div class="row classInfo">
-								<div class="col-md-6 add">
-									<a href="" class="btn btn-outline-dark btn-sm disabled btn1">${classList.local_name}</a>
+									</c:if>
+								</c:when>
+								<c:otherwise> <!-- likeClassList 존재 X -->
+									<img src="${pageContext.request.contextPath}/resources/images/profile/heart.png" id="heartOverlay" class="heartImg" data-class-code="${classList.class_code}" data-member-code="${classList.member_code}">
+								</c:otherwise>
+							</c:choose>
+							<!-- 라이크 클래스 하트 이미지 변경 -->
+							
+							<div class="card-bodys d-flex flex-column">
+								<div class="classCategory col-md-10">
+									<button type="button" class="btn btn-outline-secondary btn-sm category btn1">${classList.class_big_category}</button>
+									<button type="button" class="btn btn-outline-secondary btn-sm category btn1">${classList.class_small_category}</button>
 								</div>
-								<div class="col-md-6 price">
-									<p>${classList.class_price}원</p>
+								<div class="createrName d-flex align-items-center">
+									<img src="${pageContext.request.contextPath}/resources/images/class/pic.png">
+									<p class="mb-0 ml-2">${classList.member_nickname}</p>
+								</div>
+								<div class="className">
+								   <a href="class-detail?class_code=${classList.class_code}"><h6>${classList.class_name}</h6></a>
+								</div>
+								<div class="row classInfo">
+									<div class="col-md-6 add">
+										<a href="" class="btn btn-outline-dark btn-sm disabled btn1">${classList.local_name}</a>
+									</div>
+									<div class="col-md-6 price">
+										<p><fmt:formatNumber value="${classList.class_price}" pattern="#,###" />원</p>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-		</c:forEach>
-	</div>
+			</c:forEach>
+		</div>
    </div> <!-- col-md-12 -->
 </div> <!-- container -->
 
@@ -523,65 +488,65 @@ body {
 // 대카테고리에 따른 소카테고리 값
 $(function() {
 	
-    // 대 카테고리 선택시 소 카테고리 리스트 나타남
-    $("#class_big_category").change(function() {
-        var big_category = $("#class_big_category").val();
+	// 대 카테고리 선택시 소 카테고리 리스트 나타남
+	$("#class_big_category").change(function() {
+		var big_category = $("#class_big_category").val();
 
-        // AJAX 요청을 통해 소 카테고리 리스트를 업데이트
-        $.ajax({
-            url: "small-category",
-            method: "get",
-            data: { 
-                big_category: big_category
-            },
-            success: function(data) {
-                $("#class_small_category").empty();
+		// AJAX 요청을 통해 소 카테고리 리스트를 업데이트
+		$.ajax({
+			url: "small-category",
+			method: "get",
+			data: { 
+			    big_category: big_category
+			},
+			success: function(data) {
+			    $("#class_small_category").empty();
 
-                // 전체 옵션 추가
-                $("#class_small_category").append(
-                    $('<option></option>').val('smallCategoryAll').text('전체')
-                );
+				// 전체 옵션 추가
+				$("#class_small_category").append(
+				    $('<option></option>').val('smallCategoryAll').text('전체')
+				);
 
-                // 소 카테고리 옵션 추가
-                $.each(data, function(index, item) {
-                    $("#class_small_category").append(
-                        $('<option></option>').val(item.common3_code).text(item.code_value)
-                    );
-                });
+				// 소 카테고리 옵션 추가
+				$.each(data, function(index, item) {
+				    $("#class_small_category").append(
+						$('<option></option>').val(item.common3_code).text(item.code_value)
+					);
+				});
 				
-                // 대 카테고리가 "전체"일 경우 소 카테고리도 "전체"
-                if (big_category === 'bigCategoryAll') {
-                    $("#class_small_category").val('smallCategoryAll');
-                }
+				// 대 카테고리가 "전체"일 경우 소 카테고리도 "전체"
+				if (big_category === 'bigCategoryAll') {
+			    	$("#class_small_category").val('smallCategoryAll');
+				}
                 
-                // 파라미터로 전달받은 값이 있으면 선택 (소 카테고리)
-                var urlParams = new URLSearchParams(window.location.search);
-                var small_category = urlParams.get('class_small_category');
+				// 파라미터로 전달받은 값이 있으면 선택 (소 카테고리)
+				var urlParams = new URLSearchParams(window.location.search);
+				var small_category = urlParams.get('class_small_category');
 
-                if (small_category) {
-                    $("#class_small_category").val(small_category);
-                }
+				if (small_category) {
+			    	$("#class_small_category").val(small_category);
+				}
             },
-            error: function(xhr, status, error) {
-                console.error('AJAX Error: ', error);
-            }
-        });
-    });
+				error: function(xhr, status, error) {
+				console.error('AJAX Error: ', error);
+			}
+		});
+	});
 
-    // 페이지 로드 시, 파라미터로 전달받은 값에 따라 선택
-    $(document).ready(function() {
-        var urlParams = new URLSearchParams(window.location.search);
-        var bigCategory = urlParams.get('class_big_category');
-        var smallCategory = urlParams.get('class_small_category');
-        var big_category = $("#class_big_category").val();
+	// 페이지 로드 시, 파라미터로 전달받은 값에 따라 선택
+	$(document).ready(function() {
+		var urlParams = new URLSearchParams(window.location.search);
+		var bigCategory = urlParams.get('class_big_category');
+		var smallCategory = urlParams.get('class_small_category');
+		var big_category = $("#class_big_category").val();
 
-        if (smallCategory) {
-            $("#class_small_category").val(smallCategory);
-        }
+		if (smallCategory) {
+	    	$("#class_small_category").val(smallCategory);
+		}
 
-        if (bigCategory) {
-            $("#class_big_category").val(bigCategory).change(); 
-        } 
+		if (bigCategory) {
+	    	$("#class_big_category").val(bigCategory).change(); 
+		} 
         
 //         if (bigCategory) {
 //             $("#class_big_category").val(bigCategory);
@@ -597,7 +562,7 @@ $(function() {
 //             $("#class_small_category").val(smallCategory);
 //         }
 
-    });
+	});
 });
 
 // ------------------------------------------------------------------------------------
@@ -614,201 +579,218 @@ $(function() {
 
 	    // big_category "전체"인 경우
 	    if (big_category === "bigCategoryAll") {
-	        big_category = [];
-	        $("#class_big_category option").each(function() {
-	            if ($(this).val() !== "bigCategoryAll") {
-	                big_category.push($(this).val());
-	            }
-	        });
-	    }
+			big_category = [];
+			$("#class_big_category option").each(function() {
+				if ($(this).val() !== "bigCategoryAll") {
+					big_category.push($(this).val());
+				}
+			});
+		}
 	    
-	    // small_category "전체"인 경우
-	    if (small_category === "smallCategoryAll") {
-	        small_category = [];
-	        $("#class_small_category option").each(function() {
-	            if ($(this).val() !== "smallCategoryAll") {
-	                small_category.push($(this).val());
-	            }
-	        });
-	    }
+		// small_category "전체"인 경우
+		if (small_category === "smallCategoryAll") {
+			small_category = [];
+			$("#class_small_category option").each(function() {
+				if ($(this).val() !== "smallCategoryAll") {
+					small_category.push($(this).val());
+				}
+			});
+		}
 	    
-	    // local "전체"인 경우
-	    if (local === "classLocalAll") {
-	        local = [];
-	        $("#class_local option").each(function() {
-	            if ($(this).val() !== "classLocalAll") {
-	                local.push($(this).val());
-	            }
-	        });
-	    }
+		// local "전체"인 경우
+		if (local === "classLocalAll") {
+			local = [];
+			$("#class_local option").each(function() {
+				if ($(this).val() !== "classLocalAll") {
+					local.push($(this).val());
+				}
+			});
+		}
 	    
-	    // Ajax 요청을 통해 필터링된 클래스 목록을 가져옴
-	    fetchClassList({
-	        big_category: big_category,
-	        small_category: small_category,
-	        local: local,
-	    });
-	}); // btnSearch 끝
+		// Ajax 요청을 통해 필터링된 클래스 목록을 가져옴
+		fetchClassList({
+			big_category: big_category,
+			small_category: small_category,
+			local: local,
+		});
+	});	// btnSearch 끝
     
 	// -------------- 해시태그 클릭 시 -------------- 
     $(".hashtag").on("click", function() {
-        var hashtag = $(this).val(); 
-	    fetchClassList({
-           	hashtag: hashtag 
-	    });
-    }); // hashtag 해시태그 끝
+		var hashtag = $(this).val(); 
+		fetchClassList({
+			hashtag: hashtag 
+		});
+	}); // hashtag 해시태그 끝
     
 	// -------------- 클래스 정렬 셀렉트 박스 -------------- 
-    $("#classListSelect").on("change", function() {
+	$("#classListSelect").on("change", function() {
     	
-        var selectedOption = $(this).val();
+		var selectedOption = $(this).val();
         
-        var url;
-        if (selectedOption === "lowPrice") {
-            url = "class-low-price";
-        } else if (selectedOption === "highPrice") {
-            url = "class-high-price";
-        } else if (selectedOption === "starList") {
-            url = "class-star-list";
-        } else if (selectedOption === "reviewList") {
-            url = "class-review-list";
-        }
+		var url;
+		if (selectedOption === "lowPrice") {
+			url = "class-low-price";
+		} else if (selectedOption === "highPrice") {
+			url = "class-high-price";
+		} else if (selectedOption === "starList") {
+			url = "class-star-list";
+		} else if (selectedOption === "reviewList") {
+			url = "class-review-list";
+		}
         
-        // AJAX 요청 데이터 설정
-        var data = {
-       		classListSelect: selectedOption
-        };
+		// AJAX 요청 데이터 설정
+		var data = {
+			classListSelect: selectedOption
+		};
         
-        $.ajax({
-            type: "GET",
-            url: url,
-            dataType: "json",
-            data: data,
-            contentType: "application/json",
-            success: function(filter) {
-            	console.log("ajax 성공");
-                updateClassList(filter);
-            },
-            error: function(xhr, status, error) {
-                console.error("Error details:", xhr, status, error);
+		$.ajax({
+			type: "GET",
+			url: url,
+			dataType: "json",
+			data: data,
+			contentType: "application/json",
+			success: function(filter) {
+				console.log("ajax 성공");
+				updateClassList(filter);
+			},
+			error: function(xhr, status, error) {
+				console.error("Error details:", xhr, status, error);
                 alert("오류 발생: " + error);
-            }
-        });
+			}
+		});
 	}); // classListSelect() 끝
 });
 
 //------------------------------------------------------------------------------------
 // 초기화 버튼 (셀렉트 컨테이너 값 초기화)
 function resetCategory() {
-    // 카테고리 선택 초기화
-    document.getElementById('class_big_category').value = 'bigCategoryAll';
-    document.getElementById('class_small_category').value = 'smallCategoryAll';
-    document.getElementById('class_local').value = 'classLocalAll';
+	
+	// 카테고리 선택 초기화
+	document.getElementById('class_big_category').value = 'bigCategoryAll';
+	document.getElementById('class_small_category').value = 'smallCategoryAll';
+	document.getElementById('class_local').value = 'classLocalAll';
 
-    fetchClassList({
+	fetchClassList({
 		hash_tag: "" // 필터링 파라미터 초기화
-    });
+	});
+    
+	// 콜랩스 닫기
+	var collapseElement = document.getElementById('collapseExample');
+	var collapse = new bootstrap.Collapse(collapseElement, {
+		toggle: false
+	});
+	collapse.hide();
+    
+	// classListSelect 선택 초기화
+	document.getElementById('classListSelect').value = 'lowPrice';
+    
 } // resetCategory 끝
 
 //------------------------------------------------------------------------------------
 //AJAX 요청 함수
 function fetchClassList(data) {
-    $.ajax({
-        type: "GET",
-        url: "filter-class",
-        dataType: "json",
-        data: data,
-        contentType: "application/json",
-        success: function(filter) {
-            updateClassList(filter);
-        },
-        error: function(xhr, status, error) {
-            console.error("Error details:", xhr, status, error);
-            alert("오류 발생: " + error);
-        }
-    });
+	$.ajax({
+		type: "GET",
+		url: "filter-class",
+		dataType: "json",
+		data: data,
+		contentType: "application/json",
+		success: function(filter) {
+			updateClassList(filter);
+		},
+		error: function(xhr, status, error) {
+			console.error("Error details:", xhr, status, error);
+			alert("오류 발생: " + error);
+		}
+	});
 }
 
 //------------------------------------------------------------------------------------
 // 클래스 목록 갯수 업데이트 함수
 function updateClassList(filterClass) {
-	 $(".classCount").html('<p>' + filterClass.length + '개의 클래스</p>');
-	 $("#classListContainer").html("");
-
-	 for (let filter of filterClass) {
-	     $("#classListContainer").append(generateClassCardHTML(filter));
-	 }
+		$(".classCount").html('<h5>' + filterClass.length + '개의 클래스</h5>');
+		
+		$("#classListContainer").html("");
+		
+		for (let filter of filterClass) {
+			$("#classListContainer").append(generateClassCardHTML(filter));
+		}
 	 
-	 console.log("ajax 성공ㅇㅇㅇㅇㅇㅇ");
+	    if (filterClass.length == 0) {
+	        $("#classListContainer").html('<h5 style="text-align: center; margin-top : 50px;">조건과 일치하는 클래스가 존재하지 않습니다.</h5>');
+	    }
+	    
+		console.log("ajax 성공ㅇㅇㅇㅇㅇㅇ");
 }
 
 //------------------------------------------------------------------------------------
 function updateParameterClass(bigCategory, smallCategory) {
-    $.ajax({
-        url: "update-class-list",
-        method: "get",
-        data: { 
-            bigCategory: bigCategory,
-            smallCategory: smallCategory
-        },
+	$.ajax({
+		url: "update-class-list",
+		method: "get",
+		data: { 
+			bigCategory: bigCategory,
+			smallCategory: smallCategory
+		},
         success: function(data) {
-            var classListContainer = $(".classListContainer");
-            classListContainer.empty(); // 기존 클래스 목록을 비웁니다.
+			var classListContainer = $(".classListContainer");
+			classListContainer.empty(); // 기존 클래스 목록을 비웁니다.
 
             if (data.length > 0) {
-                // 클래스 목록을 생성하여 추가합니다.
-                $.each(data, function(index, item) {
-                    var classCard = generateClassCardHTML(item);
-                    classListContainer.append(classCard);
-                });
+				// 클래스 목록을 생성하여 추가합니다.
+				$.each(data, function(index, item) {
+					var classCard = generateClassCardHTML(item);
+					classListContainer.append(classCard);
+				});
 
-                classListContainer.show(); // 클래스 목록을 보여줍니다.
-            } else {
-                classListContainer.hide(); // 데이터가 없으면 목록을 숨깁니다.
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error('AJAX Error: ', error);
-        }
-    });
+				classListContainer.show(); // 클래스 목록을 보여줍니다.
+			} else {
+				classListContainer.hide(); // 데이터가 없으면 목록을 숨깁니다.
+			}
+		},
+		error: function(xhr, status, error) {
+			console.error('AJAX Error: ', error);
+		}
+	});
 }
 //------------------------------------------------------------------------------------
 //클래스 카드 HTML 생성 함수
 
 function generateClassCardHTML(filter) {
 	
-    return '<div class="col-lg-3 col-md-6 mb-4 mb-lg-0 d-flex classCard">' 
-    + '<div class="card shadow-sm border-0 rounded flex-fill mb-4">' 
-    + '<div class="card-body p-0 position-relative card-body1 position-relative1">'
-    + '<a href="class-detail?class_code=' + filter.class_code + '">'
-    + '<img src="' + contextPath + '/resources/images/products/s4.jpg" class="w-100 card-img-top classPic">' 
-    + '</a>' 
-    + '<img src="' + contextPath + '/resources/images/profile/heart.png" id="heartOverlay" class="heartImg" data-class-code="'
-    + filter.class_code + '" data-member-code="' + filter.member_code + '">' 
-    + '<div class="card-bodys d-flex flex-column">'
-    + '<div class="classCategory col-md-10">'
-    + '<button type="button" class="btn btn-outline-secondary btn-sm category btn1">' + filter.class_big_category + '</button>' 
-    + '<button type="button" class="btn btn-outline-secondary btn-sm category btn1">' + filter.class_small_category + '</button>' 
-    + '</div>' 
-    + '<div class="createrName d-flex align-items-center">' 
-    + '<img src="' + contextPath + '/resources/images/class/pic.png">' 
-    + '<p class="mb-0 ml-2">' + filter.member_nickname + '</p>' 
-    + '</div>' 
-    +'<div class="className">'
-    + '<a href="class-detail"><h6>' + filter.class_name + '</h6></a>' 
-    + '</div>'
-    + '<div class="row classInfo">' 
-    + '<div class="col-md-6 add">' 
-    + '<a href="" class="btn btn-outline-dark btn-sm disabled btn1">' + filter.local_name + '</a>' 
-    + '</div>' 
-    + '<div class="col-md-6 price">' 
-    + '<p>' + filter.class_price + '원</p>' 
-    + '</div>' 
-    + '</div>' 
-    + '</div>' 
-    + '</div>' 
-    + '</div>' 
-    + '</div>';
+	return '<div class="col-lg-3 col-md-6 mb-4 mb-lg-0 d-flex classCard">' 
+	+ '<div class="card shadow-sm border-0 rounded flex-fill mb-4">' 
+	+ '<div class="card-body p-0 position-relative card-body1 position-relative1">'
+	+ '<a href="class-detail?class_code=' + filter.class_code + '">'
+	+ '<img src="' + contextPath + '/resources/images/products/s4.jpg" class="w-100 card-img-top classPic">' 
+	+ '</a>' 
+	+ '<img src="' + contextPath + '/resources/images/profile/heart.png" id="heartOverlay" class="heartImg" data-class-code="'
+	+ filter.class_code + '" data-member-code="' + filter.member_code + '">' 
+	+ '<div class="card-bodys d-flex flex-column">'
+	+ '<div class="classCategory col-md-10">'
+	+ '<button type="button" class="btn btn-outline-secondary btn-sm category btn1">' + filter.class_big_category + '</button>' 
+	+ '<button type="button" class="btn btn-outline-secondary btn-sm category btn1">' + filter.class_small_category + '</button>' 
+	+ '</div>' 
+	+ '<div class="createrName d-flex align-items-center">' 
+	+ '<img src="' + contextPath + '/resources/images/class/pic.png">' 
+	+ '<p class="mb-0 ml-2">' + filter.member_nickname + '</p>' 
+	+ '</div>' 
+	+'<div class="className">'
+	+ '<a href="class-detail"><h6>' + filter.class_name + '</h6></a>' 
+	+ '</div>'
+	+ '<div class="row classInfo">' 
+	+ '<div class="col-md-6 add">' 
+	+ '<a href="" class="btn btn-outline-dark btn-sm disabled btn1">' + filter.local_name + '</a>' 
+	+ '</div>' 
+	+ '<div class="col-md-6 price">' 
+	+ '<p>' + filter.class_price + '원</p>' 
+	+ '</div>' 
+	+ '</div>' 
+	+ '</div>' 
+	+ '</div>' 
+	+ '</div>' 
+	+ '</div>';
 }
 
 </script>

@@ -373,7 +373,6 @@
                     <mainClass>org.test.int1.Main</mainClass>
                 </configuration>
             </plugin>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-war-plugin -->
             
             <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-war-plugin -->
             <!-- 첫 줄에서 다음 오류 발생 시 maven-war-plugin 추가 -->

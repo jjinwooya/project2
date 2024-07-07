@@ -212,7 +212,7 @@
 		        </li>
 		        <li class="nav-item bottom-nevi-item d-flex justify-content-center align-items-center">
 		        
-		            <a class="nav-link bottom-nav-link px-0 mx-2 position-relative" href="#" id="openChatModal2">
+		            <a class="nav-link bottom-nav-link px-0 mx-2 position-relative" href="#" id="openChatModal2" >
 		            	<i class="bi bi-envelope bi-top bottom-icon"></i>
 		            	<span class="position-absolute badge-position-bt bg-danger border border-light rounded-circle">
 							<span class="visually-hidden">New alerts</span>

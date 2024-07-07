@@ -233,13 +233,7 @@ public class MemberController {
 	@GetMapping("user-chat-list")
 	public String userChatList(MemberVO member, Model model, HttpSession session) {
 		
-		MemberVO sMember = (MemberVO)session.getAttribute("member");
-		
-		if(sMember == null) {
-			model.addAttribute("msg", "로그인 후 이용해 주세요.");
-			model.addAttribute("targetURL", "member-login");
-			return "result_process/fail";
-		}
+	
 		
 		model.addAttribute("member", member);
 		return "user_chat/user_chat_list";
@@ -249,13 +243,6 @@ public class MemberController {
 	@GetMapping("user-chat-room")
 	public String userChatRoom(MemberVO member, Model model, HttpSession session) {
 		
-		MemberVO sMember = (MemberVO)session.getAttribute("member");
-		
-		if(sMember == null) {
-			model.addAttribute("msg", "로그인 후 이용해 주세요.");
-			model.addAttribute("targetURL", "member-login");
-			return "result_process/fail";
-		}
 		
 		model.addAttribute("member", member);
 		return "user_chat/user_chat_room";

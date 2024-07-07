@@ -336,8 +336,8 @@
 	top: 12px; /* 위로 이동 */ 
 	right: 20px; /* 오른쪽으로 이동 */ 
     transform: translate(50%, -50%); /* 적절한 위치로 조정 */
-    width: 15px !important;
-    height: 15px !important;
+    width: 12px !important;
+    height: 12px !important;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -396,6 +396,17 @@
     height: 100%;
 }
 
+/* 모달 배경 */
+.modal-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+}
 
 
 /*** Top Navbar End ***/
@@ -494,8 +505,8 @@
 									    </li>
 									    <li class="nav-item">
 											<!-- 클릭 시 모달 창을 열기 위한 링크 -->
-											<a class="nav-link position-relative" href="#" id="openChatModal">
-												<i class="bi bi-envelope bi-top"  style="font-size: 29px; "></i>
+											<a class="nav-link position-relative" href="#" id="openChatModal" >
+												<i class="bi bi-envelope bi-top"  style="font-size: 25px; "></i>
 												<span class="position-absolute badge-position bg-danger border border-light rounded-circle">
 													<span class="visually-hidden">New alerts</span>
 												</span>
@@ -513,15 +524,15 @@
 													<a class="nav-link" href="admin"><i class="bi bi-gear"></i> 관리자</a>
 												</li>
 												<li class="nav-item d-flex align-items-center">
-												    <a class="nav-link top-logout" onclick="logout()"><i class="bi bi-box-arrow-right"></i> 로그아웃</a>
+												    <a class="nav-link top-logout" onclick="logout()"><i class="bi bi-box-arrow-right" style="font-size: 25px;"></i> 로그아웃</a>
 												</li>
 											</c:when>
 											<c:otherwise>
 												<li class="nav-item d-flex align-items-center">
-												    <a class="nav-link" href="my-page"><i class="bi bi-person-circle bi-top"></i></a>
+												    <a class="nav-link" href="my-page"><i class="bi bi-person-circle bi-top" style="font-size: 25px;"></i></a>
 												</li>
 												<li class="nav-item d-flex align-items-center">
-												    <a class="nav-link top-logout" onclick="logout()"><i class="bi bi-box-arrow-right"></i> 로그아웃</a>
+												    <a class="nav-link top-logout" onclick="logout()">로그아웃 &nbsp;<i class="bi bi-box-arrow-right" style="font-size: 25px;"></i> </a>
 												</li>
 											</c:otherwise>
 										</c:choose>
@@ -657,22 +668,24 @@
 			</div>
 		</div>
 	</div>  
-	
+		
 	<!-- 채팅창 모달 창 -->
-	<div id="chatListModal" class="modal" style="display:none;">
-		<div class="chat-modal-content">
-			<!-- 모달 창 안에 닫기 버튼 -->
-			<span id="chatModalClose">&times;</span>
-			<!-- 모달 창 내용 -->
-			<iframe id="chatListContent" width="100%" height="100%" frameborder="0"></iframe>
-		</div>
+	<div id="chatListModal" class="modal">
+	    <div class="chat-modal-content">
+	        <!-- 모달 창 안에 닫기 버튼 -->
+	        <span id="chatModalClose">&times;</span>
+	        <!-- 모달 창 내용 -->
+	        <iframe id="chatListContent" width="100%" height="100%" frameborder="0"></iframe>
+	    </div>
 	</div>
+	<div id="modalBackdrop" class="modal-backdrop"></div>
 											
 </div> <!-- class-will-top -->
 
 <script>
 $(function() {
 	
+	// 탑 분야 카테고리 
 	$("#top-categoty").on("mouseover", function() {
 		$.ajax({
 			type: "GET",
@@ -714,9 +727,9 @@ $(function() {
 		});
 	
 		
-	});
+	}); // $("#top-categoty").on("mouseover", function() {}) 끝
 	
-	
+	// 탑 지역 카테고리
 	$("#top-local").on("mouseover", function() {
 		$.ajax({
 			type: "GET",
@@ -742,10 +755,82 @@ $(function() {
 		});
 	
 		
+	}); // $("#top-local").on("mouseover", function() {}) 끝
+	
+	// ============================================================================================
+   
+    // 미니 탑 메뉴 
+    $("#mini-menu-toggle").on("click", function() {
+		// 미니 탑 메뉴 분야 카테고리 
+		$.ajax({
+			type: "GET",
+	        url: "top-field-category",
+		 	dataType : "json",
+		 	contentType: "application/json",
+		 	success : function(fieldCategory) {
+		 		$("#mini-cate-field-area").html("");
+			 	for(field of fieldCategory) {
+			 		console.log("field.id : " + field.id);
+			 		console.log("field.largeCategory : " + field.largeCategory);
+			 		let miniSmallAreaId = "mini-cate-small-area"+field.id;
+			 		
+			 		$("#mini-cate-field-area").append(
+					 		 '<div class="mini-cate-field">'
+			            	+ 	 '<h5 class="mini-cate-big"><a href="class-list">'+field.largeCategory+'</a></h5>'
+			            	+	 '<ul class="mini-cate-small-area" id="'+miniSmallAreaId+'"></ul>'
+			            	+ '</div>'
+			 		);
+			 		for(children of field.children) {
+			 			console.log("children.id : "+ children.id);
+			 			console.log("children.largeCategory : "+children.largeCategory);
+			 			console.log("children.smallCategory : "+children.smallCategory);
+						$("#" + miniSmallAreaId).append('<li class="mini-cate-small"><a href="class-list?class_big_category='+field.id+'&class_small_category='+children.id+'">' + children.smallCategory + '</a></li>');
+			 		}
+			 	}
+		 		
+		 	},
+		 	error: function(xhr, status, error) {
+		        console.error("Error details:", xhr, status, error); // 디버깅 정보 출력
+				
+		        alert("mini-menu-toggle / top-field-category  오류 발생" + error);
+		    }
+			
+		}); // ajax() 끝
+		
+		// 미니 탑 메뉴 지역 카테고리 
+		$.ajax({
+			type: "GET",
+	        url: "top-local-category",
+		 	dataType : "json",
+		 	contentType: "application/json",
+		 	success : function(localCategory) {
+		 		$("#mini-cate-local-area").html("");
+			 	for(local of localCategory) {
+		 		console.log("local.local_name : " + local.local_name);
+		 		console.log("local.local_code : " + local.local_code);
+				 	$("#mini-cate-local-area").append(
+	                    '<h5 class="mini-cate-local"><a href="class-list?common2_code='+ local.local_code + '">'+ local.local_name +'</a></h5>'
+				 	);
+			 	}
+		 	},
+		 	error: function(xhr, status, error) {
+		        console.error("Error details:", xhr, status, error); // 디버깅 정보 출력
+		        alert("mini-menu-toggle / top-local-category 오류 발생" + error);
+		    }
+		}); // ajax() 끝
+		
+		// 미니 탑 메뉴창 열기
+		$(".mini-top-menu").toggle(); 
+		
+	}); //  $("#mini-menu-toggle").on("click", function() {}) 끝
+    
+    // 미니 탑 메뉴 닫기
+    $("#mini-top-close").on("click", function() {
+		$(".mini-top-menu").toggle();
 	});
 	
-	
-    // 검색창과 검색 버튼 클릭 시 #search-box-area 나타남
+    // ====================================================================================================
+	 // 검색창과 검색 버튼 클릭 시 #search-box-area 나타남
     $('.search-box, .search-txt, .search-btn, .search-btn2').on('click', function(event) {
         $('#searchModal').fadeIn();
         $("#keyword").focus();
@@ -784,107 +869,49 @@ $(function() {
         target.on('mouseleave', () => closeCollapse(target));
     });
 	
-    
-    $("#mini-menu-toggle").on("click", function() {
-		
-		$.ajax({
-			type: "GET",
-	        url: "top-field-category",
-		 	dataType : "json",
-		 	contentType: "application/json",
-		 	success : function(fieldCategory) {
-		 		$("#mini-cate-field-area").html("");
-			 	for(field of fieldCategory) {
-			 		console.log("field.id : " + field.id);
-			 		console.log("field.largeCategory : " + field.largeCategory);
-			 		let miniSmallAreaId = "mini-cate-small-area"+field.id;
-			 		
-			 		$("#mini-cate-field-area").append(
-					 		 '<div class="mini-cate-field">'
-			            	+ 	 '<h5 class="mini-cate-big"><a href="class-list">'+field.largeCategory+'</a></h5>'
-			            	+	 '<ul class="mini-cate-small-area" id="'+miniSmallAreaId+'"></ul>'
-			            	+ '</div>'
-			 		);
-			 		for(children of field.children) {
-			 			console.log("children.id : "+ children.id);
-			 			console.log("children.largeCategory : "+children.largeCategory);
-			 			console.log("children.smallCategory : "+children.smallCategory);
-						$("#" + miniSmallAreaId).append('<li class="mini-cate-small"><a href="class-list?class_big_category='+field.id+'&class_small_category='+children.id+'">' + children.smallCategory + '</a></li>');
-			 		}
-			 	}
-		 		
-		 	},
-		 	error: function(xhr, status, error) {
-		        console.error("Error details:", xhr, status, error); // 디버깅 정보 출력
-				
-		        alert("mini-menu-toggle / top-field-category  오류 발생" + error);
-		    }
-			
-		});
-		
-		$.ajax({
-			type: "GET",
-	        url: "top-local-category",
-		 	dataType : "json",
-		 	contentType: "application/json",
-		 	success : function(localCategory) {
-		 		$("#mini-cate-local-area").html("");
-			 	for(local of localCategory) {
-		 		console.log("local.local_name : " + local.local_name);
-		 		console.log("local.local_code : " + local.local_code);
-				 	$("#mini-cate-local-area").append(
-	                    '<h5 class="mini-cate-local"><a href="class-list?common2_code='+ local.local_code + '">'+ local.local_name +'</a></h5>'
-				 	);
-			 	}
-		 	},
-		 	error: function(xhr, status, error) {
-		        console.error("Error details:", xhr, status, error); // 디버깅 정보 출력
-		        alert("mini-menu-toggle / top-local-category 오류 발생" + error);
-		    }
-		});
-		
-		
-		$(".mini-top-menu").toggle();
-	});
-    
-    $("#mini-top-close").on("click", function() {
-		$(".mini-top-menu").toggle();
-	});
-	
-    
-    
-    // 모달 창 열기
-//     $("#openChatModal").on("click", function() {
-//         // 모달 창에 링크를 열도록 설정
-//         $("#chatListContent").attr("src", "user-chat-list"); // 실제로 열고자 하는 URL로 변경
-        
-//         // 모달 창 보이기
-//         $("#chatListModal").css("display", "block");
-//     });
-    
-	// 사용자가 모달 외부를 클릭하면 모달 닫기
-    window.onclick = function(event) {
-        if (event.target == document.getElementById("chatListModal")) {
-            $("#chatListModal").css("display", "none");
-        }
-    }
-	
-	// 모달 창 닫기
-    $("#chatModalClose").on("click", function() {
-        $("#chatListModal").css("display", "none");
-    });
-    
-    
- 	// 모달 창 열기
+    	
+    // ===================================================================================================
+ 	// 채팅 모달 창 열기
     $("#openChatModal").on("click", function(e) {
         e.preventDefault(); // 기본 동작 방지
-        $("#chatListContent").attr("src", "user-chat-list"); // 실제로 열고자 하는 URL로 변경
-        $("#chatListModal").css("display", "block");
-        $(".modal-backdrop").css("display", "block"); // 배경 표시
+        let member_code = "${sessionScope.member.member_code}";
+        if(member_code == null || member_code == "") {
+        	 alert("로그인이 필요한 페이지 입니다.");
+	         window.location.href = "member-login";
+        } else {
+	        $("#chatListContent").attr("src", "user-chat-list"); // 실제로 열고자 하는 URL로 변경
+	        $("#chatListModal").css("display", "block");
+	        $("#modalBackdrop").css("display", "block"); // 배경 표시
+	        $("body").css("overflow", "hidden"); // 배경 스크롤 방지
+        }
     });
 
-   
+    // 채팅 모달 창 닫기
+    $("#chatModalClose").on("click", function() {
+        $("#chatListModal").css("display", "none");
+        $("#modalBackdrop").css("display", "none");
+        $("body").css("overflow", "auto"); // 배경 스크롤 복구
+    });
 
+    // 채팅 모달 외부를 클릭하면 모달 닫기
+    $(window).on("click", function(event) {
+        if (event.target == document.getElementById("modalBackdrop")) {
+            $("#chatListModal").css("display", "none");
+            $("#modalBackdrop").css("display", "none");
+            $("body").css("overflow", "auto"); // 배경 스크롤 복구
+        }
+    });
+	
+    // ===================================================================================================
+    // 채팅창 웹소켓
+	// 페이지 로딩 완료 시 채팅방 입장을 위해 웹소켓을 연결하는 connect() 메서드 호출
+	connect();
+	
+    	
+    	
+    	
+    	
+    
 	
 });
 

@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpSession;
 
@@ -169,37 +171,58 @@ public class ClassController {
 		return listSelect;
 	}
 	
+	// 클래스 별점 순 정렬
 	@ResponseBody
 	@GetMapping("class-star-list")
-	public List<Map<String, Object>> getClassStarList(@RequestParam(required = false) String classListSelect){
+	public List<Map<String, Object>> getClassStarList(Model model, @RequestParam(required = false) String classListSelect){
 
 	    // 별점순 조회
 	    List<Map<String, Object>> starList = classService.getStarList();
-
+	    model.addAttribute("starList", starList);
+	    
 	    // 클래스 코드들을 저장할 리스트
 	    List<Integer> classCodes = new ArrayList<>();
 
-	    // 각 클래스의 정보에 대해 클래스 코드 수집
+	    // 별점순 클래스코드 구함
 	    for (Map<String, Object> map : starList) {
-	        Integer class_code = (Integer) map.get("class_code");
+	    	Integer class_code = (Integer) map.get("class_code");
 	        if (class_code != null) {
 	            classCodes.add(class_code);
 	        }
+	        System.out.println("/////class_code ??!!!" + class_code);
+	        System.out.println("/////classCodes ??!!!" + classCodes);
 	    }
-	    System.out.println("/////classCodes ??!!!" + classCodes);
-
+	    
+	    System.out.println(">>classCodes : " + classCodes);
+	    
 	    // 필터링 메소드 호출을 위한 파라미터 설정
-	    Map<String, Object> paramMap = new HashMap<>();
-	    paramMap.put("class_codes", classCodes);
+	    Map<String, Object> list = new HashMap<>();
+	    list.put("class_codes", classCodes);
 
 	    // 필터링 메소드 호출 및 결과 받아오기
-	    List<Map<String, Object>> filter = classService.getClassList(paramMap);
-
+	    List<Map<String, Object>> filter = classService.getClassList(list);
+	    System.out.println(">> filter : " + filter);
+	    
+	    // 결과를 classCodes 순서대로 정렬
+	    Map<Integer, Map<String, Object>> filterMap = filter.stream()
+	        .collect(Collectors.toMap(
+	            item -> (Integer) item.get("class_code"),
+	            item -> item
+	        ));
+	    
+	    System.out.println("filterMap" + filterMap);
+	    
+	    List<Map<String, Object>> sortedFilter = classCodes.stream()
+	        .map(filterMap::get)
+	        .filter(Objects::nonNull)  // Null 체크 추가
+	        .collect(Collectors.toList());
+	    
+	    System.out.println("sortedFilter" + sortedFilter);
 	    // 필터링된 결과 반환
 	    return filter;
 	}
 	
-	// 리뷰많은 순
+	// 클래스 리뷰순 정렬
 	@ResponseBody
 	@GetMapping("class-review-list")
 	public List<Map<String, Object>> getClassReviewlist(Model model,@RequestParam(required = false) String classListSelect){

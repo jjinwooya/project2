@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:websocket="http://www.springframework.org/schema/websocket"
+	xsi:schemaLocation="http://www.springframework.org/schema/websocket http://www.springframework.org/schema/websocket/spring-websocket-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+	<!-- 웹소켓 요청에 사용될 주소에 대한 핸들러 클래스 매핑 -->
+	<!-- 자바스크립트를 통해 WebSocket 객체 생성 수행 시 지정한 요청 주소를 path 에 지정 -->
+	<websocket:handlers>
+		<websocket:mapping handler="wsHandler" path="/echo"/>
+		<!-- 웹소켓 최초 연결 시 HTTP 통신 과정에서 request, response 객체를 가로채서 -->
+		<!-- WebSocketSession 객체에 저장해주는 인터셉터 정보 설정 -->
+		<websocket:handshake-interceptors>
+			<bean class="org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor"></bean>
+		</websocket:handshake-interceptors>
+	</websocket:handlers>
+	
+	<!-- websocket:mapping 태그에 지정한 요청이 들어오면 handler 속성과 일치하는 id 속성 찾아서 해당 클래스 실행 -->
+	<!-- id 속성은 handler 속성에 지정한 이름, class 속성은 매핑할 클래스명(패키지포함) -->
+	<bean id="wsHandler" class="com.itwillbs.p2c3.class_will.handler.MyWebSocketHandler" />
+	
+	<!-- ========================================================================= -->
+<!-- 	<websocket:handlers> -->
+<!-- 		<websocket:mapping handler="wsHandler2" path="/echo2"/> -->
+<!-- 		<websocket:handshake-interceptors> -->
+<!-- 			<bean class="org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor"></bean> -->
+<!-- 		</websocket:handshake-interceptors> -->
+<!-- 	</websocket:handlers> -->
+	
+<!-- 	<bean id="wsHandler2" class="com.itwillbs.p2c3.class_will.handler.MyWebSocketHandler" /> -->
+	
+
+</beans>
+
+
+
+
+
+
+
+
