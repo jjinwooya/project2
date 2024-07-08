@@ -248,6 +248,8 @@ th:nth-child(2), td:nth-child(2) {
 									                // 결과 출력
 									                document.write(stars${loop.index});
 									            </script></td>
+									            	
+													<td>${review.class_review_date}</td>	
 													<td><c:choose>
 															<c:when test="${review.review_reply_status eq 'N'}">
 																<button>미응답</button>
@@ -259,7 +261,6 @@ th:nth-child(2), td:nth-child(2) {
 																<button>상태 불명</button>
 															</c:otherwise>
 														</c:choose></td>
-													<td>${review.class_name}</td>	
 													<td>
 														<button class="btn btn-primary"
 															onclick="location.href='edit-review-page?review_code=${review.class_review_code}'">수정</button>

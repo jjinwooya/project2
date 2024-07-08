@@ -126,8 +126,8 @@
 		top: 15px; /* 위로 이동 */ 
 		right: 20px; /* 오른쪽으로 이동 */ 
 	    transform: translate(50%, -50%); /* 적절한 위치로 조정 */
-	    width: 15px !important;
-	    height: 15px !important;
+	    width: 12px !important;
+	    height: 12px !important;
 	    display: flex;
 	    align-items: center;
 	    justify-content: center;
@@ -265,9 +265,16 @@
 			// 모달 창 열기
 		    $("#openChatModal2").on("click", function(e) {
 		        e.preventDefault(); // 기본 동작 방지
-		        $("#chatListContent").attr("src", "user-chat-list"); // 실제로 열고자 하는 URL로 변경
-		        $("#chatListModal").css("display", "block");
-		        $(".modal-backdrop").css("display", "block"); // 배경 표시
+		        let member_code = "${sessionScope.member.member_code}";
+		        if(member_code == null || member_code == "") {
+		        	 alert("로그인이 필요한 페이지 입니다.");
+			         window.location.href = "member-login";
+		        } else {
+			        $("#chatListContent").attr("src", "user-chat-list"); // 실제로 열고자 하는 URL로 변경
+			        $("#chatListModal").css("display", "block");
+			        $("#modalBackdrop").css("display", "block"); // 배경 표시
+			        $("body").css("overflow", "hidden"); // 배경 스크롤 방지
+		        }
 		    });
 			
 		});

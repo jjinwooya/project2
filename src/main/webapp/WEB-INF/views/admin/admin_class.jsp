@@ -10,7 +10,7 @@
     <meta name="author" content="">
 
     <title>관리자 페이지</title>
-
+	
    <!-- Custom fonts for this template-->
         <link href="${pageContext.request.contextPath}/resources/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
@@ -30,7 +30,12 @@
     <script src="https://uicdn.toast.com/tui.pagination/latest/tui-pagination.js"></script>
 	<!-- admin_utils.js 로드 -->
     <script src="${pageContext.request.contextPath}/resources/js/admin_utils.js"></script>
-	
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/admin_default.css">
+	<style>
+		.content-wrapper {
+        	margin-top : 50px;
+        }
+	</style>	
 </head>
 <body id="page-top">
 

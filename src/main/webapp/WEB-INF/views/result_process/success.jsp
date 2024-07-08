@@ -13,6 +13,3 @@
 		location.href="${targetURL}";
 	}
 </script>
-
-
-

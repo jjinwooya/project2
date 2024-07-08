@@ -27,6 +27,9 @@ public interface CreatorMapper {
 	
 	// 커리큘럼 등록
 	void creatorCurriInsert(@Param("params") List<CurriVO> params);
+	
+	// 커리큘럼 가져오기
+	List<Map<String, String>> getCurriList(int classCode);
 
 	// 커리큘럼 삭제
 	void creatorCurriDelete(int class_code);

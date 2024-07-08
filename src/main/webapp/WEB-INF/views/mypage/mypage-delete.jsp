@@ -148,7 +148,7 @@ th:nth-child(2), td:nth-child(2) {
 								<!-- 								여기부터 토스트 ui -->
 								<div class="table-responsive">
 									<h3>나의 흔적이 ${totalReview}개 있습니다.</h3>
-									<p>${member.member_name}님이작성한리뷰들</p>
+									<p>${member.member_name}님이 작성한 리뷰들</p>
 									<table class="table table-hover">
 										<thead>
 											<tr>

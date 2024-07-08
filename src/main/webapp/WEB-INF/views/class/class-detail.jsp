@@ -84,33 +84,12 @@
     .headcount {
         color: white;
     }
-    
+    .heartCount span{
+    	text-align : center;
+    }
     
 </style>
-<script type="text/javascript">
-document.addEventListener("DOMContentLoaded", function() {
-    var heartOverlays = document.querySelectorAll(".heartImg");
-    var originalSrc = "${pageContext.request.contextPath}/resources/images/profile/heart.png";
-    var changeSrc = "${pageContext.request.contextPath}/resources/images/profile/heart_full.png";
 
-    heartOverlays.forEach(function(heartOverlay) {
-        heartOverlay.addEventListener("click", function() {
-            var img = this;
-            img.classList.add("fade");
-
-            setTimeout(function() {
-                if (img.src.includes("heart_full.png")) {
-                    img.src = originalSrc;
-                } else {
-                    img.src = changeSrc;
-                }
-                img.classList.remove("fade");
-            }, 300); 
-        });
-    });
-});
-
-</script>
 <!-- 카카오 지도 api -->
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b60a9d61c7090ce24f1b5bfa7ab26622"></script>
 <style>
@@ -157,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		var customOverlay = new kakao.maps.CustomOverlay({
 		    map: map,
 		    position: position,
-		    content: content,
+// 		    content: content,
 		    yAnchor: 1 
 		});
 		
@@ -282,13 +261,15 @@ document.addEventListener("DOMContentLoaded", function() {
 							                    <c:if test="${map.class_review_subject != null}">
 							                        <tr>
 							                            <td class="creator-review-subject">
-                                                    		<a href="#" onclick="creatorReview(event, '${param.class_code}')">${map.class_review_subject}</a>
+                                                    		<a href="#" onclick="creatorReview(event, '${param.class_code}', '${map.class_review_code}')" >${map.class_review_subject}</a>
+<%-- 															<a onclick="creatorInquiry(event, '${param.class_code}', '${map.class_inquiry_code}')" >${map.class_inquiry_subject}</a> --%>
+                                                    		
 							                            </td>
 							                            <td>
-                                                    		<a href="#" onclick="creatorReview(event, '${param.class_code}')">${map.class_review_date}</a>
+                                                    		<a href="#" onclick="creatorReview(event, '${param.class_code}', '${map.class_review_code}')" >${map.class_review_date}</a>
 							                            </td>
 							                            <td>
-                                                    		<a href="#" onclick="creatorReview(event, '${param.class_code}')">${map.member_nickname}</a>
+                                                    		<a href="#" onclick="creatorReview(event, '${param.class_code}', '${map.class_review_code}')" >${map.member_nickname}</a>
 							                            </td>
 							                            <td>
 							                                <div class="reviewStar reviewStar1 col" onclick="creatorReview(event, '${param.class_code}')" style="text-align : left">
@@ -318,9 +299,14 @@ document.addEventListener("DOMContentLoaded", function() {
             <div id="section3">
             	<h4>커리큘럼</h4>
 <%--                 <img src="${pageContext.request.contextPath}/resources/images/class/class_curri.png" class="classImg"> --%>
-				<div class="">
+				<div class="classCurri">
 					<c:forEach var="classCurri" items="${classCurri}">
-						${classCurri.curri_round} - ${classCurri.curri_content}<br>
+						<div class="classCurriRound">
+							${classCurri.curri_round}<br>
+						</div>
+						<div class="classCurriContent">
+							&nbsp;&nbsp;&nbsp;&nbsp;${classCurri.curri_content}
+						</div>
 					</c:forEach>
 				</div>
             </div>
@@ -351,13 +337,14 @@ document.addEventListener("DOMContentLoaded", function() {
 										<c:forEach var="map" items="${classInquiry}">
 			                                <tr>
 			                                    <td class="creator-review-subject">
-                                                    <a href="#" onclick="creatorInquiry(event, '${param.class_code}')">${map.class_inquiry_subject}</a>
+                                                    <a onclick="creatorInquiry(event, '${param.class_code}', '${map.class_inquiry_code}')" >${map.class_inquiry_subject}</a>
+<%--                                                     <a href="#" onclick="creatorInquiry(event, '${param.class_code}')" >${map.class_inquiry_subject}</a> --%>
 			                                    </td>
 			                                    <td>
-                                                    <a href="#" onclick="creatorInquiry(event, '${param.class_code}')">${map.class_inquiry_date}</a>
+                                                    <a href="#" onclick="creatorInquiry(event, '${param.class_code}', '${map.class_inquiry_code}')" >${map.class_inquiry_date}</a>
 			                                    </td>
 			                                    <td>
-                                                    <a href="#" onclick="creatorInquiry(event, '${param.class_code}')">${map.member_nickname}</a>
+                                                    <a href="#" onclick="creatorInquiry(event, '${param.class_code}', '${map.class_inquiry_code}')" >${map.member_nickname}</a>
 			                                    </td>
 			                                </tr>
 		                                </c:forEach>
@@ -428,8 +415,21 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <button type="button" class="btn btn-light w-100 btn-customs">
                                     <%-- <img src="${pageContext.request.contextPath}/resources/images/class/heart1.png" class="button-icon">5214 --%>
                                     <div style="display: flex; align-items: center;">
-                                        <img src="${pageContext.request.contextPath}/resources/images/profile/heart.png" id="heartOverlay" class="button-icon heartImg">
-                                        <div class="heartCount"><span>5124</span></div>
+                                    	<div class="col-md-3" style="text-align : center;">
+											<!-- 라이크 클래스 하트 이미지 변경-->
+											<c:choose>
+												<c:when test="${isLiked}">
+							                        <img src="${pageContext.request.contextPath}/resources/images/profile/heart_full.png" id="heartOverlay" class="heartImg" data-class-code="${classInfo.class_code}" data-member-code="${member.member_code}">
+							                    </c:when>
+							                    <c:otherwise>
+							                        <img src="${pageContext.request.contextPath}/resources/images/profile/heart.png" id="heartOverlay" class="heartImg" data-class-code="${classInfo.class_code}" data-member-code="${member.member_code}">
+							                    </c:otherwise>
+											</c:choose>
+											<!-- 라이크 클래스 하트 이미지 변경 -->
+                                        </div>
+                                        <div class="heartCount col-7 " id="heartCountElement">
+                                        ${likeClassCount}
+                                        </div>
                                     </div>
                                 </button>
                             </div>
@@ -443,6 +443,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             </div>
                         </div> <!-- row -->
                     </div> 
+                    
                     <!-- 좋아요, 공유버튼 -->
                     <div class="col-md-12">
                         <button type="submit" class="btn btn-light w-100">신청하기</button>
@@ -455,6 +456,129 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
 </div>
 <!-- container1 -->
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function() {
+//     var heartOverlays = document.querySelectorAll(".heartImg");
+//     var originalSrc = "${pageContext.request.contextPath}/resources/images/profile/heart.png";
+//     var changeSrc = "${pageContext.request.contextPath}/resources/images/profile/heart_full.png";
+
+//     heartOverlays.forEach(function(heartOverlay) {
+//         heartOverlay.addEventListener("click", function() {
+//             var img = this;
+//             img.classList.add("fade");
+
+//             setTimeout(function() {
+//                 if (img.src.includes("heart_full.png")) {
+//                     img.src = originalSrc;
+//                 } else {
+//                     img.src = changeSrc;
+//                 }
+//                 img.classList.remove("fade");
+//             }, 300); 
+//         });
+//     });
+    
+    //--
+	var btnCustoms = document.querySelector(".btn-customs");
+	var heartImges = document.querySelectorAll(".heartImg");
+	var originalSrc = "${pageContext.request.contextPath}/resources/images/profile/heart.png"; // 라이크 클래스 추가 안했을 시 
+	var changeSrc = "${pageContext.request.contextPath}/resources/images/profile/heart_full.png"; // 라이크 클래스 추가 했을 시 
+	var heartCountElement = document.getElementById("heartCountElement"); // heartCount 요소
+	
+	// btnCustoms 클릭 시의 이벤트 핸들러
+	btnCustoms.addEventListener("click", function() {
+	    // btnCustoms를 클릭했을 때 할 일을 여기에 추가할 수 있습니다.
+	    
+	    // heartImges 리스트의 각 항목에 대해 처리
+	    heartImges.forEach(function(img) {
+	        var member_code = img.getAttribute("data-member-code");
+	        var class_code = img.getAttribute("data-class-code");
+	        var isFullHeart = img.src.includes("heart_full.png");
+	
+	        var heart_status = !isFullHeart;
+	
+	        // 로그인 확인
+	        if (member_code == null || member_code === "") {
+	            alert("로그인이 필요한 페이지입니다.");
+	            window.location.href = "member-login";
+	            return;
+	        }
+	
+	        if (heart_status) { // heart_status가 true일 때 (like-class 추가 시)
+	            img.src = changeSrc;
+	            alert("관심 클래스에 추가되었습니다.");
+	        } else { // heart_status가 false일 때 (like-class 삭제 시)
+	            img.src = originalSrc;
+	            alert("관심 클래스에서 삭제되었습니다.");
+	        }
+	
+	        // AJAX 요청
+	        var data = JSON.stringify({
+	            heart_status: heart_status,
+	            member_code: member_code,
+	            class_code: class_code
+	        });
+	
+	        updateHeartStatus(data, class_code);
+	    });
+	});
+    
+    function updateHeartStatus(data, class_code) {
+    	
+        var xhr = new XMLHttpRequest();
+        
+        xhr.open("POST", "${pageContext.request.contextPath}/update-heart-status", true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    updateHeartCount(class_code);
+                    console.log("Heart status updated successfully");
+                } else {
+                    console.error("Error updating heartStatus");
+                }
+            }
+        };
+        
+        xhr.send(data);
+//         xhr.send(JSON.stringify(data));
+    } // updateHeartStatus()끝
+    
+    function updateHeartCount(class_code) {
+    	$.ajax({
+    		type : "get",
+    		data : {
+    			class_code : class_code
+    		},
+    		url : "like-class-count",
+            success: function(likeClassCount) {
+            	$("#heartCountElement").empty();
+                $("#heartCountElement").text(likeClassCount); // heartCount 업데이트
+            },
+            error: function() {
+                console.error("Error fetching heartCount");
+            }
+    		
+    	});
+//         // 새로운 AJAX 요청을 사용하여 heartCount 업데이트
+//         var xhr = new XMLHttpRequest();
+//         xhr.open("GET", "${pageContext.request.contextPath}/get-heart-count", true); // 예시: heartCount를 가져오는 URL
+//         xhr.onreadystatechange = function() {
+//             if (xhr.readyState === 4) {
+//                 if (xhr.status === 200) {
+//                     var newHeartCount = xhr.responseText;
+//                     heartCountElement.textContent = newHeartCount; // heartCount 업데이트
+//                 } else {
+//                     console.error("Error fetching heartCount");
+//                 }
+//             }
+//         };
+//         xhr.send();
+	}
+});
+
+</script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     let classScheduleArray = ${class_schedule_date};
@@ -629,14 +753,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 				
 <script type="text/javascript">
-function creatorReview(event, class_code) {
+function creatorReview(event, class_code, class_review_code) {
     event.preventDefault(); // 기본 동작 방지 (예: href="#" 의 경우)
-    window.open("creator-review-form2?class_code=" + class_code, "pop", "width=700, height=800, left=700, top=50");
+    console.log("creatorReview : class_code : " + class_code + ", class_review_code : " + class_review_code);
+    window.open("creator-review-form2?class_code=" + class_code + "&class_review_code=" + class_review_code, "pop", "width=700, height=700, left=700, top=50");
 }
 
-function creatorInquiry(event, class_code) {
+function creatorInquiry(event, class_code, class_inquiry_code) {
     event.preventDefault(); // 기본 동작 방지 (예: href="#" 의 경우)
-    window.open("creator-inquiry-form2?class_code=" + class_code, "pop", "width=700, height=800, left=700, top=50");
+    console.log("creatorInquiry : class_code : " + class_code + ", class_inquiry_code : " + class_inquiry_code);
+    window.open("creator-inquiry-form2?class_code=" + class_code + "&class_inquiry_code=" + class_inquiry_code, "pop", "width=700, height=800, left=700, top=50");
 }
 
 function classComplain(event, class_code) {

@@ -16,7 +16,10 @@
             color: blue;
             margin-left: 10px;
         }
+        
     </style>
+    
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/admin_default.css">
     <!-- Custom fonts for this template-->
     <link href="${pageContext.request.contextPath}/resources/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
@@ -53,15 +56,6 @@
                 <div class="container-fluid">
 				   <div class="d-sm-flex align-items-center justify-content-between mb-4">
 					    <h1 class="h3 mb-0 text-gray-800">카테고리 리스트</h1>
-					    <div class="input-group" style="width:20%">
-					        <input type="text" class="form-control bg-light border-0 small" placeholder="검색"
-					            aria-label="Search" aria-describedby="basic-addon2" style="border:1px solid black">
-					        <div class="input-group-append">
-					            <button class="btn btn-primary" type="button">
-					                <i class="fas fa-search fa-sm"></i>
-					            </button>
-					        </div>
-					    </div>
 					    <div class="btn-group">
 					        <button id="btn-delete" class="btn btn-danger btn-sm">삭제</button> <!-- 삭제 버튼 추가 -->
 					        <input type="file" id="file-input" style="display:none;" />

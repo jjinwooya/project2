@@ -94,8 +94,10 @@ public interface PayMapper {
 	
 	//willpay 환불약관 검사
 	int selectWillpayDate(Map<String, Object> map);
+	
+	//환불가능한 금액 가져오기
+	int selectAbledWillpay(Map<String, Object> map);
 
-	void updateWillpayStatus(Map<String, Object> map);
 	
 	
 	

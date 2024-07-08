@@ -41,7 +41,8 @@
 		    c2.code_value AS big_category, 
 		    c3.code_value AS small_category, 
 		    m.member_nickname, 
-		    m.member_img 
+		    m.member_img,
+		    c22.code_value AS local_name  
 		FROM (
 		    SELECT 
 		        p.class_code, 
@@ -58,29 +59,10 @@
 		JOIN class c ON c.class_code = top_classes.class_code
 		JOIN common2 c2 ON c.class_big_category = c2.common2_code AND c2.common1_code = 'CLC'
 		JOIN common3 c3 ON c.class_small_category = c3.common3_code AND c3.common2_code = c2.common2_code AND c3.common1_code = 'CLC'
-		JOIN MEMBER m ON c.member_code = m.member_code;
+		JOIN MEMBER m ON c.member_code = m.member_code
+		JOIN common2 c22 ON c.common2_code = c22.common2_code AND c22.common1_code = 'LC';
 	</select>
 	
-	<select id="selectTop10Local">
-		SELECT 
-			c.class_code,
-		    c2.code_value AS local_name 
-		FROM (
-		    SELECT 
-		        p.class_code, 
-		        COUNT(*) AS count
-		    FROM pay p
-		    JOIN class c ON p.class_code = c.class_code
-		    WHERE c.class_active = 'Y'
-		      AND c.class_regist_status = '2'
-		      AND c.class_hide = '1'
-		    GROUP BY p.class_code
-		    ORDER BY count DESC
-		    LIMIT 10
-		) AS top_classes
-		JOIN class c ON c.class_code = top_classes.class_code
-		JOIN common2 c2 ON c.common2_code = c2.common2_code AND c2.common1_code = 'LC';
-	</select>
 	
 	<select id="selectNewClass">
 		SELECT 
@@ -92,24 +74,13 @@
 		    c2.code_value AS big_category, 
 		    c3.code_value AS small_category, 
 		    m.member_nickname, 
-		    m.member_img 
+		    m.member_img,
+		    c22.code_value AS local_name 
 		FROM class c 
 		JOIN common2 c2 ON c.class_big_category = c2.common2_code AND c2.common1_code = 'CLC'
 		JOIN common3 c3 ON c.class_small_category = c3.common3_code AND c3.common2_code = c2.common2_code AND c3.common1_code = 'CLC'
 		JOIN MEMBER m ON c.member_code = m.member_code
-		WHERE c.class_active = 'Y'
-		AND c.class_regist_status = '2'
-		AND c.class_hide = '1'
-		ORDER BY class_code DESC 
-		LIMIT 8;
-	</select>
-	
-	<select id="selectNewLocal">
-		SELECT 
-			c.class_code,
-		    c2.code_value AS local_name 
-		FROM class c  
-		JOIN common2 c2 ON c.common2_code = c2.common2_code AND c2.common1_code = 'LC'
+		JOIN common2 c22 ON c.common2_code = c22.common2_code AND c22.common1_code = 'LC'
 		WHERE c.class_active = 'Y'
 		AND c.class_regist_status = '2'
 		AND c.class_hide = '1'
@@ -157,5 +128,56 @@
 		FROM like_class
 		WHERE member_code = #{member_code}
 	</select>
+	
+	<select id="selectKeyword" resultType="map">
+		SELECT 
+			c.class_code
+			,class_name
+			,c2.code_value AS class_big_category
+			,c3.code_value AS class_small_category
+			,lc.code_value AS local_name
+			,c2.common2_code
+			,c3.common3_code
+			,class_thumnail
+			,class_image
+			,class_ex
+			,class_location
+			,class_creator_explain
+			,class_hide
+			,class_price
+			,class_map_x
+			,class_map_y
+			,class_hashtag
+			,m.member_nickname
+			,m.member_img
+		FROM class c
+		JOIN common2 c2 ON c.class_big_category = c2.common2_code AND c2.common1_code = 'CLC'
+		JOIN common3 c3 ON c.class_small_category = c3.common3_code AND c3.common2_code = c2.common2_code AND c3.common1_code = 'CLC'
+		JOIN MEMBER m ON c.member_code = m.member_code
+		JOIN common2 lc ON c.common2_code = lc.common2_code AND lc.common1_code = 'LC'
+		WHERE (c.class_name LIKE CONCAT('%', #{keyword}, '%')
+			   OR c.class_ex LIKE CONCAT('%', #{keyword}, '%')
+			   OR c.class_location LIKE CONCAT('%', #{keyword}, '%')
+			   OR c.class_hashtag LIKE CONCAT('%', #{keyword}, '%')
+			   OR c2.code_value LIKE CONCAT('%', #{keyword}, '%')
+			   OR c3.code_value LIKE CONCAT('%', #{keyword}, '%'))
+		AND c.class_active = 'Y'
+		AND c.class_regist_status = '2'
+		AND c.class_hide = '1'; 
+	</select>
+	
+	
+	<select id="selectRecommend" resultType="string">
+		SELECT search_word_keyword
+		FROM (
+		    SELECT search_word_keyword, COUNT(*) AS keyword_count
+		    FROM search_word
+		    WHERE search_word_keyword REGEXP '^[가-힣]+$'
+		    GROUP BY search_word_keyword
+		) AS subquery
+		ORDER BY keyword_count DESC
+		LIMIT 7;
+	</select>
+	
 	
 </mapper>

@@ -31,12 +31,18 @@
 	<!-- admin_utils.js 로드 -->
     <script src="${pageContext.request.contextPath}/resources/js/admin_utils.js"></script>
     
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/admin_default.css">
+    
 
 </head>
 <style>
    	#grid-container {
     	width: 30%;
 	}
+	
+	.content-wrapper {
+       	margin-top : 50px;
+    }
 </style>
 <body id="page-top">
 

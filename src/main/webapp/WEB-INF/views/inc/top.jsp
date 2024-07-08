@@ -413,55 +413,7 @@
 
 </style>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const collapseElements = document.querySelectorAll('[data-bs-toggle="collapse"]');
-
-        let currentOpenCollapse = null;
-
-        const openCollapse = (target) => {
-            if (currentOpenCollapse && currentOpenCollapse !== target) {
-                currentOpenCollapse.classList.remove('show');
-            }
-            target.classList.add('show');
-            currentOpenCollapse = target;
-        };
-
-        const closeCollapse = (target) => {
-            target.classList.remove('show');
-            if (currentOpenCollapse === target) {
-                currentOpenCollapse = null;
-            }
-        };
-
-        collapseElements.forEach(function (elem) {
-            const target = document.querySelector(elem.getAttribute('data-bs-target'));
-
-            elem.addEventListener('mouseenter', () => openCollapse(target));
-            
-            target.addEventListener('mouseenter', () => openCollapse(target));
-            target.addEventListener('mouseleave', () => closeCollapse(target));
-        });
-        
-        
-       
-    });
-    
-    function logout() {
-		
-    	if(confirm("로그아웃하시겠습니까?")) {
-    		location.href = "member-logout";
-    	}
-    } 
-    
-    
-</script>
-
-
-
-
-<!-- 본문 시작 -->
-<!-- Navbar start -->
+<!-- top Navbar start -->
 <div class="class-will-top">
 	<div class="container-fluid ">
 	    <div class="container px-0 top-cate">
@@ -623,22 +575,7 @@
 	        <div class="recommend my-3 py-3 text-center container">
 	            <!-- 추천 검색어 영역 -->
 	            <h5 class="mb-3">추천 검색어</h5>
-	            <div class="justify-content-center">
-	            	<div class="btn recommend-keyword">
-	            		<a href="class-list">선물용</a>
-	            	</div>
-	            	<div class="btn recommend-keyword">
-	            		<a href="class-list">데이트</a>
-	            	</div>
-	            	<div class="btn recommend-keyword">
-	            		<a href="class-list" >핸드메이드</a>
-	            	</div>
-	            	<div class="btn recommend-keyword">
-	            		<a href="class-list">가족</a>
-	            	</div>
-	            	<div class="btn recommend-keyword">
-	            		<a href="class-list">드로잉</a>
-	            	</div>
+	            <div class="justify-content-center" id="recommend-area">
 	            </div>
 	        </div>
 	    </div>
@@ -681,8 +618,19 @@
 	<div id="modalBackdrop" class="modal-backdrop"></div>
 											
 </div> <!-- class-will-top -->
+<!-- top Navbar end -->
 
 <script>
+
+//=================================== top script start =====================================================
+
+
+function logout() {
+	
+	if(confirm("로그아웃하시겠습니까?")) {
+		location.href = "member-logout";
+	}
+} 
 $(function() {
 	
 	// 탑 분야 카테고리 
@@ -834,14 +782,46 @@ $(function() {
     $('.search-box, .search-txt, .search-btn, .search-btn2').on('click', function(event) {
         $('#searchModal').fadeIn();
         $("#keyword").focus();
+        
+        $.ajax({
+        	type: "GET",
+	        url: "recommend-keyword",
+		 	dataType : "json",
+		 	contentType: "application/json",
+		 	success : function(keywordList) {
+// 		 		console.log(keywordList);
+		 		$("#recommend-area").html("");
+		 		for(keyword of keywordList) {
+		 			$("#recommend-area").append('<div class="btn recommend-keyword"><a href="#" class="recommend-link" data-keyword="' + keyword + '">' + keyword + '</a></div>');
+		 		}
+            	
+		 	},
+		 	error : function(xhr, status, error) {
+		 		console.error("Error details:", xhr, status, error); // 디버깅 정보 출력
+		        alert("recommend-keyword / ajax 오류 발생 : " + error);
+		    }
+        });
+        
+        
     });
+    
+    // 추천 키워드 클릭 시 해당 키워드로 검색됨
+    $(document).on('click', '.recommend-link', function(event) {
+    	 event.preventDefault(); // 기본 동작을 막습니다.
+         let keyword = $(this).data('keyword');
+         $("#keyword").val(keyword);
+         $("form.search-box").submit();
+    });
+    
 
     // close 버튼 클릭 시 #search-box-area 사라짐
     $('.search-box-area .close').on('click', function() {
         $('#searchModal').fadeOut();
     });
 	
-    const collapseElements = $('[data-bs-toggle="collapse"]');
+    // ===================================================================================================
+    // 카테고리, 지역 콜렙스 호버
+     const collapseElements = $('#top-categoty, #top-local');
 
     let currentOpenCollapse = null;
 
@@ -868,7 +848,6 @@ $(function() {
         target.on('mouseenter', () => openCollapse(target));
         target.on('mouseleave', () => closeCollapse(target));
     });
-	
     	
     // ===================================================================================================
  	// 채팅 모달 창 열기
@@ -902,19 +881,25 @@ $(function() {
         }
     });
 	
-    // ===================================================================================================
-    // 채팅창 웹소켓
-	// 페이지 로딩 완료 시 채팅방 입장을 위해 웹소켓을 연결하는 connect() 메서드 호출
-	connect();
-	
-    	
-    	
-    	
-    	
-    
-	
 });
 
-
-
 </script>
+
+<%-- 로그인 상태일 경우에만 채팅 관련 스크립트를 클라이언트측에 전송 --%>
+<c:if test="${not empty sessionScope.member}">
+
+	<script type="text/javascript">
+		$(function() {
+			connect();
+			
+			
+			
+			
+		});
+	</script>
+
+</c:if>
+
+
+
+<!-- =================================== top script end ===================================================== -->

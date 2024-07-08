@@ -233,8 +233,6 @@ public class MemberController {
 	@GetMapping("user-chat-list")
 	public String userChatList(MemberVO member, Model model, HttpSession session) {
 		
-	
-		
 		model.addAttribute("member", member);
 		return "user_chat/user_chat_list";
 		

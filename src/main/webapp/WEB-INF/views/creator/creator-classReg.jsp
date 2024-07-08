@@ -37,10 +37,8 @@
 
 <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
 <!-- 썸머노트 cdn -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
 <!-- <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script> -->
-<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
     <style>
         .delete-btn {
             display: none;
@@ -221,7 +219,7 @@
 										<div class="classReg-creator-info-form">
 											<div class="col-md-12 mt-2 mb-5">
 												<label for="class_creator_explain" class="h6">크리에이터 소개</label>
-												<textarea name="class_creator_explain" class="class_creator_explain" maxlength="3000" cols="30" rows="5" placeholder="내용을 입력해주세요" class="with-border"></textarea> 
+												<textarea name="class_creator_explain" class="class_creator_explain with-border" maxlength="3000" cols="30" rows="5" placeholder="내용을 입력해주세요" ></textarea> 
 <!-- 												<input type="text" name="class_creator_explain" class="class_creator_explain" class="form-control" required /> -->
 												<div class="invalid-feedback">크리에이터 소개를 입력해주세요.</div>
 											</div>
@@ -247,9 +245,12 @@
 	<footer>
 		<jsp:include page="/WEB-INF/views/inc/bottom.jsp" />
 	</footer>
+	
+	<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
 
 	<!-- Template Javascript -->
-	<script src="${pageContext.request.contextPath}/resources/js/main.js"></script>
+<%-- 	<script src="${pageContext.request.contextPath}/resources/js/main.js"></script> --%>
 	
 	<script type="text/javascript">	
 	
@@ -312,56 +313,56 @@
 // 	            debugger;
 	        }
 			
-		
-		
-		// 썸머노트 설정
-		$('#summernote').summernote({
-			  height: 300,                 // 에디터 높이
-			  minHeight: null,             // 최소 높이
-			  maxHeight: null,             // 최대 높이
-			  focus: false,                  // 에디터 로딩후 포커스를 맞출지 여부
-			  lang: "ko-KR",					// 한글 설정
-			  placeholder: '최대3000자까지 쓸 수 있습니다'	,//placeholder 설정
-			  toolbar: [
-					    // [groupName, [list of button]]
-					    ['fontname', ['fontname']],
-					    ['fontsize', ['fontsize']],
-					    ['color', ['color']],
-					    ['style', ['bold', 'italic', 'underline','strikethrough', 'clear']],
-					    ['para', ['ul', 'ol', 'paragraph']],
-					    ['height', ['height']],
-// 					    ['insert',['picture']]// 이미지 첨부
-					  ],
-					fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋움체','바탕체'],
-					fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72']
-		          
-		});
-		$('.class_creator_explain').summernote({
-			  height: 200,                 // 에디터 높이
-			  minHeight: null,             // 최소 높이
-			  maxHeight: null,             // 최대 높이
-			  focus: false,                  // 에디터 로딩후 포커스를 맞출지 여부
-			  lang: "ko-KR",					// 한글 설정
-			  placeholder: '최대500자까지 쓸 수 있습니다'	,//placeholder 설정
-			  toolbar: [
-					     // [groupName, [list of button]]
-					     ['fontname', ['fontname']],
-					     ['fontsize', ['fontsize']],
-					     ['style', ['bold', 'italic', 'underline', 'clear']],
-					     ['para', ['ul', 'ol']],
-					   ],
-			  fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋움체','바탕체'],
-			  fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72'],
-			  // callbacks은 이미지 업로드 처리
-// 			  callbacks : {                                                    
-// 			  onImageUpload : function(files, editor, welEditable) {   
-		        // 다중 이미지 처리를 위해 for문을 사용
-// 					for (var i = 0; i < files.length; i++) {
-// 						imageUploader(files[i], this);
-// 					}
-// 				 }
-// 			  }
-		});
+			
+			
+			// 썸머노트 설정
+			$('#summernote').summernote({
+				  height: 300,                 // 에디터 높이
+				  minHeight: null,             // 최소 높이
+				  maxHeight: null,             // 최대 높이
+				  focus: false,                  // 에디터 로딩후 포커스를 맞출지 여부
+				  lang: "ko-KR",					// 한글 설정
+				  placeholder: '최대3000자까지 쓸 수 있습니다'	,//placeholder 설정
+				  toolbar: [
+						    // [groupName, [list of button]]
+						    ['fontname', ['fontname']],
+						    ['fontsize', ['fontsize']],
+						    ['color', ['color']],
+						    ['style', ['bold', 'italic', 'underline','strikethrough', 'clear']],
+						    ['para', ['ul', 'ol', 'paragraph']],
+						    ['height', ['height']],
+	// 					    ['insert',['picture']]// 이미지 첨부
+						  ],
+						fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋움체','바탕체'],
+						fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72']
+			          
+			});
+			$('.class_creator_explain').summernote({
+				  height: 200,                 // 에디터 높이
+				  minHeight: null,             // 최소 높이
+				  maxHeight: null,             // 최대 높이
+				  focus: false,                  // 에디터 로딩후 포커스를 맞출지 여부
+				  lang: "ko-KR",					// 한글 설정
+				  placeholder: '최대500자까지 쓸 수 있습니다'	,//placeholder 설정
+				  toolbar: [
+						     // [groupName, [list of button]]
+						     ['fontname', ['fontname']],
+						     ['fontsize', ['fontsize']],
+						     ['style', ['bold', 'italic', 'underline', 'clear']],
+						     ['para', ['ul', 'ol']],
+						   ],
+				  fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋움체','바탕체'],
+				  fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72'],
+				  // callbacks은 이미지 업로드 처리
+	// 			  callbacks : {                                                    
+	// 			  onImageUpload : function(files, editor, welEditable) {   
+			        // 다중 이미지 처리를 위해 for문을 사용
+	// 					for (var i = 0; i < files.length; i++) {
+	// 						imageUploader(files[i], this);
+	// 					}
+	// 				 }
+	// 			  }
+			});
 		});
 		
 		// 해쉬태그 다중선택

@@ -380,11 +380,9 @@ public class AdminController {
         List<String> columns = adminService.getColumnNames(tableName);
         
         List<Map<String, Object>> data;
-//        if (currentPageOnly) {
-//            data = adminService.getCurrentPageData(tableName); // 현재 페이지 데이터 가져오기
-//        } else {
-            data = adminService.getAllData(tableName); // 전체 데이터 가져오기
-//        }
+        
+        data = adminService.getAllData(tableName); // 전체 데이터 가져오기
+        
         // excelService에 excel 생성요청
         byte[] excelBytes = excelService.createExcel(title, columns, data);
         

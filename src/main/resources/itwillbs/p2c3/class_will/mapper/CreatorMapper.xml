@@ -4,59 +4,6 @@
   
 <mapper namespace="itwillbs.p2c3.class_will.mapper.CreatorMapper">
 	
-	<!-- 클래스 등록 -->
-<!-- 	<insert id="createrClassRegPro"> -->
-<!-- 		INSERT INTO class(  	   -->
-<!-- 				  class_code -->
-<!-- 				, class_name -->
-<!-- 				, class_big_category -->
-<!-- 				, class_small_category -->
-<!-- 				, class_thumnail -->
-<!-- 				, class_image -->
-<!-- 				, class_image2 -->
-<!-- 				, class_image3 -->
-<!-- 				, class_ex -->
-<!-- 				, class_location -->
-<!-- 				, class_hashtag -->
-<!-- 				, class_creator_explain -->
-<!-- 				, class_hide -->
-<!-- 				, class_price -->
-<!-- 				, class_regist_status -->
-<!-- 				, member_code -->
-<!-- 				, class_map_x -->
-<!-- 				, class_map_y -->
-<!-- 				, class_active -->
-<!-- 				, common2_code -->
-<!-- 		) -->
-<!-- 		VALUES ( -->
-<!-- 			NULL -->
-<!-- 			, #{class_name} -->
-<!-- 			, #{class_big_category} -->
-<!-- 			, #{class_small_category} -->
-<!-- 			, #{class_thumnail} -->
-<!-- 			, #{class_image} -->
-<!-- 			, #{class_image2} -->
-<!-- 			, #{class_image3} -->
-<!-- 			, #{class_ex} -->
-<!-- 			, #{class_location} -->
-<!-- 			, #{class_hashtag} -->
-<!-- 			, #{class_creator_explain} -->
-<!-- 			, #{class_hide} -->
-<!-- 			, #{class_price} -->
-<!-- 			, #{class_regist_status} -->
-<!-- 			, #{member_code} -->
-<!-- 			, #{location_x} -->
-<!-- 			, #{location_y} -->
-<!-- 			, 'Y' -->
-<!-- 			, ( -->
-<!-- 				SELECT common2_code  -->
-<!-- 				FROM common2  -->
-<!-- 				WHERE code_value = #{sido} -->
-<!-- 				AND common1_code = 'LC' -->
-<!-- 			  ) -->
-<!-- 		)		 -->
-<!-- 	</insert> -->
-
 	<!-- 클래스 수정 -->
 	<insert id="createrClassRegPro">
 		INSERT INTO class(  	  
@@ -143,8 +90,15 @@
       	</foreach>
 	</insert>
 	
+	<!-- 커리큘럼 가져오기 -->
+	<select id="getCurriList">
+		SELECT curri_round, curri_content
+		FROM curri
+		WHERE class_code = #{class_code}
+	</select>
+	
 	<!-- 커리큘럼 삭제 -->
-	<delete id="">
+	<delete id="creatorCurriDelete">
 		DELETE FROM curri
 		WHERE class_code = #{class_code}
 	</delete>

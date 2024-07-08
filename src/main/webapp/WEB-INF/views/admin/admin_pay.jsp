@@ -31,11 +31,19 @@
 	<!-- admin_utils.js 로드 -->
     <script src="${pageContext.request.contextPath}/resources/js/admin_utils.js"></script>
     
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/admin_default.css">
+    
     <script>
     	if("${alert}" != null && "${alert}" != ""){
     		alert("${alert}");
     	}
     </script>
+    
+    <style>
+		.content-wrapper {
+        	margin-top : 50px;
+        }
+	</style>
 </head>
 
 <body id="page-top">

@@ -47,6 +47,8 @@
 	rel="stylesheet">
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <style>
 body {
 	
@@ -131,9 +133,35 @@ tbody tr:hover {
 
 						<div class="col-lg-9 creator-body">
 							<div class="creator-event mt-5">
-								<div class="col-md-12 text-center h2 mb-5">항상 고마운
-									${member.member_name}님</div>
 								<div class="container">
+									<div class="col-md-12 text-center h2 mb-5">오늘은
+										${memberDate.member_name}님이 클래스윌을 만난지
+										${memberDate.days_since_registration} 일 입니다.</div>
+									<div class="row">
+										<div class="col">
+											<div class="table-responsive">
+												<table class="table table-hover">
+													<thead>
+														<tr>
+															<th>회원 이름</th>
+															<th>가입일</th>
+
+														</tr>
+													</thead>
+													<tbody>
+														<tr>
+															<td>${memberDate.member_name}</td>
+															<td>${memberDate.member_reg_date}</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="container">
+									<div class="col-md-12 text-center h2 mb-5">그 동안
+										${member.member_name}님은 클래스윌과 함께 성장하셨습니다.</div>
 									<div class="row">
 										<div class="col">
 											<div class="table-responsive">
@@ -163,19 +191,83 @@ tbody tr:hover {
 							<div class="mt-5">
 								<canvas id="chart" style="width: 100%; height: 400px;"></canvas>
 							</div>
+							<div class="container">
+								<div class="col-md-12 text-center h2 mb-5">
+									성장을 위해 ${memberDate.member_name} 님은
+									<fmt:formatNumber value="${memberMoney.total_amount}"
+										type="number" pattern="#,###" />
+									원을 투자하셨습니다
+								</div>
+								<div class="col-md-12 text-right h2 mb-5">성장을 위한 나의 투자</div>
+								<div class="row mb-3">
+									<div class="col-md-3">
+										<label for="year">검색할 연도:</label> <select id="year"
+											class="form-control">
+											<option value="2024">2024년</option>
+										</select>
+									</div>
+									<div class="col-md-3">
+										<label for="month">검색할 월:</label> <select id="month"
+											class="form-control">
+											<option value="01">1월</option>
+											<option value="02">2월</option>
+											<option value="03">3월</option>
+											<option value="04">4월</option>
+											<option value="05">5월</option>
+											<option value="06">6월</option>
+											<option value="07">7월</option>
+											<option value="08">8월</option>
+											<option value="09">9월</option>
+											<option value="10">10월</option>
+											<option value="11">11월</option>
+											<option value="12">12월</option>
+										</select>
+									</div>
+									<div class="col-md-2">
+										<input type="hidden" id="member_code"
+											value="${memberMoney.member_code}" />
+										<button id="fetchData" class="btn btn-primary mt-4">검색하기
+										</button>
+									</div>
+								</div>
+								<div class="table-responsive">
+									<table class="table table-hover">
+										<thead>
+											<tr>
+												<th>Pay Code</th>
+
+												<th>Amount</th>
+												<th>Datetime</th>
+												<th>Type</th>
+												<th>Status</th>
+												<th>Member Code</th>
+												<th>Schedule Code</th>
+												<th>Headcount</th>
+												<th>Class Code</th>
+												<th>IMP UID</th>
+												<th>Use Willpay</th>
+
+											</tr>
+										</thead>
+										<tbody id="dataBody">
+											
+										
+										</tbody>
+									</table>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+
 	<footer>
 		<jsp:include page="/WEB-INF/views/inc/bottom.jsp" />
 	</footer>
 
 	<!-- JavaScript Libraries -->
-	<script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script
@@ -266,8 +358,63 @@ tbody tr:hover {
 	    } else {
 	      console.error("Cannot find canvas element with id 'chart'");
 	    }
-	  });
+	  });//그래프용 script 끝!
 	
+	  	  
+	  
+	  $(document).ready(function(){
+	    $('#fetchData').click(function(){
+	        var year = $('#year').val();
+	        var month = $('#month').val();
+	        var member_code = $('#member_code').val(); 
+
+	        //console.log('Year:', year);
+	        //console.log('Month:', month);
+	        //console.log('member_code:', member_code);
+	        $.ajax({
+	            url: 'fetchPayData',
+	            method: 'POST',
+	            contentType: 'application/json',
+	            data: JSON.stringify({ year: year, month: month, member_code: member_code }),
+	            success: function(response) {
+	                var tbody = $('#dataBody');
+	                console.log($('#dataBody'));
+	                tbody.empty(); // 기존 데이터 삭제
+
+	                //console.log('Response:', response); // 받은 데이터 콘솔 출력
+
+	                if (Array.isArray(response.data)) {
+	                    response.data.forEach(function(pay) {
+	                        //console.log('Pay Code:', pay.pay_code); // 각 pay의 pay_code 출력
+	                        //console.log('Pay Amount:', pay.pay_amount); // 각 pay의 pay_amount 출력
+	                        // ... 필요한 항목들에 대해 추가적으로 console.log로 확인 가능
+
+	              var row = '<tr>' +
+						    '<td>' + pay.pay_code + '</td>' +
+						    '<td>' + pay.pay_amount + '</td>' +
+						    '<td>' + pay.pay_datetime + '</td>' +
+						    '<td>' + pay.pay_type + '</td>' +
+						    '<td>' + pay.pay_status + '</td>' +
+						    '<td>' + pay.member_code + '</td>' +
+						    '<td>' + pay.class_schedule_code + '</td>' +
+						    '<td>' + pay.pay_headcount + '</td>' +
+						    '<td>' + pay.class_code + '</td>' +
+						    '<td>' + pay.imp_uid + '</td>' +
+						    '<td>' + pay.use_willpay + '</td>' +
+							'</tr>';
+
+	                        tbody.append(row); // 테이블에 행 추가
+	                    });
+	                } else {
+	                    console.error("Response data is not an array:", response.data);
+	                }
+	            },
+	            error: function(xhr, status, error) {
+	                console.error("Error fetching data:", error);
+	            }
+	        });
+	    });
+	});
 	</script>
 
 </body>

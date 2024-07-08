@@ -1,3 +1,4 @@
+<%@page import="com.google.gson.Gson"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -39,8 +40,7 @@
 <!-- 썸머노트 cdn -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script> -->
-<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
     <style>
         .delete-btn {
             display: none;
@@ -90,14 +90,14 @@
 
 						<div class="col-lg-9 creator-body" >
 							<div class="creator-main-table col-xl-8 mb-5 ">
-								<form class="validation-form" novalidate action="ClassModifyPro" name="fr" method="post" onsubmit="return confirm('클래스를 수정하시겠습니까?');">
+								<form class="validation-form myForm" novalidate action="ClassModifyPro" name="fr" method="post" onsubmit="return confirm('클래스를 수정하시겠습니까?');">
 									<input type="hidden" name="class_code" value="${classDetail.class_code}">
 									<!-- 	셀렉트박스 -->
 									<div class="col-md-12 mb-2" align="center">
 										<div class="col-xl-6 mb-5">
 											<hr style="color:white;">
 											<div>
-												<h3 class="text-white">클래스등록</h3>
+												<h3 class="text-white">클래스 정보수정</h3>
 											</div>
 											<hr style="color:white;">
 										</div>
@@ -147,13 +147,14 @@
 											</div>
 											<div class="col-md-12 my-4">
 												<label for="class_thumnail" class="h6">커버이미지</label> 
-<!-- 												<input type="file" name="class_thumnail" id="class_thumnail" class="form-control" required /> -->
+<%-- 												<input type="file" name="class_thumnail" id="class_thumnail" value="${classDetail.}" class="form-control" required /> --%>
 												<div class="thumnail" id="thumnailArea">
 													<c:choose>
 														<c:when test="${not empty thumnailFile}">
 <%-- 															<c:set var="thumnailFile" value="${thumnailFile}" /> --%>
 															<c:set var="originalThumnailName" value="${fn:substringAfter(thumnailFile, '_')}" />
 															${originalThumnailName}
+															<input type="hidden" value="${thumnailFile}" name="class_thumnail">
 															<a href="${pageContext.request.contextPath}/resources/upload/${thumnailFile}" download="${originalThumnailName}">
 																<input type="button" value="다운로드">
 															</a>
@@ -173,9 +174,10 @@
 												<label for="class_image" class="h6">본문이미지</label> 
 <!-- 												<input type="file" name="class_image" id="class_image" class="form-control" required /> -->
 												<c:forEach var="fileName" items="${fileNames}" varStatus="status">
-													<div class="file" id="fileItemArea${status.count}">
+													<div class="file" id="fileItemArea${status.count}" >
 														<c:choose>
 															<c:when test="${not empty fileName}">
+<%-- 																<input type="hidden" value="${fileName.file}" name="file${status.count}"> --%>
 																<c:set var="originalFileName" value="${fn:substringAfter(fileName,'_')}" />
 																${originalFileName}
 																<a href="${pageContext.request.contextPath}/resources/upload/${fileName}" download="${originalFileName}">
@@ -213,10 +215,10 @@
 												<!-- 주소지의 x y 좌표 -->
 												<div class="d-flex justify-content-between">
 													<div class="col-md-6">
-											    		<input type="text" id="location_x" name="location_x" placeholder="X좌표" class="form-control my-1" readonly>
+											    		<input type="text" id="location_x" name="location_x" value="${classDetail.class_map_x}" placeholder="X좌표" class="form-control my-1" readonly>
 													</div>
 													<div class="col-md-6">
-														<input type="text" id="location_y" name="location_y" placeholder="Y좌표" class="form-control my-1" readonly>
+														<input type="text" id="location_y" name="location_y" value="${classDetail.class_map_y}" placeholder="Y좌표" class="form-control my-1" readonly>
 													</div>
 												</div>
 											</div>
@@ -238,12 +240,17 @@
 							        			<th>회차</th>
 							        			<th>커리큘럼내용</th>
 							        		</tr>
-							        		<tr>
-							        			<td>1차시</td>
-							        			<td>
-							        				<textarea name="1차시" id="curri_content" maxlength="1000" rows="5" placeholder="내용을 입력해주세요" class="form-control"></textarea>
-							        			</td>
-							        		</tr>
+							        		<c:forEach var="curri" items="${curriList}" varStatus="status">
+							        			<tr>
+							        				<td>${status.count}차시<span class="delete-btn">&times;</span></td>
+							        				<td>
+							        					<textarea name="${status.count}차시" id="curri_content" maxlength="1000" rows="5" placeholder="내용을 입력해주세요" class="form-control">${curri.curri_content}</textarea> 
+							        				</td>
+							        			</tr>
+							        			<c:if test="${status.last}">
+											        <input type="hidden" id="lastCount" value="${status.count}">
+											    </c:if>
+							        		</c:forEach>
 							        	</table>
 									</div>
 									
@@ -281,9 +288,12 @@
 	<footer>
 		<jsp:include page="/WEB-INF/views/inc/bottom.jsp" />
 	</footer>
+	
+	<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
 
 	<!-- Template Javascript -->
-	<script src="${pageContext.request.contextPath}/resources/js/main.js"></script>
+<%-- 	<script src="${pageContext.request.contextPath}/resources/js/main.js"></script> --%>
 	
 	<script type="text/javascript">	
 		// ajax 로 업로드된 이미지 파일 삭제 
@@ -299,8 +309,8 @@
 					},
 					success: function(result) {
 						if(result){ // 성공
-	 						console.log($(".file").eq(index-1).html())
-	 						console.log($("#fileItemArea" + index).html())
+// 	 						console.log($(".file").eq(index-1).html())
+// 	 						console.log($("#fileItemArea" + index).html())
 							$(".file").eq(index-1).html(
 									'<input type="file" name="file' + index + '">'
 							);
@@ -375,48 +385,51 @@
 					});	
 				}
 				
-		
+				// 회차 추가 및 데이터 전달
+				let roundCount = 1;
+				if($("#lastCount").val() != null){
+					roundCount = $("#lastCount").val();
+					console.log(roundCount);
+				}
+				debugger;
+			    $('.addCurri').on('click', function() {
+			  	 if(roundCount < 5){
+			  		roundCount++;
+		            var newRow = '<tr>'
+				                     + '<td>' + roundCount + '차시 <span class="delete-btn">&times;</span></td>'
+				                     + '<td><textarea name="' + roundCount + '차시" id="curri_content" maxlength="1000" rows="5" placeholder="내용을 입력해주세요" class="form-control"></textarea></td>'
+				                 + '</tr>';
+		            $('#timeTable').append(newRow);
+			  	} else{
+			  		 alert("차시는 5회까지 추가 가능합니다!");
+			  	}
+			       });
+	
+				$('#timeTable').on('mouseenter', 'tr', function() {
+				    $(this).find('.delete-btn').show();
+				});
+				
+				$('#timeTable').on('mouseleave', 'tr', function() {
+				    $(this).find('.delete-btn').hide();
+				});
+				
+				$('#timeTable').on('click', '.delete-btn', function() {
+				    $(this).closest('tr').remove();
+				    updateTextAreaNames();
+				});
+				
+				function updateTextAreaNames() {
+		            let rows = $('#timeTable tr');
+		            roundCount = rows.length - 1; // 첫 번째 tr은 헤더이므로 제외
+		            rows.each(function (index) {
+		                if (index > 0) { // 첫 번째 tr은 헤더이므로 제외
+		                    $(this).find('textarea').attr('name', index + '차시' );
+		                    $(this).find('td:first').html(index + '차시 <span class="delete-btn">&times;</span>');
+		                }
+		            });
+		        }
 			
-			// 회차 추가 및 데이터 전달
-			let roundCount = 1;
-		    $('.addCurri').on('click', function() {
-		  	 if(roundCount < 5){
-		  		roundCount++;
-	            let newRow = '<tr>'
-			                     + '<td>' + roundCount + '차시 <span class="delete-btn">&times;</span></td>'
-			                     + '<td><textarea name="' + roundCount + '차시" id="curri_content" maxlength="1000" rows="5" placeholder="내용을 입력해주세요" class="form-control"></textarea></td>'
-			                 + '</tr>';
-	            $('#timeTable').append(newRow);
-		  	} else{
-		  		 alert("차시는 5회까지 추가 가능합니다!");
-		  	}
-		       });
-
-			$('#timeTable').on('mouseenter', 'tr', function() {
-			    $(this).find('.delete-btn').show();
-			});
-			
-			$('#timeTable').on('mouseleave', 'tr', function() {
-			    $(this).find('.delete-btn').hide();
-			});
-			
-			$('#timeTable').on('click', '.delete-btn', function() {
-			    $(this).closest('tr').remove();
-			    updateTextAreaNames();
-			});
-			
-			function updateTextAreaNames() {
-	            let rows = $('#timeTable tr');
-	            roundCount = rows.length - 1; // 첫 번째 tr은 헤더이므로 제외
-	            rows.each(function (index) {
-	                if (index > 0) { // 첫 번째 tr은 헤더이므로 제외
-	                    $(this).find('textarea').attr('name', index + '차시' );
-	                    $(this).find('td:first').html(index + '차시 <span class="delete-btn">&times;</span>');
-	                }
-	            });
-	        }
-			
-			});
+		});
 		
 		// 썸머노트 설정
 		$('#summernote').summernote({
@@ -465,13 +478,13 @@
 		    const form = document.querySelector('.validation-form');
 		    const selectedItemsInput = document.getElementById('selected-items');
 		    const initialSelectedItems = selectedItemsInput.value.split(',');
-			debugger;
+// 			debugger;
 		    items.forEach(item => {
 		    	const dataValue = item.getAttribute('data-value').trim();
-		        console.log('Data Value:', dataValue); // 데이터 값 확인용 로그
+// 		        console.log('Data Value:', dataValue); // 데이터 값 확인용 로그
 		        if (initialSelectedItems.includes(dataValue)) {
 		            item.classList.add('selected');
-		            console.log('Item Selected:', item); // 선택된 항목 로그
+// 		            console.log('Item Selected:', item); // 선택된 항목 로그
 		        }
 		    	
 		        item.addEventListener('click', () => {
@@ -493,6 +506,16 @@
 		    }
 		    
 		});
+		
+// 		$(window).on('beforeunload', function(e) {
+// 		    // 변경 사항을 저장할 기회를 주는 커스텀 메시지
+// 		    var confirmationMessage = '저장되지 않은 변경 사항이 있습니다. 이 페이지를 벗어나면 사라집니다. 정말로 이동하시겠습니까?';
+		
+// 		    // 경고 메시지를 브라우저에 설정
+// 		    e.returnValue = confirmationMessage; // 표준을 위해
+// 		    return confirmationMessage; // 크로스브라우저 호환을 위해
+// 		});
+		
 	</script>
 	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 	<script>

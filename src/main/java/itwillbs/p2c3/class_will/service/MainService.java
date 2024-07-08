@@ -36,25 +36,19 @@ public class MainService {
 	}
 	
 	
-//	@Transactional
-//	public List<Map<String, Object>> checkKeyword(String keyword, String searchDateTime) {
-//		
-//		mainMapper.insertKeyword(keyword, searchDateTime);
-//		System.out.println("checkKeyword - insertKeyword 성공");
-//		
-//		List<Map<String, Object>> searchClassList = mainMapper.selectKeyword(keyword);
-//		
-//		return searchClassList;
-//	}
-	public void checkKeyword(String keyword, String searchDateTime) {
+	@Transactional
+	public List<Map<String, Object>> retrieveKeyword(String keyword, String searchDateTime) {
 		
 		if(mainMapper.insertKeyword(keyword, searchDateTime)) {
 			System.out.println("checkKeyword - insertKeyword 성공");
-			
 		}
 		
+		List<Map<String, Object>> searchClassList = mainMapper.selectKeyword(keyword);
 		
+		return searchClassList;
 	}
+	
+	
 	
 	
 	@Transactional
@@ -89,44 +83,20 @@ public class MainService {
 		
 	}
 	
-	@Transactional
 	public List<Map<String, Object>> selectTop10() {
-		List<Map<String, Object>> classList = mainMapper.selectTop10Class();
-		List<Map<String, Object>> localList = mainMapper.selectTop10Local();
-		
-		for(Map<String, Object> contents : classList) {
-			for(Map<String, Object> local : localList) {
-				if(contents.get("class_code") == local.get("class_code")) {
-					contents.put("local_name", local.get("local_name"));
-				}
-			}
-			System.out.println("contents : " + contents);
-		}
-		
-		
-		
-		return classList;
+		return  mainMapper.selectTop10Class();
 	}
 	
-	@Transactional
 	public List<Map<String, Object>> selectNewClass() {
-		List<Map<String, Object>> classList = mainMapper.selectNewClass();
-		List<Map<String, Object>> localList = mainMapper.selectNewLocal();
-		
-		for(Map<String, Object> contents : classList) {
-			for(Map<String, Object> local : localList) {
-				if(contents.get("class_code") == local.get("class_code")) {
-					contents.put("local_name", local.get("local_name"));
-				}
-			}
-			System.out.println("contents : " + contents);
-		}
-		
-		return classList;
+		return mainMapper.selectNewClass();
 	}
 
 	public List<Map<String, Object>> selectLikeClass(MemberVO sMember) {
 		return mainMapper.selectLikeClass(sMember);
+	}
+
+	public List<String> selectRecommend() {
+		return mainMapper.selectRecommend();
 	}
 
 	

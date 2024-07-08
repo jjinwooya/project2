@@ -16,7 +16,6 @@ public class DailyVisitScheduler {
 	
 	@Scheduled(cron = "0 0 0 * * ?")
     public void deleteTableData() {
-		System.out.println("ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ 스케줄러실행됨");
     	adminService.deleteVisitLogs();
     }
 }

@@ -342,11 +342,11 @@
 	]]>
 	</select>
 	
-	<update id="updatePayStatus">
-		UPDATE pay
-		SET pay_status = 'canceled'
-		WHERE pay_code = #{pay_code}
-	</update>
+<!-- 	<update id="updatePayStatus"> -->
+<!-- 		UPDATE pay -->
+<!-- 		SET pay_status = 'canceled' -->
+<!-- 		WHERE pay_code = #{pay_code} -->
+<!-- 	</update> -->
 	
 	<update id="resetHeadcount">
 		UPDATE class_schedule
@@ -374,6 +374,7 @@
 			, 'paid'
 			, 2
 			, #{member_code}
+			, #{will_pay_chargeType}
 		)
 	</insert>
 	
@@ -396,6 +397,7 @@
 			   , wp.will_pay_get_pay
 			   , wp.will_pay_bank_name
 			   , wp.will_pay_account
+			   , wp.will_pay_chargeType
 			   , c2.code_value AS pay_type
 			   , wp.member_code
 			   , m.member_credit
@@ -430,11 +432,20 @@
 		]]>
 	</select>
 	
-	<update id="updateWillpayStatus">
-		UPDATE will_pay
-		SET will_pay_status = 'canceled'
-		WHERE will_pay_code = #{will_pay_code}
-	</update>
+	<select id="selectAbledWillpay" resultType="int">
+		SELECT m.member_credit - bonus_willpay.willpay AS abled_willpay
+		FROM MEMBER m
+		LEFT JOIN (
+			SELECT SUM(wp.will_pay_get_pay - wp.will_pay_amount) AS willpay
+				   , wp.member_code 
+			FROM will_pay wp
+			WHERE wp.member_code = #{member_code}
+			GROUP BY wp.member_code
+		) AS bonus_willpay
+		ON m.member_code = bonus_willpay.member_code
+		WHERE m.member_code = #{member_code}
+	</select>
+	
 	
 	
 </mapper>

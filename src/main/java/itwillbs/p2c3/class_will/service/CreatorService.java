@@ -38,7 +38,7 @@ public class CreatorService {
 		creatorMapper.createrClassDelete(map);
 		creatorMapper.createrClassRegPro(map);
 //		System.out.println(">>>>>>>>params: " + params);
-		int class_code = (int)map.get("class_code");
+		int class_code = Integer.parseInt((String)map.get("class_code"));
 		creatorMapper.creatorCurriDelete(class_code);
 		creatorMapper.creatorCurriUpdate(params, class_code);
 	}
@@ -53,6 +53,11 @@ public class CreatorService {
 		return creatorMapper.insertClassPlan(map, classTime);
 	}
 	
+	// 커리큘럼 가져오기
+	public List<Map<String, String>> getCurriList(int classCode) {
+		return creatorMapper.getCurriList(classCode);
+	}
+
 	// 클래스 일정 가져오기
 	public List<Map<String, Object>> getSchedule(int classCode) {
 		return creatorMapper.getSchedule(classCode);

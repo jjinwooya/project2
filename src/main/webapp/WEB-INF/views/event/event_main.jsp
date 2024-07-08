@@ -215,7 +215,7 @@ body {
 				</div>
 			</div>
 		<c:forEach var="eventList" items="${list}" >
-			<div class="item movie-event" onclick="event_detail(${eventList.event_num})">
+			<div class="item movie-event" onclick="event_detail(${eventList.event_code})">
 				<div class="imgBox">
 					<img src="${pageContext.request.contextPath}/${eventList.event_thumbnail}" alt="썸네일"/>
 				</div>

@@ -60,7 +60,7 @@
 		<!-- 페이징 처리 때문. -->
 		SELECT COUNT(*)
 		FROM class_review cr
-		WHERE member_code =  ${member_code}
+		WHERE member_code = ${member_code}
 	</select>
 
 	<select id="selectReviewByCode">
@@ -222,6 +222,7 @@
 	</update>
 
 	<select id="selectMemberMaster">
+		<!-- 특정 회원이 수료한 클래스 숫자 월별로도 가능 -->
 		 <![CDATA[
 		SELECT
 		DATE_FORMAT(cs.class_schedule_date, '%Y-%m') as month,
@@ -239,7 +240,28 @@
 		ORDER BY
 		DATE_FORMAT(cs.class_schedule_date, '%Y-%m') ASC
 		 ]]>
+	</select>
+	<select id="calDate">
+		<!-- 특정 회원이 가입한지로 지난 시간 -->
+		SELECT member_code, member_name, member_reg_date,
+		DATEDIFF(NOW(), member_reg_date) AS days_since_registration
+		FROM MEMBER
+		WHERE member_code = #{member_code}
+	</select>
 
+	<select id="countMoney">
+		<!-- 특정 회원이 사용한 금액 -->
+		SELECT member_code, SUM(pay_amount + use_willpay) AS total_amount
+		FROM pay
+		WHERE member_code = #{member_code}
+		GROUP BY member_code
+	</select>
+	<select id="findMoney">
+		SELECT * FROM pay
+		WHERE member_code = #{member_code}
+		AND YEAR(pay_datetime) = #{year}
+		AND MONTH(pay_datetime) = #{month}
+	
 	</select>
 
 

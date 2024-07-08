@@ -12,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -122,15 +124,32 @@ public class MainController {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		String searchDateTime = currentDateTime.format(formatter);
 		
-//		List<Map<String, Object>> searchClassList = mainService.checkKeyword(keyword, searchDateTime);
-//		System.out.println("searchClassList : " + searchClassList);
-//		model.addAttribute("searchClassList", searchClassList);
+		List<Map<String, Object>> searchClassList = mainService.retrieveKeyword(keyword, searchDateTime);
+		System.out.println("searchClassList : " + searchClassList);
+		model.addAttribute("searchClassList", searchClassList);
 		
-		mainService.checkKeyword(keyword, searchDateTime);
+		return "redirect:/class-list";
 		
-		
-		return "redirect:/class-list?";
 	} // searchKeyword()
+	
+	
+	// 검색창 추천어 
+	@ResponseBody
+	@GetMapping("recommend-keyword")
+	public String recommendKeyword() {
+		
+		List<String> recommendList = mainService.selectRecommend();
+		System.out.println("============ recommendList : " + recommendList);
+		
+		JsonArray list = new JsonArray();
+		
+		for(String keyword : recommendList) {
+			list.add(keyword);
+		}
+		
+		return list.toString();
+		
+	}
 	
 	
 	

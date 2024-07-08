@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import itwillbs.p2c3.class_will.mapper.ClassMapper;
+import itwillbs.p2c3.class_will.vo.MemberVO;
 
 @Service
 public class ClassService {
@@ -58,9 +59,9 @@ public class ClassService {
 //	public List<Map<String, Object>> getFilterClass(List<String> bigCategories, List<String> smallCategories, List<String> locals){
 //		return mapper.selectFilterClass(bigCategories, smallCategories, locals);
 //	}
-	public List<Map<String, Object>> getFilterClass(Map<String, Object> map){
-		return mapper.selectFilterClass(map);
-	}
+//	public List<Map<String, Object>> getFilterClass(Map<String, Object> map){
+//		return mapper.selectFilterClass(map);
+//	}
 	
 	// 클래스 낮으낙격순 정렬
 	public List<Map<String, Object>> getPriceList(Map<String, Object> list){
@@ -101,19 +102,32 @@ public class ClassService {
 	}
 	
 	// 클래스 리뷰
-	public List<Map<String, Object>> getClassReview(int class_code){
-		return mapper.selectClassReview(class_code);
+	public List<Map<String, Object>> getClassReview(Map<String, Object> map){
+		return mapper.selectClassReview(map);
 	}
 	
 	// 클래스 질문
-	public List<Map<String, Object>> getClassInquiry(int class_code){
-		return mapper.selectClassInquiry(class_code);
+	public List<Map<String, Object>> getClassInquiry(Map<String, Object> map){
+		return mapper.selectClassInquiry(map);
 	}
 	
 	// 클래스 커리큘럼
 	public List<Map<String, Object>> getClassCurri(int class_code){
 		return mapper.selectClassCurri(class_code);
 	}
+	
+	// 클래스 코드 별 좋아요 갯수
+	public int getLikeClassCount(int class_code) {
+		return mapper.selectLikeClassCount(class_code);
+	}
+	
+	// 디테일 클래스 좋아요
+	public boolean getLikeClass(Map<String, Object> map){
+		return mapper.selectLikeClass(map);
+	}
+//	public Map<String, Object> getLikeClass(Map<String, Object> map){
+//		return mapper.selectLikeClass(map);
+//	}
 	
 	// 클래스 해시태그
 	public List<Map<String, Object>> getClassHashtag(int class_code){

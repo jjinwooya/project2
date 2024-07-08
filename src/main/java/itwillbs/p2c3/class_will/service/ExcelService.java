@@ -16,10 +16,13 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import itwillbs.p2c3.class_will.controller.AdminController;
 import itwillbs.p2c3.class_will.mapper.AdminMapper;
 
 
@@ -28,11 +31,15 @@ public class ExcelService {
 	
 	@Autowired
 	private AdminMapper adminMapper;
-
+	
+	private static final Logger logger = LoggerFactory.getLogger(ExcelService.class);
+	
+	
     public byte[] createExcel(String title, List<String> headers, List<Map<String, Object>> data) throws IOException {
+    	logger.debug("들어오긴함");
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet(title);
-        
+        logger.debug(workbook.toString());
         // 헤더 행 생성
         Row headerRow = sheet.createRow(0);
         for (int i = 0; i < headers.size(); i++) {

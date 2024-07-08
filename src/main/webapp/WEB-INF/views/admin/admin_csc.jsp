@@ -32,7 +32,12 @@
     <script src="${pageContext.request.contextPath}/resources/js/admin_utils.js"></script>
     
     <script src="${pageContext.request.contextPath}/resources/js/jquery-3.7.1.js"></script>
-    
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/admin_default.css">
+    <style>
+		.content-wrapper {
+        	margin-top : 50px;
+        }
+	</style>
 </head>
 <body id="page-top">
 

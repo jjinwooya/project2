@@ -30,52 +30,106 @@
 		FROM hash_tag
 	</select>
 	
-	<select id="selectFilterClass" resultType="map">
-		SELECT 
-			class_code,
-			class_name,
-			c2.code_value AS class_big_category,
-			c3.code_value AS class_small_category,
-			c2.common2_code,
-			c3.common3_code,
-			class_thumnail,
-			class_image,
-			class_location,
-			class_map_x,
-			class_map_y,
-			class_hashtag,
-			class_creator_explain,
-			class_hide,
-			class_price,
-			crs.code_value AS class_regist_status,
-			m.member_name
+	<!-- 클래스 리스트 -->
+	<select id="selectClassList" resultType="map" parameterType="map">
+		SELECT c.class_code
+			,class_name
+			,c2.code_value AS class_big_category
+			,c3.code_value AS class_small_category
+			,lc.code_value AS local_name
+			,c2.common2_code
+			,c3.common3_code
+			,class_thumnail
+			,class_image
+			,class_ex
+			,class_location
+			,class_creator_explain
+			,class_hide
+			,class_price
+			,class_map_x
+			,class_map_y
+			,class_hashtag
+			,m.member_name
+			,m.member_nickname
 		FROM class c
-		LEFT JOIN common1 c1 ON c.class_big_category = c1.common1_code
 		LEFT JOIN common2 c2 ON c.class_big_category = c2.common2_code AND c2.common1_code = 'CLC'
-		LEFT JOIN common3 c3 ON c.class_small_category = c3.common3_code AND c3.common2_code = c2.common2_code AND c3.common1_code = 'CLC'
+		LEFT JOIN common2 lc ON c.common2_code = lc.common2_code AND lc.common1_code = 'LC'
 		LEFT JOIN common2 crs ON c.class_regist_status = crs.common2_code AND crs.common1_code = 'CRS'
+		LEFT JOIN common3 c3 ON c.class_small_category = c3.common3_code AND c3.common2_code = c2.common2_code AND c3.common1_code = 'CLC'
 		JOIN MEMBER m ON c.member_code = m.member_code
-		WHERE c.class_active = 'Y'
-		AND c.class_regist_status = '2'
-		<if test="bigCategories != null and bigCategories.size() > 0">
-			AND c2.common2_code IN
-			<foreach item="bigCategory" collection="bigCategories" open="(" separator="," close=")">
-			    #{bigCategory}
-			</foreach>
-		</if>
-		<if test="smallCategories != null and smallCategories.size() > 0">
-			AND c3.common3_code IN
-			<foreach item="smallCategory" collection="smallCategories" open="(" separator="," close=")">
-			    #{smallCategory}
-			</foreach>
-		</if>
-		<if test="locals != null and locals.size() > 0">
-			AND c2.common2_code IN
-			<foreach item="local" collection="locals" open="(" separator="," close=")">
-			    #{local}
-			</foreach>
-		</if>
+	    <where>
+				c.class_regist_status = 2 AND c.class_active = 'Y'
+			<if test="big_category != null and !big_category.isEmpty()">
+				AND c2.common2_code = #{big_category}
+	        </if>
+			<if test="small_category != null and !small_category.isEmpty()">
+				AND c3.common3_code = #{small_category}
+			</if>
+	        <if test="local != null and !local.isEmpty()">
+				AND c.common2_code = #{local}
+	        </if>
+	        <if test="hashtag != null and !hashtag.isEmpty()">
+				AND c.class_hashtag LIKE CONCAT('%', #{hashtag}, '%')
+	        </if>
+	        <if test="class_codes != null and !class_codes.isEmpty()">
+				AND c.class_code IN
+            <foreach item="classCode" collection="class_codes" open="(" separator="," close=")">
+                #{classCode}
+            </foreach>
+            ORDER BY FIELD(c.class_code,
+            <foreach item="classCode" collection="class_codes" separator=",">
+                #{classCode}
+            </foreach>)
+	        </if>
+		</where>
 	</select>
+	
+<!-- 	<select id="selectFilterClass" resultType="map"> -->
+<!-- 		SELECT  -->
+<!-- 			class_code, -->
+<!-- 			class_name, -->
+<!-- 			c2.code_value AS class_big_category, -->
+<!-- 			c3.code_value AS class_small_category, -->
+<!-- 			c2.common2_code, -->
+<!-- 			c3.common3_code, -->
+<!-- 			class_thumnail, -->
+<!-- 			class_image, -->
+<!-- 			class_location, -->
+<!-- 			class_map_x, -->
+<!-- 			class_map_y, -->
+<!-- 			class_hashtag, -->
+<!-- 			class_creator_explain, -->
+<!-- 			class_hide, -->
+<!-- 			class_price, -->
+<!-- 			crs.code_value AS class_regist_status, -->
+<!-- 			m.member_name -->
+<!-- 		FROM class c -->
+<!-- 		LEFT JOIN common1 c1 ON c.class_big_category = c1.common1_code -->
+<!-- 		LEFT JOIN common2 c2 ON c.class_big_category = c2.common2_code AND c2.common1_code = 'CLC' -->
+<!-- 		LEFT JOIN common3 c3 ON c.class_small_category = c3.common3_code AND c3.common2_code = c2.common2_code AND c3.common1_code = 'CLC' -->
+<!-- 		LEFT JOIN common2 crs ON c.class_regist_status = crs.common2_code AND crs.common1_code = 'CRS' -->
+<!-- 		JOIN MEMBER m ON c.member_code = m.member_code -->
+<!-- 		WHERE c.class_active = 'Y' -->
+<!-- 		AND c.class_regist_status = '2' -->
+<!-- 		<if test="bigCategories != null and bigCategories.size() > 0"> -->
+<!-- 			AND c2.common2_code IN -->
+<!-- 			<foreach item="bigCategory" collection="bigCategories" open="(" separator="," close=")"> -->
+<!-- 			    #{bigCategory} -->
+<!-- 			</foreach> -->
+<!-- 		</if> -->
+<!-- 		<if test="smallCategories != null and smallCategories.size() > 0"> -->
+<!-- 			AND c3.common3_code IN -->
+<!-- 			<foreach item="smallCategory" collection="smallCategories" open="(" separator="," close=")"> -->
+<!-- 			    #{smallCategory} -->
+<!-- 			</foreach> -->
+<!-- 		</if> -->
+<!-- 		<if test="locals != null and locals.size() > 0"> -->
+<!-- 			AND c2.common2_code IN -->
+<!-- 			<foreach item="local" collection="locals" open="(" separator="," close=")"> -->
+<!-- 			    #{local} -->
+<!-- 			</foreach> -->
+<!-- 		</if> -->
+<!-- 	</select> -->
 	
 	<!-- 클래스 가격 순  -->
 	<select id="selectPriceList" resultType="map">
@@ -185,70 +239,20 @@
 		FROM common3
 		WHERE common1_code = 'CLC'AND code_hide = 'N'
 	</select>
-	
-	<!-- 클래스 리스트 -->
-	<select id="selectClassList" resultType="map" parameterType="map">
-		SELECT c.class_code
-			,class_name
-			,c2.code_value AS class_big_category
-			,c3.code_value AS class_small_category
-			,lc.code_value AS local_name
-			,c2.common2_code
-			,c3.common3_code
-			,class_thumnail
-			,class_image
-			,class_ex
-			,class_location
-			,class_creator_explain
-			,class_hide
-			,class_price
-			,class_map_x
-			,class_map_y
-			,class_hashtag
-			,m.member_name
-			,m.member_nickname
-		FROM class c
-		LEFT JOIN common2 c2 ON c.class_big_category = c2.common2_code AND c2.common1_code = 'CLC'
-		LEFT JOIN common2 lc ON c.common2_code = lc.common2_code AND lc.common1_code = 'LC'
-		LEFT JOIN common2 crs ON c.class_regist_status = crs.common2_code AND crs.common1_code = 'CRS'
-		LEFT JOIN common3 c3 ON c.class_small_category = c3.common3_code AND c3.common2_code = c2.common2_code AND c3.common1_code = 'CLC'
-		JOIN MEMBER m ON c.member_code = m.member_code
-	    <where>
-				c.class_regist_status = 2 AND c.class_active = 'Y'
-			<if test="big_category != null and !big_category.isEmpty()">
-				AND c2.common2_code = #{big_category}
-	        </if>
-			<if test="small_category != null and !small_category.isEmpty()">
-				AND c3.common3_code = #{small_category}
-			</if>
-	        <if test="local != null and !local.isEmpty()">
-				AND c.common2_code = #{local}
-	        </if>
-	        <if test="hashtag != null and !hashtag.isEmpty()">
-				AND c.class_hashtag LIKE CONCAT('%', #{hashtag}, '%')
-	        </if>
-	        <if test="class_codes != null and !class_codes.isEmpty()">
-				AND c.class_code IN
-            <foreach item="classCode" collection="class_codes" open="(" separator="," close=")">
-                #{classCode}
-            </foreach>
-            ORDER BY FIELD(c.class_code,
-            <foreach item="classCode" collection="class_codes" separator=",">
-                #{classCode}
-            </foreach>)
-	        </if>
-		</where>
-	</select>
 
 	<!-- 클래스 리뷰 -->
 	<select id="selectClassReview" resultType="map">
 		SELECT class_review_subject
 			, class_review_content
 			, class_review_date
+			, class_review_time
 			, class_review_rating
 			, member_name
 			, member_nickname
 			, m.member_code
+			, c.class_code 
+			, c.class_name
+			, cr.class_review_code 
 		FROM class_review cr
 		JOIN MEMBER m
 		ON m.member_code = cr.member_code 
@@ -256,6 +260,10 @@
 		ON cr.class_code  = c.class_code 
 		WHERE c.class_regist_status = '2'
 		AND cr.class_code = #{class_code} 
+		<if test="class_review_code != null">
+			AND cr.class_review_code = #{class_review_code}
+		</if>
+		
 	</select>
 	
 	<!-- 클래스 질문 -->
@@ -266,6 +274,8 @@
 			, member_name
 			, member_nickname
 			, m.member_code
+			, c.class_name
+			, ci.class_inquiry_code
 		FROM class_inquiry ci
 		JOIN MEMBER m
 		ON m.member_code = ci.member_code 
@@ -273,13 +283,15 @@
 		ON ci.class_code = c.class_code 
 		WHERE c.class_regist_status = '2'
 		AND ci.class_code = #{class_code}
+		<if test="class_inquiry_code != null">
+			AND ci.class_inquiry_code = #{class_inquiry_code}
+		</if>
 	</select>
 	
 	<!-- 클래스 커리큘럼 -->
 	<select id="selectClassCurri" resultType="map">
-		SELECT
-			curri_round,
-			curri_content
+		SELECT curri_round
+			, curri_content
 		FROM
 			curri
 		WHERE 
@@ -294,6 +306,20 @@
 		WHERE class_code = #{class_code}
 	</select>
 	
+	<!-- 클래스 디테일 클래스 코드 별 좋아요 갯수 -->
+	<select id="selectLikeClassCount" resultType="int">
+		SELECT count(like_class_code)
+		FROM like_class
+		WHERE class_code = #{class_code}
+	</select>
+	
+	<!-- 클래스 디테일 좋아요 -->
+	<select id="selectLikeClass" resultType="boolean">
+    	SELECT COUNT(*) > 0
+		FROM like_class
+		WHERE member_code = #{member_code} AND class_code = #{class_code}
+	</select>
+
 	<!-- 클래스 신고 -->
 	<insert id="insertClassComplain" parameterType="map">
 		INSERT INTO class_report

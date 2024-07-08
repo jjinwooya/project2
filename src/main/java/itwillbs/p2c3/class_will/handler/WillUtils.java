@@ -18,22 +18,6 @@ public class WillUtils {
 	
 	
 	public static String checkDeleteSuccess(boolean isSuccess, Model model, String msg, boolean isClose) {
-//		if(isSuccess) {
-//			model.addAttribute("msg", msg);
-//			
-//			if(isClose) {
-//				model.addAttribute("isClose", "true");
-//			}
-//			return "result_process/success";
-//		}else {
-//			model.addAttribute("msg", msg);
-//			
-//			if(isClose) {
-//				model.addAttribute("isClose", "true");
-//			}
-//			return "result_process/fail";
-//		}
-		
 		String result = "result_process/";
 		result += isSuccess ? "success" : "fail";
 		model.addAttribute("msg", msg);
@@ -104,6 +88,5 @@ public class WillUtils {
 			
 			return "result_process/success";
 		}
-		
 	}
 }

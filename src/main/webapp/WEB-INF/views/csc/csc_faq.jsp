@@ -72,19 +72,6 @@
 					</div>
                     <hr>
                 </div>
-                <!-- 검색창 -->
-                <div class="row">
-                    <div class="csc_faq_search">
-                        <div class="inner">
-                            <form action="javascript:void(0);" method="get" name="search_faq" id="faqSearch">
-                                <label for="csc_faq_search">빠른검색</label>
-                                <input type="text" id="csc_faq_search" name="faqSearchKeyword" placeholder="검색어 입력">
-                                <input type="submit" value="검색">
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <!-- 검색창 끝 -->
                 <!-- 구분 카테고리 시작 -->
                 <div class="row mt-3">
                     <div class="csc_faq_sel">

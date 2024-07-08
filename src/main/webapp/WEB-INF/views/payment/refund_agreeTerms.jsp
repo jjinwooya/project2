@@ -52,10 +52,10 @@
 	</div>
 </div>
 <script>
-$('#agreeButton').click(function() {
+$("#agreeButton").click(function() {
 	if (window.opener && !window.opener.closed) {
 		window.opener.showRefundBtn();  // 부모 창의 함수를 호출하여 버튼을 보이게 합니다.
-		window.close();  // 팝업창을 닫습니다.
+		window.close();  // 팝업창을 닫기
 	}
 });	
 </script>

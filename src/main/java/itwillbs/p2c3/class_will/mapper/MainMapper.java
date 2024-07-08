@@ -41,6 +41,8 @@ public interface MainMapper {
 	void updateDailyVisit(Map<String, Object> dbVisitDate);
 
 	List<Map<String, Object>> selectLikeClass(MemberVO sMember);
+
+	List<String> selectRecommend();
 	
 	
 	

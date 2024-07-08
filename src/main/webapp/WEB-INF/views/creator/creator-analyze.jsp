@@ -86,7 +86,7 @@
 								<div class="admin_main_center_card" onclick="location.href='creator-class-last'">
 									<div class="admin_main_card" align="left">참여회원수</div>
 									<div align="right" class="card_num">
-										<a href="#">${analyzeList.attendCount}건</a>
+										<a href="#">${analyzeList.attendCount}명</a>
 									</div>
 								</div>
 								<div class="admin_main_center_card" onclick="location.href='creator-review'">
@@ -98,7 +98,7 @@
 								<div class="admin_main_center_card" onclick="location.href='creator-class'">
 									<div class="admin_main_card" align="left">회당 평균참여수</div>
 									<div align="right" class="card_num">
-										<a href="#">${analyzeList.avgAttendCount}건</a>
+										<a href="#">${analyzeList.avgAttendCount}명</a>
 									</div>
 								</div>
 							</div>

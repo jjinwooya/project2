@@ -24,9 +24,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import itwillbs.p2c3.class_will.handler.WillUtils;
+import itwillbs.p2c3.class_will.service.AdminService;
 import itwillbs.p2c3.class_will.service.ClassService;
 import itwillbs.p2c3.class_will.service.MemberService;
 import itwillbs.p2c3.class_will.service.PayService;
@@ -41,6 +44,10 @@ public class ClassController {
 	
 	@Autowired
 	private MemberService memberService;
+	
+	@Autowired
+	private AdminService adminService;
+	
 	
 	@Autowired
 	private ClassService classService;
@@ -131,8 +138,8 @@ public class ClassController {
 		public List<Map<String, Object>> getFilterClass(Model model, HttpSession session, @RequestParam(required = false) String hashtag, @RequestParam Map<String, String> params) {
 	    
 	    // 클래스 리스트
-		String big_category = params.get("big_category");
-		String small_category = params.get("small_category");
+		String big_category = params.get("class_big_category");
+		String small_category = params.get("class_small_category");
 		String local = params.get("local");
 		
         Map<String, Object> list = new HashMap<>();
@@ -147,6 +154,37 @@ public class ClassController {
 	    return filterClass;
 	}
 	
+	// 메인 카테고리에서 넘어올 때 클래스 리스트 업데이트
+	@ResponseBody
+	@GetMapping("update-class-list")
+	public List<Map<String, Object>> updateClassList(Model model,@RequestParam Map<String, String> requestBody){
+		
+		// 클래스 리스트
+	    String big_category = (String) requestBody.get("big_category"); // Integer로 받지 않고 String으로 받음
+	    String small_category = (String) requestBody.get("small_category"); // Integer로 받지 않고 String으로 받음
+	    String local = (String) requestBody.get("common2_code"); // Integer로 받지 않고 String으로 받음
+
+//		String big_category = params.get("class_big_category");
+//		String small_category = params.get("class_small_category");
+//		String local = params.get("common2_code");
+		System.out.println(">> big_category : " + big_category + ", small_category : " + small_category + ", local : " + local );
+		Map<String, Object> list = new HashMap<>();
+		list.put("big_category", big_category);
+		list.put("small_category", small_category);
+		list.put("local", local);
+		model.addAttribute("list", list);
+		
+		List<Map<String, Object>> filterClass = classService.getClassList(list);
+		model.addAttribute("filterClass", filterClass);
+		System.out.println(">>update-class-list :" + filterClass);
+		return filterClass;
+	    // filterClass는 원하는 조건에 맞게 데이터를 필터링하는 로직을 포함해야 합니다.
+//	    List<Map<String, Object>> list = new ArrayList<>();
+	    
+	    // 예시: 데이터베이스에서 데이터를 가져와서 필터링하는 로직 추가
+	    // filterClass = classService.getFilteredClasses(bigCategory, smallCategory, common2_code);
+
+	}
 	// 클래스 낮은가격 순 정렬
 	@ResponseBody
 	@GetMapping("class-low-price")
@@ -200,11 +238,11 @@ public class ClassController {
 	    list.put("class_codes", classCodes);
 
 	    // 필터링 메소드 호출 및 결과 받아오기
-	    List<Map<String, Object>> filter = classService.getClassList(list);
-	    System.out.println(">> filter : " + filter);
+	    List<Map<String, Object>> filterClass = classService.getClassList(list);
+	    System.out.println(">> filterClass : " + filterClass);
 	    
 	    // 결과를 classCodes 순서대로 정렬
-	    Map<Integer, Map<String, Object>> filterMap = filter.stream()
+	    Map<Integer, Map<String, Object>> filterMap = filterClass.stream()
 	        .collect(Collectors.toMap(
 	            item -> (Integer) item.get("class_code"),
 	            item -> item
@@ -219,7 +257,7 @@ public class ClassController {
 	    
 	    System.out.println("sortedFilter" + sortedFilter);
 	    // 필터링된 결과 반환
-	    return filter;
+	    return filterClass;
 	}
 	
 	// 클래스 리뷰순 정렬
@@ -276,26 +314,76 @@ public class ClassController {
         return ResponseEntity.ok().body(bigCategoryList);
     }
 	
+	@GetMapping("like-class-count")
+	@ResponseBody
+	public ResponseEntity<Integer> getLikeClassCount(@RequestParam(name = "class_code") int class_code) {
+	    int likeClassCount = classService.getLikeClassCount(class_code);
+	    System.out.println(">> like-class-count : " + likeClassCount);
+	    return ResponseEntity.ok(likeClassCount);
+	}
 	
 	// 클래스 디테일
 	@GetMapping("class-detail")
-	public String classDetail(Model model, @RequestParam(name = "class_code") int class_code) {
-		Map<String, Object> map = new HashMap<>();
+	public String classDetail(Model model, HttpSession session, @RequestParam(name = "class_code") int class_code) {
 		
-		map.put("class_code", class_code);
+	    MemberVO member = (MemberVO) session.getAttribute("member");
+//	    Integer member_code = null;
+	    
+	    Map<String, Object> map = new HashMap<>();
+	    
+	    Integer member_code = null;
+	    if (member != null) {
+	        member_code = member.getMember_code();
+	    }
+		
+	    map.put("class_code", class_code);
+		System.out.println(">> class_code :: " + map.get("class_code"));
 		
 		// 클래스 후기
-		List<Map<String, Object>> classReview = classService.getClassReview(class_code); 
+		List<Map<String, Object>> classReview = classService.getClassReview(map); 
 		model.addAttribute("classReview", classReview);
 	    
 		// 클래스 질문
-		List<Map<String, Object>> classInquiry = classService.getClassInquiry(class_code); 
+		List<Map<String, Object>> classInquiry = classService.getClassInquiry(map); 
 		model.addAttribute("classInquiry", classInquiry);
 	    
 		// 클래스 커리큘럼
 		List<Map<String, Object>> classCurri = classService.getClassCurri(class_code);
 		model.addAttribute("classCurri", classCurri);
-
+		System.out.println(">> classCurri : " + classCurri);
+		
+		// 클래스 코드 별 좋아요 갯수
+		int likeClassCount = classService.getLikeClassCount(class_code);
+		model.addAttribute("likeClassCount", likeClassCount);
+		System.out.println(">> likeClassCount : " + likeClassCount);
+		
+////	    List<Map<String, Object>> classList = classService.getClassList(list);
+////	    model.addAttribute("classList", classList);
+//	    
+//	    // 클래스 리스트에 member_code 추가
+//	    if (member_code != null) { // member_code가 존재하면 
+////	        for (Map<String, Object> classMap : classList) {
+//	    	map.put("member_code", member_code);
+//	            System.out.println(">> member_code : " + member_code);
+////	        }
+//	        // 라이크 클래스
+//	        Map<String, Object> likeClass = classService.getLikeClass(map);
+//	        model.addAttribute("likeClass", likeClass);
+//	        System.out.println(">> likeClass : " + likeClass);
+//	    } else {
+//	    	return "class/class-detail";
+//	    }
+//	    
+	    // 사용자의 클래스 좋아요 여부 가져오기
+	    boolean isLiked = false;
+	    if (member_code != null) {
+//	        Map<String, Object> map = new HashMap<>();
+	        map.put("member_code", member_code);
+	        map.put("class_code", class_code);
+	        isLiked = classService.getLikeClass(map); // isLikedClass 메서드는 좋아요 여부를 확인하는 메서드라 가정
+	    }
+	    model.addAttribute("isLiked", isLiked);
+	    
 		//classInfo 클래스 데이터 가져오기
 		Map<String, Object> classCode = new HashMap<>();
 		classCode.put("class_code", class_code);
@@ -331,25 +419,70 @@ public class ClassController {
 	
 	// 클래스 상세 리뷰
 	@GetMapping("creator-review-form2")
-	public String creatorReviewForm2(Model model, @RequestParam int class_code){
-		List<Map<String, Object>> classReview = classService.getClassReview(class_code); 
+	public String creatorReviewForm2(Model model, @RequestParam int class_code, @RequestParam int class_review_code){
+		System.out.println(">> class_review_code : " + class_review_code);
+		Map<String, Object> map = new HashMap<>();
+		map.put("class_review_code", class_review_code);
+		map.put("class_code", class_code);
+		List<Map<String, Object>> classReview = classService.getClassReview(map); 
 		model.addAttribute("classReview", classReview);
-		return"creator/creator-review-show";
-		
+		return"class/class-review-show";
 	}
 	
 	// 클래스 상세 질문
 	@GetMapping("creator-inquiry-form2")
-	public String creatorInquiryForm2(Model model, @RequestParam int class_code){
-		List<Map<String, Object>> classInquiry = classService.getClassInquiry( class_code ); 
+	public String creatorInquiryForm2(Model model, @RequestParam int class_code, @RequestParam int class_inquiry_code){
+	    Map<String, Object> map = new HashMap<>();
+	    map.put("class_inquiry_code", class_inquiry_code);
+	    map.put("class_code", class_code);
+		List<Map<String, Object>> classInquiry = classService.getClassInquiry(map); 
 		model.addAttribute("classInquiry", classInquiry);
-		return"creator/creator-inquiry-show";
+		return"class/class-inquiry-show";
 	}
 	
-	// 신고하기
-//	@GetMapping("class-complain")
-//	public String classComplain(Model model, @RequestParam int class_code) {
-//		System.out.println("class-complain class-code @@@@@@%^%^%^% :" + class_code);
-//		return "class/class-complain";
-//	}
+	@GetMapping("class-complain")
+	public String classComplain(Model model, HttpSession session) {
+		MemberVO member = (MemberVO)session.getAttribute("member");
+		if(member == null) {
+			return WillUtils.checkDeleteSuccess(false, model, "잘못된 접근입니다.", true);
+		}
+		
+		// 카테고리 검색
+		List<Map<String, Object>> big_category = adminService.getBigCategoryClassComplain();
+		
+		model.addAttribute("big_category", big_category);
+		model.addAttribute("member", member);
+		
+		return "class/class-complain";
+	}
+	
+	@ResponseBody
+	@GetMapping("getSubCategories")
+	public List<Map<String, Object>> getSubCategory(@RequestParam(value = "categoryCode", required = false) Integer categoryCode) {
+        if (categoryCode == 0) {
+        	return null;
+        }
+		System.out.println("casdgadfsadf : " + categoryCode);
+		
+		List<Map<String, Object>> small_category = adminService.getSmallCategoryClassComplain(categoryCode);
+		
+		return small_category;
+	}
+	
+	@PostMapping("complain-class-pro")
+	public String complainClassPro(@RequestParam Map<String, Object> params, HttpSession session, Model model) {
+		MemberVO member = (MemberVO)session.getAttribute("member");
+		if(member == null) {
+			return WillUtils.checkDeleteSuccess(false, model, "잘못된 접근입니다.", true);
+		}
+		params.put("member_code", member.getMember_code());
+		
+		boolean isSuccess = classService.insertClassComplain(params);
+		
+		if(!isSuccess) {
+			return WillUtils.checkDeleteSuccess(false, model, "신고 등록 실패", true);
+		}
+		
+		return WillUtils.checkDeleteSuccess(true, model, "신고 등록 완료", true);
+	}
 }

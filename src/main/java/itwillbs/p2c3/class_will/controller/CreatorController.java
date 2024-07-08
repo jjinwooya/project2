@@ -32,6 +32,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.gson.Gson;
+
 import itwillbs.p2c3.class_will.handler.WillUtils;
 import itwillbs.p2c3.class_will.service.CreatorService;
 import itwillbs.p2c3.class_will.service.MemberService;
@@ -243,7 +245,7 @@ public class CreatorController {
 		List<Map<String, String>> categoryList = creatorService.getCategory();
 		List<Map<String, String>> hashtagList = creatorService.getHashtag();
 		Map<String, Object> classDetail = creatorService.getClassDetail(class_code);
-		
+		List<Map<String, String>> curriList = creatorService.getCurriList(class_code);		
 		String location = (String)classDetail.get("class_location");
 		if(location.contains("/")) {
 			String[] locationArr = location.split("/");
@@ -259,12 +261,22 @@ public class CreatorController {
 	    };
 		String thumnailFile = (String) classDetail.get("class_thumnail");
 		
+//		List<JSONObject> cr_list = new ArrayList<JSONObject>(); 
+		
+//		for(Map<String, String> cls : curriList) {
+//            JSONObject cl = new JSONObject(cls);
+//            cr_list.add(cl);
+//		}
+//		Gson gson = new Gson();
+//		String crListJson = gson.toJson(cr_list);
+		
 	    model.addAttribute("fileNames", arrFileNames);
 	    model.addAttribute("thumnailFile", thumnailFile);
 		
 		model.addAttribute("categoryList", categoryList);
 		model.addAttribute("hashtagList", hashtagList);
 		model.addAttribute("classDetail", classDetail);
+		model.addAttribute("curriList", curriList);
 		
 		return "creator/creator-classModify";
 	}
@@ -329,6 +341,7 @@ public class CreatorController {
             }
         }
 
+
         String uploadDir = "/resources/upload";
         String saveDir = request.getServletContext().getRealPath(uploadDir);
 
@@ -375,9 +388,10 @@ public class CreatorController {
 	
 	// creater-class 등록
 	@PostMapping("ClassModifyPro")
-	public String ClassModifyPro(@RequestParam Map<String, Object> map,  @RequestParam Map<String, MultipartFile> files, HttpSession session, HttpServletRequest request, Model model) {
+	public String ClassModifyPro(@RequestParam Map<String, Object> map
+				               , HttpSession session, HttpServletRequest request, Model model) {
 		System.out.println(">>>>>>>modifyPro map: " + map);
-		System.out.println(">>>>>>>>modifyPro files: " + files);
+//		System.out.println(">>>>>>>>modifyPro files: " + files);
 		
 		MemberVO member = (MemberVO)session.getAttribute("member");
 		if(member == null) {
@@ -389,6 +403,12 @@ public class CreatorController {
 		map.put("class_location", map.get("post_code") + "/" + map.get("address1") + "/" + map.get("address2"));
 		
 		List<CurriVO> curriList = new ArrayList<CurriVO>();
+		
+		Map<String, MultipartFile> files = new HashMap<String, MultipartFile>();
+//		files.put("class_thumnail", (MultipartFile)map.get("class_thumnail"));
+//		files.put("file1", (MultipartFile)map.get("file1"));
+//		files.put("file2", (MultipartFile)map.get("file2"));
+//		files.put("file3", (MultipartFile)map.get("file3"));
 		
 		for (Map.Entry<String, Object> entry : map.entrySet()) {
 			CurriVO curri = new CurriVO();

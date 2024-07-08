@@ -11,11 +11,12 @@
     </appender>
     
     <!-- 파일 Appender 추가 -->
-    <appender name="file" class="org.apache.log4j.RollingFileAppender">
+    <appender name="file" class="org.apache.log4j.DailyRollingFileAppender">
 <!--         <param name="file" value="${app.root}/WEB-INF/logs/log.log" /> -->
-        <param name="file" value="./logs/class_will.log" />
+        <param name="file" value="./webapps/class-will/resources/logs/class_will.log" />
         <param name="Append" value="true" />
         <param name="MaxFileSize" value="10MB" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd" />
         <param name="MaxBackupIndex" value="30" />
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />
@@ -92,7 +93,7 @@
     
     <!-- Root Logger -->
     <root>
-        <priority value="warn" />
+        <priority value="debug" />
         <appender-ref ref="console" />
         <appender-ref ref="file" />
     </root>

@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>클래스문의</title>
+<title>클래스 문의</title>
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
 	rel="stylesheet"
@@ -24,7 +24,7 @@
 		<div class="input-form-backgroud row">
 			<div class="input-form col-md-12 mx-auto">
 				<c:forEach var="map" items="${classInquiry}">
-						<h4 class="mb-4">클래스문의</h4>
+						<h4 class="mb-4">클래스 문의</h4>
 							<div>
 								<p>🔸참여클래스 : ${map.class_name}</p>
 								<p>🔸작성자 : ${map.member_nickname}</p>
@@ -36,9 +36,7 @@
 							</div>
 							<div class="mb-3">
 								<label for="inquiry-content">내용</label>
-								<textarea rows="10" name="inquiry-content" id="inquiry-content" class="form-control" cols="50" readonly>
-									${map.class_inquiry_content}
-								</textarea> 
+								    <textarea rows="10" id="inquiry-content" class="form-control" readonly>${map.class_inquiry_content}</textarea>
 							</div>
 							
 							<hr class="mb-4">

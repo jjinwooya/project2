@@ -14,7 +14,8 @@ $(function() {
         }
 
         $('#selected_package').val("");
-        $("#form_payAc_type").val("normal");
+        $("#will_pay_chargeType").val("normal");
+        	console.log($("#will_pay_chargeType").val());
         formTranAmt.val(willpay);
     });
 
@@ -29,7 +30,7 @@ $(function() {
 
         rewardFee = rewardFee.replace(/원/g, '');
         $("#form_tran_amt").val(rewardFee);
-        $("#form_payAc_type").val("package");
+        $("#will_pay_chargeType").val("package");
 
         // selected_package 입력 필드에 값을 설정
         $('#selected_package').val(packageUpPrice + "원");

@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import itwillbs.p2c3.class_will.vo.MemberVO;
 
 @Mapper
 public interface ClassMapper {
@@ -25,9 +28,9 @@ public interface ClassMapper {
 	// 해시태그
 	List<Map<String, Object>> selectHashtag();
 	
-	// 카테고리바 필터링된 클래스
-	// List<Map<String, Object>> selectFilterClass(@RequestParam("bigCategories") List<String> bigCategories, @RequestParam("smallCategories") List<String> smallCategories, @RequestParam("locals")List<String> locals);
-	List<Map<String, Object>> selectFilterClass(Map<String, Object> map);
+//	// 카테고리바 필터링된 클래스
+//	// List<Map<String, Object>> selectFilterClass(@RequestParam("bigCategories") List<String> bigCategories, @RequestParam("smallCategories") List<String> smallCategories, @RequestParam("locals")List<String> locals);
+//	List<Map<String, Object>> selectFilterClass(Map<String, Object> map);
 	
 	// 클래스 리뷰 별점 순 정렬
 	List<Map<String, Object>> selectStarList();
@@ -60,14 +63,20 @@ public interface ClassMapper {
 	List<Map<String, Object>> selectListSmallCategory();
 	
 	// 클래스 리뷰
-	List<Map<String, Object>> selectClassReview(int class_code);
+	List<Map<String, Object>> selectClassReview(Map<String, Object> map);
 	
 	// 클래스 질문 
-	List<Map<String, Object>> selectClassInquiry(int class_code);
+	List<Map<String, Object>> selectClassInquiry(Map<String, Object> map);
 	
 	// 클래스 커리큘럼 
 	List<Map<String, Object>> selectClassCurri(int class_code);
 	
+	// 클래스 코드 별 좋아요 갯수
+	int selectLikeClassCount(int class_code);
+	
+	// 디테일 클래스 좋아요
+//	Map<String, Object> selectLikeClass(Map<String, Object> map);
+	boolean selectLikeClass(Map<String, Object> map);
 	// 클래스 해시태그 
 	List<Map<String, Object>> selectClassHashtag(int class_code);
 	

@@ -33,6 +33,8 @@
     
     <script src="${pageContext.request.contextPath}/resources/js/jquery-3.7.1.js"></script>
     
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/admin_default.css">
+    
 </head>
 <body id="page-top">
 
