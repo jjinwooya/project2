@@ -108,7 +108,6 @@
     	    const data = ${jo_list};
     	    let type = "event";
     	    
-    	    
     	    // 버튼 색깔 변경
     	    const buttons = document.querySelectorAll('.category-btn');
     	    buttons.forEach(button => {
@@ -119,17 +118,12 @@
     	        }
     	    });
     	    
-    	    
+    	    // 적응버튼 이벤트
     	    $('#btn-apply').on('click', function () {
     	        const modifiedRows = grid.getModifiedRows();
-    	        // modifiedRows가 배열인지 확인하고 배열로 변환
-    	        const rowsArray = Array.isArray(modifiedRows) ? modifiedRows : [modifiedRows];
-
-    	        
-    	        const jsonData = JSON.stringify(rowsArray);
-
+    	        const jsonData = JSON.stringify(modifiedRows);
     	        $.ajax({
-    	            url: 'updateEvent',
+    	            url: 'update-event',
     	            type: 'POST',
     	            contentType: 'application/json',
     	            data: jsonData,
@@ -183,7 +177,37 @@
     	            this.el.querySelector('input').checked = props.value;
     	        }
     	    }
-            
+    	    // 수정하기 버튼
+    	    class ModifyRenderer {
+    	        constructor(props) {
+    	            const container = document.createElement('div');
+    	            
+    	            const viewButton = document.createElement('button');
+    	            viewButton.className = 'btn btn-danger btn-sm';
+    	            viewButton.innerText = '수정하기';
+					
+					
+    	            // 버튼 클릭 이벤트 추가
+    	            viewButton.addEventListener('click', () => {
+                        const rowKey = props.grid.getIndexOfRow(props.rowKey);
+                        const rowData = props.grid.getRow(rowKey);
+                        let code = rowData.event_code;
+    	                window.open("admin-event-modify?&event_code=" + code, "상세정보", "width=1200px,height=1000px");
+    	            });
+
+    	            container.appendChild(viewButton);
+    	            
+    	            this.el = container;
+    	        }
+    	        getElement() {
+    	            return this.el;
+    	        }
+    	        render(props) {
+    	            this.el.dataset.rowKey = props.rowKey;
+    	            this.el.dataset.columnName = props.columnName;
+    	            this.el.dataset.code = props.value.event_code;
+    	        }
+    	    }
 
     	    // 상세보기 버튼
     	    class ActionRenderer {
@@ -200,7 +224,7 @@
                         const rowKey = props.grid.getIndexOfRow(props.rowKey);
                         const rowData = props.grid.getRow(rowKey);
                         let code = rowData.event_code;
-    	                window.open("admin-event-detail?&code=" + code, "상세정보", "width=1200px,height=1000px");
+    	                window.open("eventDetail?&event_code=" + code, "상세정보", "width=1200px,height=1000px");
     	            });
 
     	            container.appendChild(viewButton);
@@ -221,15 +245,22 @@
                 el: document.getElementById('grid'),
                 data: data,
                 columns: [
-                    { header: '제목', name: 'event_subject' , editor: 'text'},
-                    { header: '작성일', name: 'event_reg_date' , editor: 'text'},
-                    { header: '이벤트 기간', name: 'event_date' , editor: 'text'},
-                    { header: '지급 포인트', name: 'event_point' , editor: 'text'},
+                    { header: '제목', name: 'event_subject'},
+                    { header: '작성일', name: 'event_reg_date'},
+                    { header: '이벤트 기간', name: 'event_date'},
+                    { header: '지급 포인트', name: 'event_point'},
                     {
                         header: 'Action',
                         name: 'action',
                         renderer: {
                             type: ActionRenderer
+                        }
+                    },
+                    {
+                        header: 'Modify',
+                        name: 'modify',
+                        renderer: {
+                            type: ModifyRenderer
                         }
                     },
                     {

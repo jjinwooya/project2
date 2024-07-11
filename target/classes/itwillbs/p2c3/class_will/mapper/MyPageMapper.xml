@@ -261,7 +261,7 @@
 		WHERE member_code = #{member_code}
 		AND YEAR(pay_datetime) = #{year}
 		AND MONTH(pay_datetime) = #{month}
-	
+		AND pay_status = 'paid'
 	</select>
 
 

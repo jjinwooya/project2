@@ -43,6 +43,8 @@
 <link
 	href="${pageContext.request.contextPath}/resources/css/creator/creator-main.css"
 	rel="stylesheet">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <style>
 body {
 	
@@ -173,8 +175,7 @@ th:nth-child(2), td:nth-child(2) {
 													</td>
 													<td>
 														<c:if test="${pay.refund_type eq '1' }">
-<%-- 															<input type="button" value="환불하기" id="refundClass" onclick="refund('${pay.imp_uid}', '${pay.pay_amount}', '${pay.use_willpay}', '${pay.pay_code}', '${pay.pay_headcount }', '${pay.class_schedule_code }')"> --%>
-															<button class="btn btn-dark" id="refundClass" onclick="refundPay('${pay.imp_uid}', '${pay.pay_amount}', '${pay.use_willpay}', '${pay.pay_code}', '${pay.pay_headcount }', '${pay.class_schedule_code }')">환불하기</button>
+															<button class="btn btn-dark" id="refundClass" onclick="refundPay('${pay.imp_uid}', '${pay.pay_amount}', '${pay.use_willpay}', '${pay.pay_code}', '${pay.pay_headcount }', '${pay.class_schedule_code }', '${pay.pay_type }')">환불하기</button>
 														</c:if>
 													</td>
 												</tr>
@@ -200,13 +201,14 @@ th:nth-child(2), td:nth-child(2) {
 	<jsp:include page="/WEB-INF/views/inc/bottom.jsp" />
 </footer>
 <script>
-function refundPay(param_imp_uid, param_amount, param_willpay, param_pay_code, param_pay_headcount, param_class_schedule_code) {
+function refundPay(param_imp_uid, param_amount, param_willpay, param_pay_code, param_pay_headcount, param_class_schedule_code, param_pay_type) {
 	let imp_uid = param_imp_uid; //imp_uid
 	let amount = param_amount; //결제금액
 	let willpay = param_willpay; // 윌페이
 	let pay_code = param_pay_code; //페이코드
 	let headcount = param_pay_headcount; //인원수
-	let class_schedule_code = param_class_schedule_code; 
+	let class_schedule_code = param_class_schedule_code;
+	let pay_type = param_pay_type;
 	
 	let params = {
 			imp_uid : imp_uid,
@@ -217,32 +219,58 @@ function refundPay(param_imp_uid, param_amount, param_willpay, param_pay_code, p
 			class_schedule_code : class_schedule_code
 	};
 	
-	if(confirm("환불하시겠습니까?")) {
-		$.ajax({
-			url: "refund",
-			type: "POST",
-			data: JSON.stringify(params),
-			contentType: "application/json",
-			dataType: "json",
-			success: function(res) {
-	// 			boolean successRefund = res;
-				if(res) {
-					alert("환불되었습니다.");
-		            location.reload();
+	if(pay_type == 1) {
+		if(confirm("환불하시겠습니까?")) {
+			$.ajax({
+				url: "refund",
+				type: "POST",
+				data: JSON.stringify(params),
+				contentType: "application/json",
+				dataType: "json",
+				success: function(res) {
+		// 			boolean successRefund = res;
+					if(res) {
+						alert("환불되었습니다.");
+			            location.reload();
+					}
+				},
+				error: function() {
+					alert("호출 실패");
 				}
-			},
-			error: function() {
-				alert("호출 실패");
-			}
-		});
+			});
+		}
+	} else if(pay_type == 3) {
+		if(confirm("환불하시겠습니까?")) {
+			$.ajax({
+				url: "refund-willpay",
+				type: "POST",
+				data: JSON.stringify({
+					amount : amount,
+					member_credit : willpay,
+					pay_code : pay_code,
+					pay_headcount : headcount,
+					class_schedule_code : class_schedule_code
+				}),
+				contentType: "application/json",
+				dataType: "json",
+				success: function(res) {
+		// 			boolean successRefund = res;
+					if(res) {
+						alert("환불되었습니다.");
+			            location.reload();
+					}
+				},
+				error: function() {
+					alert("호출 실패");
+				}
+			});
+		}
 	}
 	
 }
 	
 </script>
 <!-- JavaScript Libraries -->
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 <script

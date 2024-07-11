@@ -50,6 +50,8 @@
 <script
 	src="https://uicdn.toast.com/tui.code-snippet/latest/tui-code-snippet.js"></script>
 <script src="https://uicdn.toast.com/tui.grid/latest/tui-grid.js"></script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <style>
 body {
 	
@@ -321,8 +323,7 @@ th:nth-child(2), td:nth-child(2) {
 	</footer>
 
 	<!-- JavaScript Libraries -->
-	<script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+	
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script

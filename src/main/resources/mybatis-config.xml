@@ -3,4 +3,8 @@
   PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-config.dtd">
   <configuration>
+  	<typeAliases>
+		<!-- <typeAlias type="클래스타입" alias="별칭" /> -->
+		<typeAlias type="itwillbs.p2c3.class_will.vo.MemberVO" alias="member"/>
+	</typeAliases>
   </configuration>

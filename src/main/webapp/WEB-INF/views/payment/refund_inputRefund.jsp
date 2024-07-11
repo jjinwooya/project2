@@ -52,8 +52,11 @@
 		<div class="card-body text-bg-dark d-column justify-content-center" >
 			<h5 class="card-title">환불가능 금액</h5>
 			<p class="card-text">
-				<span class="text_color">현재 WILL-PAY</span> : ${member_willpay }원<br>
-				<span class="text_color">환불 가능한 WILL-PAY</span> :<span id="abledWillpay">${member_abledWillpay}</span>원<br>
+				<span class="text_color">현재 WILL-PAY :</span>
+				<span id="remainedWillpay">&nbsp;${member_willpay }</span>원
+				<br>
+				<span class="text_color">환불 가능한 WILL-PAY :</span>
+				<span id="abledWillpay">&nbsp;${member_abledWillpay}</span>원
 			</p>
 			<div class="form-group form-group-center">
 				<input type="text" class="form-control w-50" id="will_pay_refund_amt" placeholder="금액을 입력해 주세요">
@@ -67,15 +70,18 @@
 </div>
 <script>
 $(function() {
-	let refundAmt = $("#will_pay_refund_amt").val();
-	let abledWillpay = $("#abledWillpay").text();	
+	//LocaleString() - 포맷팅
+	let remainedWillpay = $("#remainedWillpay").text();
+	let remainWillpay = parseInt(remainedWillpay);
+	$("#remainedWillpay").text(remainWillpay.toLocaleString());
 	
-	
+	let abledWillpay = $("#abledWillpay").text();
+	let ableWillpay = parseInt(abledWillpay);
+	$("#abledWillpay").text(ableWillpay.toLocaleString());
 });
 </script>
 <script>
 function refundWillpay() {
-	debugger;
 	let refundAmt = $("#will_pay_refund_amt").val();
 	let abledWillpay = $("#abledWillpay").text();
 	

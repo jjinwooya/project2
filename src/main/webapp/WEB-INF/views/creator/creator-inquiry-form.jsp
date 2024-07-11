@@ -34,7 +34,7 @@
 		<div class="container">
 		<div class="input-form-backgroud row">
 			<div class="input-form col-md-12 mx-auto">
-				<h4 class="mb-4">클래스후기</h4>
+				<h4 class="mb-4">클래스문의</h4>
 					<div>
 						<p>🔸참여클래스 : ${inquiry.class_name}</p>
 						<p>🔸작성자 : ${inquiry.member_nickname}</p>

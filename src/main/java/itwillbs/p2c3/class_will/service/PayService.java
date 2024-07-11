@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,11 +36,19 @@ public class PayService {
 	
 	private IamportClient client;
 	
+	
 	public PayService() {
 		String apiKey ="3531856454755108";
 		String apiSecret = "ue5UeHzRddcp4PozEatgw9W9SD1To4172hH0vQZebn5ZqW95F8WDgrZ3mD7EIyhoKuaEIHZ1HiYMz1TJ";
 		
 		this.client = new IamportClient(apiKey, apiSecret);
+	}
+	
+	//datetime 포멧 메서드
+	public String formatDate(Date date) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String payDate = dateFormat.format(date);
+		return payDate;
 	}
 	
 	//member_credit 가져오는 메서드
@@ -76,46 +85,41 @@ public class PayService {
 		return payMapper.selectCredit(map);
 	}
 	
+	
+	
 	//결제 검증
 	public Map<String, Object> verifyPayment(Map<String, Object> map) {
 		Map<String, Object> response = new HashMap<String, Object>();
 		try {
 			IamportResponse<Payment> paymentResponse = client.paymentByImpUid((String)map.get("imp_uid"));
-			response = new HashMap<String, Object>();
 			//결제 성공 시
 			if(paymentResponse.getResponse() != null && paymentResponse.getResponse().getStatus().equals("paid")) {
 				//use_willpay 처리
-				payMapper.updateCredit(map);
+				payMapper.updateCredit(map); //willpay 증가 메서드
 				//class_schedule 테이블의 class_remain_headcount 처리
 				payMapper.updateHeadcount(map);
 				
 				//-----------------------------------------
 				//DB에 결제 데이터 저장
-				//class_schedule_code, member_code, class_code 가져오기
-				Map<String, Object> objects = payMapper.selectObjects(map);
-				
 				Payment pr = paymentResponse.getResponse();
-				System.out.println(paymentResponse.getResponse().getStatus());
-				
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				String payDate = sdf.format(pr.getPaidAt());
+				//format 메서드
+				String payDate = formatDate(pr.getPaidAt());
 				
 				map.put("pay_type", pr.getPayMethod().equals("card") ? 1 : 2);
 				map.put("pay_amount", pr.getAmount());
 				map.put("pay_datetime", payDate);
-				map.put("class_code", objects.get("class_code"));
-				map.put("class_schedule_code", objects.get("class_schedule_code"));
+				map.put("class_code", map.get("class_code"));
+				map.put("class_schedule_code", map.get("class_schedule_code"));
 				map.put("member_code", map.get("member_code"));
 				map.put("pg_provider", pr.getPgProvider());
 				map.put("card_name", pr.getCardName());
-				payMapper.registPaySuccessInfo(map);
+				int registResult = payMapper.registPaySuccessInfo(map);
 				
-//				System.out.println("페이번호: " + map.get("pay_code"));
-				
-				
-				response.put("pay_code", map.get("pay_code"));
-				response.put("success", true);
-				response.put("error", "결제 검증에 성공하였습니다");
+				if(registResult > 0) {
+					response.put("pay_code", map.get("pay_code"));
+					response.put("success", true);
+					response.put("error", "결제 검증에 성공하였습니다");
+				}
 			} else {
 				response.put("success", false);
 				response.put("error", "결제 검증에 실패하였습니다.");
@@ -129,12 +133,36 @@ public class PayService {
 		return response;
 	}
 	
+	public Map<String, Object> updateWillPayAllCase(Map<String, Object> map) {
+		Map<String, Object> response = new HashMap<String, Object>();
+		
+		Date paidAt = new Date();
+		String payDate = formatDate(paidAt);
+		
+		map.put("pay_type", 3);
+		map.put("pay_datetime", payDate);
+		int registResult = payMapper.registPaySuccessInfo(map);
+		if(registResult > 0) {
+			payMapper.updateCredit(map);
+			payMapper.updateHeadcount(map);
+			response.put("pay_code", map.get("pay_code"));
+			response.put("success", true);
+			response.put("error", "결제 성공!");
+		} else {
+			response.put("success", false);
+			response.put("error", "결제 실패!");
+		}
+		
+		return response;
+	}
+	
+	
 	
 	//결제에 성공한 paySuccessInfo 가져오기
 	public Map<String, String> getSuccessPayInfo(Map<String, String> map) {
 		return payMapper.selectSuccessPayInfo(map);
 	}
-	
+	//======================================================================
 	//access_token 획득
 	public Map getAccessToken(Map<String, String> authResponse) {
 		Map token = bankApi.requestAccessToken(authResponse);
@@ -173,19 +201,19 @@ public class PayService {
 	public Map getUserInfo(Map map) {
 		Map userInfo = bankApi.requestUserInfo(map);
 		
-		List<Map<String, Object>> res_list = (List<Map<String, Object>>)userInfo.get("res_list");
-		
-		//update를 하기위한 Map객체
-		Map<String, String> fintech = new HashMap<String, String>();
-		fintech.put("access_token", (String)map.get("access_token"));
-		
-		//마지막 계좌에서 fintech_use_num 가져오기
-		Map<String, Object> lastMap = res_list.get(res_list.size() - 1);
-		for(Map.Entry<String, Object> entry : lastMap.entrySet()) {
-			fintech.put((String)entry.getKey(), (String)entry.getValue());
-		}
-		
-		payMapper.updateFintechUseNum(fintech);
+//		List<Map<String, Object>> res_list = (List<Map<String, Object>>)userInfo.get("res_list");
+//		
+//		//update를 하기위한 Map객체
+//		Map<String, String> fintech = new HashMap<String, String>();
+//		fintech.put("access_token", (String)map.get("access_token"));
+//		
+//		//마지막 계좌에서 fintech_use_num 가져오기
+//		Map<String, Object> lastMap = res_list.get(res_list.size() - 1);
+//		for(Map.Entry<String, Object> entry : lastMap.entrySet()) {
+//			fintech.put((String)entry.getKey(), (String)entry.getValue());
+//		}
+//		
+//		payMapper.updateFintechUseNum(fintech);
 		
 		return userInfo;
 	}
@@ -232,14 +260,10 @@ public class PayService {
 			System.out.println("will_pay_code: " + will_pay_code);
 			
 			withdrawInfo = payMapper.selectWithdrawInfo(will_pay_code);
-//			return withdrawInfo;
 		}
 		return withdrawInfo;
 	}
 
-//	public void registPayAccountInfo(Map withdrawResult) {
-//		payMapper.insertPayAccountInfo(withdrawResult);
-//	}
 	
 	//will-pay 충전 성공 시 member_credit update
 	public int updateWillPay(Map<String, Object> map) {
@@ -304,6 +328,13 @@ public class PayService {
 		return isSuccess;
 	}
 	
+	//포트원 결제 시 - 전액 willpay 결제 환불
+	public void refundWillPayAllCase(Map<String, Object> map) {
+		payMapper.updateWillpay(map);
+		payMapper.updatePayStatus(map);
+		payMapper.resetHeadcount(map);
+	}
+	
 	//충전 성공한 willpayChargeList 가져오기
 	public List<Map<String, Object>> getWillpayChargeList(int member_code) {
 		return payMapper.selectWillpayChargeList(member_code);
@@ -350,11 +381,7 @@ public class PayService {
 		
 		return true;
 	}
-	
-
-
 
 	
-
 	
 }

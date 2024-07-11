@@ -88,10 +88,22 @@
 				<p>결제종류 : ${paySuccessInfo.card_name}(${paySuccessInfo.pg_provider})</p>
 				<p>결제수단 : ${paySuccessInfo.pay_type}</p>
 				<hr>
-				<p>클래스 가격(인원수:&nbsp;${paySuccessInfo.pay_headcount}) : ${paySuccessInfo.pay_amount}원</p>
-				<p>WILL-PAY 사용금액 : ${paySuccessInfo.use_willpay}원</p>
+				<p>클래스 가격(인원수:&nbsp;${paySuccessInfo.pay_headcount}) :
+					<fmt:formatNumber value="${paySuccessInfo.total_amount}" var="total" pattern="#,###"/> 
+					${total}원
+				</p>
+				<p>
+					WILL-PAY 사용금액 :
+					<fmt:formatNumber value="${paySuccessInfo.use_willpay}" var="amount" pattern="#,###"/> 
+					${amount}원
+				</p>
 				<hr>
-				<p><b>최종 결제금액 : ${paySuccessInfo.result_amount} 원</b></p>
+				<p>
+					<b>최종 결제금액 :
+					<fmt:formatNumber value="${paySuccessInfo.result_amount}" var="result" pattern="#,###"/> 
+					${result} 원
+					</b>
+				</p>
 			</div>
 			<div>
 				<h5 class="text-success">클래스 정보</h5>

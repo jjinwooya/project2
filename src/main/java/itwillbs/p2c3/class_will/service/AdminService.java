@@ -201,7 +201,7 @@ public class AdminService {
 		return adminMapper.insertEvent(map) > 0 ? true : false;
 	}
 
-	public List<Map<String, String>> getEventList() {
+	public List<Map<String, Object>> getEventList() {
 		return adminMapper.selectEventList();
 	}
 
@@ -215,6 +215,14 @@ public class AdminService {
 
 	public void deleteVisitLogs() {
 		adminMapper.deleteVisitLogs();
+	}
+
+	public Map<String, Object> getEventDetail(int event_code) {
+		return adminMapper.selectEventDetail(event_code);
+	}
+
+	public boolean updateEventHide(Map<String, Object> updateRow) {
+		return adminMapper.updateEventHide(updateRow);
 	}
 
 	

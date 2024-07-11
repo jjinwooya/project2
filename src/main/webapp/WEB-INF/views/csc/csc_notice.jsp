@@ -85,28 +85,7 @@
 			<hr>
 			<div class="row">
 			
-				<div class="col-1 mt-3" id ="noticeCount">
-					<span id="count"><!--전체 갯수, 각 구분마다 갯수 --></span>
-				</div>
 				
-<!-- 				<div class="col-11"> -->
-<!-- 				<div class="csc_local" data-theater="">전체</div> -->
-<%-- 					<c:forEach items="${category }" var="cat"> --%>
-<%-- 						<div class="csc_local" data-category="${cat.common1_code }">${cat.code_value }</div> --%>
-<%-- 					</c:forEach> --%>
-<!-- 					<div class="csc_search"> -->
-<!-- 						공지 찾는 검색창  -->
-<!-- 						<form method="post" action="javascript:void(0);" id="notice_search"> -->
-<!-- 							<input type="text" placeholder="검색어를 입력해주세요" name="noticeSearchKeyword" id="noticeSearchKeyword">  -->
-<!-- 								<i class="bi bi-search searchIcon"></i> -->
-<!-- 							<div class="csc_searcher"> -->
-<!-- 								<input type="submit" value="검색"> -->
-<!-- 							</div> -->
-<!-- 						</form> -->
-<!-- 					</div> -->
-<!-- 				</div> -->
-			</div>
-			<hr>
 			<!-- 게시판 -->
 			<div class="row boardArea">
 				<table>

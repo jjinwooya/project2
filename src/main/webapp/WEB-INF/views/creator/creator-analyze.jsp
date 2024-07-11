@@ -105,7 +105,7 @@
 
 							<div class="creator-main-table col-md-10 my-5">
 								<div class="admin_main_chart">
-									<canvas id="myChart" height="100px"></canvas>
+									<canvas id="myChart" height="400px"></canvas>
 								</div>
 							</div>
 						
@@ -124,13 +124,13 @@
 	</footer>
 
 	<!-- JavaScript Libraries -->
-	<script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- 	<script -->
+<!-- 		src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script> -->
+<!-- 	<script -->
+<!-- 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script> -->
 
-	<!-- Template Javascript -->
-	<script src="${pageContext.request.contextPath}/resources/js/main.js"></script>
+<!-- 	<!-- Template Javascript --> -->
+<%-- 	<script src="${pageContext.request.contextPath}/resources/js/main.js"></script> --%>
 	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 	
 	<script type="text/javascript">
@@ -160,69 +160,99 @@
 	         </c:forEach>
 		 ];
 		
-		$('#classSelect').change(function() {
-			classCode = $('#classSelect').val();
-			$.ajax({
-				url: "graphByClass",
-				method: "get",
-				data: { "classCode" : classCode },
-				success: function(data) {
-					 var TheaterList = [
-						 <c:forEach var="theater" items="${theaterList}">
-				         	"${theater.theater_name}" ,
-				         </c:forEach>
-					 ];
-				}
-			});	
-		});
+// 		$('#classSelect').change(function() {
+// 			classCode = $('#classSelect').val();
+// 			$.ajax({
+// 				url: "graphByClass",
+// 				method: "get",
+// 				data: { "classCode" : classCode },
+// 				success: function(data) {
+// 					debugger;
+// 					 var TheaterList = [
+// 						 <c:forEach var="theater" items="${theaterList}">
+// 				         	"${theater.theater_name}" ,
+// 				         </c:forEach>
+// 					 ];
+// 				}
+// 			});	
+// 		});
 		 
 		var myChart = new Chart(ctx, {
 		    type: 'bar', // 기본적으로 바 차트 설정
 		    data: {
 		        labels: MonthList,
 		        datasets: [{
-		            label: '월간 매출 데이터',
-		            data: [2300, 3000, 2500, 2100, 2500, 3100, 1900, 3000, 2500, 2000, 2500, 3100],
+		            label: '월간 매출 데이터(전체)',
+		            data: SumList,
 		            backgroundColor: chartColors,
 		            borderColor: 'rgb(192, 20, 20)',
 		            borderWidth: 2,
-		            yAxisID: 'bar-y-axis' // 바 차트를 위한 y축 ID
+		            yAxisID: 'shared-y-axis'  // 바 차트를 위한 y축 ID
 		        }]
 		    },
 		    options: {
 		        maintainAspectRatio: false,
 		        scales: {
 		            yAxes: [{
-		                id: 'bar-y-axis', // 바 차트용 y축
+		                id: 'shared-y-axis', // 동일한 y축 ID
 		                type: 'linear',
 		                position: 'left',
 		                ticks: {
 		                    beginAtZero: true
-		                }
-		            }, {
-		                id: 'line-y-axis', // 라인 차트용 y축
-		                type: 'linear',
-		                position: 'right',
-		                ticks: {
-		                    beginAtZero: true
+		                },
+		                scaleLabel: {
+		                    display: true,
+		                    labelString: '매출액'
 		                }
 		            }]
 		        }
 		    }
 		});
-	
-		// 라인 차트 추가
-		myChart.data.datasets.push({
-		    label: '월간 매출 데이터 (전체)',
-		    data: SumList,
-		    borderColor: 'rgb(256, 0, 0)',
-		    borderWidth: 2,
-		    fill: false,
-		    yAxisID: 'line-y-axis' // 라인 차트를 위한 y축 ID
+		
+		// 카테고리에 따른 데이터
+		$('#classSelect').change(function() {
+			const classCode = $('#classSelect').val();
+			$.ajax({
+				url : "graphByClass",
+				method : "GET",
+				data : {
+					"classCode" : classCode
+				},
+				success : function(result) {
+					var ChartSumList = [];
+					MonthList.forEach(function(e, i){
+						var data = result.filter(v => v.month === e.substring(0, 7))[0];
+						ChartSumList.push(data ? data.total_sum : 0);
+					})
+					ChartChange(ChartSumList);
+				}
+			});
 		});
 	
-		// 차트 업데이트
-		myChart.update();
+		// 라인 차트 추가
+		function ChartChange(data) {
+			// '월간 매출 데이터 (전체)' 데이터셋을 찾기
+		    var datasetIndex = myChart.data.datasets.findIndex(function(dataset) {
+		        return dataset.label === '월간 매출 데이터 (클래스)';
+		    });
+
+		    // 기존 데이터셋이 있으면 삭제
+		    if (datasetIndex !== -1) {
+		        myChart.data.datasets.splice(datasetIndex, 1);
+		    }
+			myChart.data.datasets.push({
+			    label: '월간 매출 데이터 (클래스)',
+			    data: data,
+			    borderColor: 'rgb(256, 0, 0)',
+			    borderWidth: 2,
+			    fill: false,
+			    yAxisID: 'shared-y-axis' // 라인 차트를 위한 y축 ID
+			});
+		
+			// 차트 업데이트
+			myChart.update();
+		}
+		
 	</script>
 
 </body>

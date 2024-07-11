@@ -51,6 +51,7 @@
 			,class_hashtag
 			,m.member_name
 			,m.member_nickname
+			,m.member_img
 		FROM class c
 		LEFT JOIN common2 c2 ON c.class_big_category = c2.common2_code AND c2.common1_code = 'CLC'
 		LEFT JOIN common2 lc ON c.common2_code = lc.common2_code AND lc.common1_code = 'LC'
@@ -196,8 +197,9 @@
 	<!-- 리뷰 별점 순 정렬 -->
 	<select id="selectStarList">
 		SELECT 
-		    IFNULL(AVG(cr.class_review_rating), 0) AS avg_rating,
-		    c.class_code
+		    IFNULL(AVG(cr.class_review_rating), 0) AS avg_rating
+		    ,c.class_code
+		    ,c.class_thumbnail
 		FROM class c
 		LEFT JOIN class_review cr ON cr.class_code = c.class_code
 		WHERE c.class_regist_status = '2'

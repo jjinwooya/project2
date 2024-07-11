@@ -75,14 +75,6 @@
                 <!-- 구분 카테고리 시작 -->
                 <div class="row mt-3">
                     <div class="csc_faq_sel">
-<!--                         <select id="faq_category" name="faq_category" class="form-select form-select-sm w-25"> -->
-<!--                             <option value="">전체</option> -->
-<!--                             <option value="예매/결제" data-category="예매/결제">예매/결제</option> -->
-<!--                             <option value="영화관이용" data-category="영화관이용">영화관이용</option> -->
-<!--                             <option value="쿠폰" data-category="쿠폰">쿠폰</option> -->
-<!--                             <option value="스토어" data-category="스토어">스토어</option> -->
-<!--                             <option value="홈페이지/모바일" data-category="홈페이지/모바일">홈페이지/모바일</option> -->
-<!--                         </select> -->
 						<select id="faq_category" name="faq_category" class="form-select form-select-sm w-25">
 							<option value="">전체</option>
 								<c:forEach items="${category}" var="cat">
@@ -93,29 +85,29 @@
                 </div>
                 <hr>
                 <!-- 자주묻는 질문 게시판 -->
-                <div class="accordion" id="faqAccordion">
-                    <c:choose>
-                        <c:when test="${empty list}">
-                            <div align="center">FAQ 게시물이 없습니다</div>
-                        </c:when>
-                        <c:otherwise>
-                            <c:forEach var="faq" items="${list}" varStatus="status">
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="heading${status.index}">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${status.index}" aria-expanded="false" aria-controls="collapse${status.index}">
-                                            <span class="faq_category">[${faq.faq_category}]&nbsp;&nbsp;&nbsp;</span> ${faq.faq_subject}
-                                        </button>
-                                    </h2>
-                                    <div id="collapse${status.index}" class="accordion-collapse collapse" aria-labelledby="heading${status.index}" data-bs-parent="#faqAccordion">
-                                        <div class="accordion-body">
-                                            ${faq.faq_content}
-                                        </div>
-                                    </div>
-                                </div>
-                            </c:forEach>
-                        </c:otherwise>
-                    </c:choose>
-                </div>
+					<div class="accordion" id="faqAccordion">
+					    <c:choose>
+					        <c:when test="${empty list}">
+					            <div align="center">FAQ 게시물이 없습니다</div>
+					        </c:when>
+					        <c:otherwise>
+					            <c:forEach var="faq" items="${list}" varStatus="status">
+					                <div class="accordion-item" data-category="${faq.faq_category}">
+					                    <h2 class="accordion-header" id="heading${status.index}">
+					                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${status.index}" aria-expanded="false" aria-controls="collapse${status.index}">
+					                            <span class="faq_category">[${faq.faq_category}]&nbsp;&nbsp;&nbsp;</span> ${faq.faq_subject}
+					                        </button>
+					                    </h2>
+					                    <div id="collapse${status.index}" class="accordion-collapse collapse" aria-labelledby="heading${status.index}" data-bs-parent="#faqAccordion">
+					                        <div class="accordion-body">
+					                            ${faq.faq_content}
+					                        </div>
+					                    </div>
+					                </div>
+					            </c:forEach>
+					        </c:otherwise>
+					    </c:choose>
+					</div>
                 <hr>
             </div>
         </div>
@@ -129,7 +121,6 @@
     <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>   
 
     <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="${pageContext.request.contextPath}/resources/lib/easing/easing.min.js"></script>
     <script src="${pageContext.request.contextPath}/resources/lib/waypoints/waypoints.min.js"></script>
@@ -149,6 +140,29 @@
                 accordion.addEventListener('mouseover', function (event) {
                     event.stopPropagation();
                 });
+            });
+        });
+        
+        $(document).ready(function() {
+            // 카테고리 선택 변경 시 이벤트 핸들러
+            $('#faq_category').on('change', function() {
+            	debugger;
+				var selectedCategory = $('#faq_category option:selected').data('category');
+                // 모든 FAQ 항목을 숨깁니다.
+                $('.accordion-item').hide();
+
+                // 선택된 카테고리에 해당하는 FAQ 항목을 표시합니다.
+                if (!selectedCategory) {
+                    // '전체'가 선택된 경우 모든 항목을 표시합니다.
+                    $('.accordion-item').show();
+                } else {
+                    // 특정 카테고리가 선택된 경우 해당 항목만 표시합니다.
+                    $('.accordion-item').each(function() {
+                        if ($(this).data('category') === selectedCategory) {
+                            $(this).show();
+                        }
+                    });
+                }
             });
         });
     </script>

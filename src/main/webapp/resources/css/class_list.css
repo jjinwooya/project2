@@ -8,7 +8,7 @@ body {
 .container1 {
 	background : black;
 	height : auto;
-	width: 1200px;
+/* 	width: 1200px; */
 	margin: auto;
 }
 
@@ -26,7 +26,13 @@ body {
 
 .btnLocation {
 	text-align : right;
+	margin-right : 0px;
 }
+
+.btnLocationDiv {
+	margin-left : 90px;
+}
+
 .card-bodys {
     height: 200px; /* 예시로 설정한 높이 */
 	padding : 15px;
@@ -63,6 +69,11 @@ body {
 	
 }
 
+/* #classListContainer{ */
+/* 	margin-left : 10px; */
+/* 	margin-right : 10px; */
+	
+/* } */
 .className h6 {
 	color : black;
 	font-weight: bold;
@@ -168,8 +179,12 @@ body {
 
 .price{
 	text-align : right;
+	color : black;
 }
 
+.cursor {
+	cursor: pointer;
+}
 .box1 {
     display: flex;
     align-items: center; /* 수직 중앙 정렬 */
@@ -188,7 +203,7 @@ body {
 .selectBox1 {
 /*     margin: 0; 마진 제거 */
     height: auto; /* 높이 자동 조절 */
-    margin-left : 90px;
+/*     margin-left : 90px; */
     opacity : 0.9;
 }
 

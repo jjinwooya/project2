@@ -5,15 +5,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -115,7 +111,7 @@ public class MainController {
 	
 	
 	// top & bottom 검색창
-	@PostMapping("search-keyword")
+	@PostMapping("class-list")
 	public String searchKeyword(@RequestParam String keyword, Model model) {
 		
 		System.out.println("keyword : " + keyword);
@@ -124,11 +120,17 @@ public class MainController {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		String searchDateTime = currentDateTime.format(formatter);
 		
-		List<Map<String, Object>> searchClassList = mainService.retrieveKeyword(keyword, searchDateTime);
+		List<Map<String, String>> searchClassList = mainService.retrieveKeyword(keyword, searchDateTime);
 		System.out.println("searchClassList : " + searchClassList);
-		model.addAttribute("searchClassList", searchClassList);
+		if(searchClassList != null) {
+			model.addAttribute("searchClassList", searchClassList);
+			
+		} else {
+			model.addAttribute("msg", "검색 결과가 존재하지 않습니다.");
+			return "result_process/fail";
+		}
 		
-		return "redirect:/class-list";
+		return "class/class-list";
 		
 	} // searchKeyword()
 	

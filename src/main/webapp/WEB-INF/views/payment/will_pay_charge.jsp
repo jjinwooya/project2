@@ -201,9 +201,9 @@ body{
 <script>
 	// JSON 데이터를 JavaScript 변수에 할당
 	let bankInfoJson;
-	let tokenSession = '${token}';
+	let tokenSession = "${token}";
 	if(tokenSession != '') {
-		bankInfoJson = JSON.parse('${bankInfoJson}');
+		bankInfoJson = JSON.parse("${bankInfoJson}");
 	}
 </script>
 <script src="${pageContext.request.contextPath }/resources/js/will_pay_charge.js"></script>

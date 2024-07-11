@@ -39,7 +39,7 @@
 		) 
 	</insert>
 	
-	<select id="selectMember">
+	<select id="selectMember" resultType="member">
 		SELECT *
 		FROM MEMBER 
 		WHERE member_email = #{member_email}

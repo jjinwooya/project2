@@ -212,7 +212,7 @@
 		        </li>
 		        <li class="nav-item bottom-nevi-item d-flex justify-content-center align-items-center">
 		        
-		            <a class="nav-link bottom-nav-link px-0 mx-2 position-relative" href="#" id="openChatModal2" >
+		            <a class="nav-link bottom-nav-link px-0 mx-2 position-relative openChatModal" href="#" id="openChatModal2" >
 		            	<i class="bi bi-envelope bi-top bottom-icon"></i>
 		            	<span class="position-absolute badge-position-bt bg-danger border border-light rounded-circle">
 							<span class="visually-hidden">New alerts</span>
@@ -257,26 +257,6 @@
 			w.addEventListener("load",l);}})();
 		ChannelIO('boot', {
 			"pluginKey": "e4e4b39e-51da-4d32-b93f-b4e5dcacd689" // fill your plugin key
-		});
-		
-		
-		$(function() {
-			
-			// 모달 창 열기
-		    $("#openChatModal2").on("click", function(e) {
-		        e.preventDefault(); // 기본 동작 방지
-		        let member_code = "${sessionScope.member.member_code}";
-		        if(member_code == null || member_code == "") {
-		        	 alert("로그인이 필요한 페이지 입니다.");
-			         window.location.href = "member-login";
-		        } else {
-			        $("#chatListContent").attr("src", "user-chat-list"); // 실제로 열고자 하는 URL로 변경
-			        $("#chatListModal").css("display", "block");
-			        $("#modalBackdrop").css("display", "block"); // 배경 표시
-			        $("body").css("overflow", "hidden"); // 배경 스크롤 방지
-		        }
-		    });
-			
 		});
 		
 		

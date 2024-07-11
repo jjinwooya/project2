@@ -19,8 +19,8 @@ public interface CreatorMapper {
 	// 클래스 등록
 	void createrClassRegPro(Map<String, Object> map);
 
-	// 클래스 삭제
-	void createrClassDelete(Map<String, Object> map);
+	// 클래스 업데이트
+	void createrClassUpdate(Map<String, Object> map);
 	
 	// 클래스 상세정보
 	Map<String, Object> getClassDetail(int class_code);
@@ -170,6 +170,8 @@ public interface CreatorMapper {
 	// 전체 값에 대한 그래프 데이터
 	List<Map<String, Object>> getGraphDataList(MemberVO member);
 	
+	// 클래스에 따른 차트 데이터
+	List<Map<String, Object>> getChartDataByClass(@Param("classCode") int classCode, @Param("member") MemberVO member);
 	
 	//=====================================================================================================
 

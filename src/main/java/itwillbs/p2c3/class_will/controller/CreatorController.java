@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.google.gson.Gson;
@@ -184,53 +185,7 @@ public class CreatorController {
         return ResponseEntity.ok(response);
     } 
 	
-	//  썸머노트 이미지업로드
-//	 @ResponseBody
-//	 @PostMapping("creatorUploadExImage")
-//	 public String uploadImage(@RequestParam("file") MultipartFile file, HttpSession session) {
-//	     if (file.isEmpty()) {
-//	         return "{\"url\":\"\"}";
-//	     }
-//	
-//	     String uploadDir = "/resources/upload";
-//	     String saveDir = session.getServletContext().getRealPath(uploadDir);
-//	     System.out.println("실제 업로드 경로(session): " + saveDir);
-//	
-//	     LocalDate today = LocalDate.now();
-//	     String datePattern = "yyyy/MM/dd";
-//	     DateTimeFormatter dtf = DateTimeFormatter.ofPattern(datePattern);
-//	     String subDir = today.format(dtf);
-//	
-//	     saveDir += "/" + subDir;
-//	     System.out.println(saveDir);
-//	     Path path = Paths.get(saveDir);
-//	
-//	     try {
-//	         Files.createDirectories(path);
-//	     } catch (IOException e) {
-//	         e.printStackTrace();
-//	     }
-//	
-//	     String fileName = UUID.randomUUID().toString().substring(0, 8) + "_" + file.getOriginalFilename();
-//	     String webUrl = uploadDir + "/" + subDir + "/" + fileName;
-//	
-//	     try {
-//	         if (!file.getOriginalFilename().equals("")) {
-//	             file.transferTo(new File(saveDir, fileName));
-//	         }
-//	     } catch (IllegalStateException | IOException e) {
-//	         e.printStackTrace();
-//	     }
-//	
-//	     System.out.println("파일 저장 경로: " + saveDir + "/" + fileName);
-//	     System.out.println("웹 접근 경로: " + webUrl);
-//	
-//	     JSONObject jsonResponse = new JSONObject();
-//	     jsonResponse.put("url", webUrl.replace("\\", "/"));
-//	     
-//	     return jsonResponse.toString();
-//	 }
-
+	
 	// creater-class 상세페이지
 	@GetMapping("creator-classModify")
 	public String createrClassModify(HttpSession session
@@ -279,6 +234,92 @@ public class CreatorController {
 		model.addAttribute("curriList", curriList);
 		
 		return "creator/creator-classModify";
+	}
+	
+	// creater-class 등록
+	@PostMapping("ClassModifyPro")
+	public String ClassModifyPro(@RequestParam Map<String, Object> map,
+						        @RequestParam(value = "class_thumnail", required = false) MultipartFile classThumnail,
+						        @RequestParam(value = "file1", required = false) MultipartFile file1,
+						        @RequestParam(value = "file2", required = false) MultipartFile file2,
+						        @RequestParam(value = "file3", required = false) MultipartFile file3
+				               , HttpSession session, HttpServletRequest request, Model model) {
+		
+		System.out.println(">>>>>>>modifyPro map: " + map);
+		
+		MemberVO member = (MemberVO)session.getAttribute("member");
+		if(member == null) {
+			model.addAttribute("msg", "잘못된 접근입니다!");
+			model.addAttribute("targetURL", "./");
+			return "result_process/fail";
+		}
+		map.put("member_code", member.getMember_code());
+		map.put("class_location", map.get("post_code") + "/" + map.get("address1") + "/" + map.get("address2"));
+		
+		List<CurriVO> curriList = new ArrayList<CurriVO>();
+		
+//		Map<String, MultipartFile> files = new HashMap<String, MultipartFile>();
+//		files.put("class_thumnail", classThumnail);
+//	    files.put("file1", file1);
+//	    files.put("file2", file2);
+//	    files.put("file3", file3);
+	    
+//	    MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+//	    Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+	    
+		for (Map.Entry<String, Object> entry : map.entrySet()) {
+			CurriVO curri = new CurriVO();
+			if (entry.getKey().contains("차시")) {
+				curri.setCurri_round(entry.getKey());
+				curri.setCurri_content((String)entry.getValue());
+				curriList.add(curri);
+			}
+		}
+		
+//			String uploadDir = "/resources/upload";
+		String saveDir = request.getServletContext().getRealPath(uploadDir);
+		
+		LocalDate today = LocalDate.now();
+		String datePattern = "yyyy/MM/dd";
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern(datePattern);
+		String subDir = today.format(dtf);
+		saveDir += "/" + subDir;
+		
+		Path path = Paths.get(saveDir);
+		try {
+			Files.createDirectories(path);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		 // 파일 필드와 기존 파일 경로의 맵핑
+	    Map<String, MultipartFile> fileMap = new HashMap<>();
+	    fileMap.put("class_thumnail", classThumnail);
+	    fileMap.put("file1", file1);
+	    fileMap.put("file2", file2);
+	    fileMap.put("file3", file3);
+		
+	    for (Map.Entry<String, MultipartFile> entry : fileMap.entrySet()) {
+	        String fieldName = entry.getKey();
+	        MultipartFile file = entry.getValue();
+	        String existingFileKey = "existing_" + fieldName;
+
+	        if (file != null && !file.isEmpty()) {
+	            String fileName = UUID.randomUUID().toString().substring(0, 8) + "_" + file.getOriginalFilename();
+	            try {
+	                file.transferTo(new File(saveDir, fileName));
+	                map.put(fieldName, subDir + "/" + fileName);
+	            } catch (IOException e) {
+	                e.printStackTrace();
+	            }
+	        } else {
+	            map.put(fieldName, map.get(existingFileKey)); // 기존 파일 경로 유지
+	        }
+	    }
+		System.out.println(">>>>> map 파일저장 이후 " + map);
+		creatorService.createrClassModifyPro(map, curriList);
+		
+		return "redirect:/creator-class";
 	}
 	
 	@ResponseBody
@@ -386,82 +427,7 @@ public class CreatorController {
 		return "redirect:/creator-class";
 	}
 	
-	// creater-class 등록
-	@PostMapping("ClassModifyPro")
-	public String ClassModifyPro(@RequestParam Map<String, Object> map
-				               , HttpSession session, HttpServletRequest request, Model model) {
-		System.out.println(">>>>>>>modifyPro map: " + map);
-//		System.out.println(">>>>>>>>modifyPro files: " + files);
-		
-		MemberVO member = (MemberVO)session.getAttribute("member");
-		if(member == null) {
-			model.addAttribute("msg", "잘못된 접근입니다!");
-			model.addAttribute("targetURL", "./");
-			return "result_process/fail";
-		}
-		map.put("member_code", member.getMember_code());
-		map.put("class_location", map.get("post_code") + "/" + map.get("address1") + "/" + map.get("address2"));
-		
-		List<CurriVO> curriList = new ArrayList<CurriVO>();
-		
-		Map<String, MultipartFile> files = new HashMap<String, MultipartFile>();
-//		files.put("class_thumnail", (MultipartFile)map.get("class_thumnail"));
-//		files.put("file1", (MultipartFile)map.get("file1"));
-//		files.put("file2", (MultipartFile)map.get("file2"));
-//		files.put("file3", (MultipartFile)map.get("file3"));
-		
-		for (Map.Entry<String, Object> entry : map.entrySet()) {
-			CurriVO curri = new CurriVO();
-			if (entry.getKey().contains("차시")) {
-				curri.setCurri_round(entry.getKey());
-				curri.setCurri_content((String)entry.getValue());
-				curriList.add(curri);
-			}
-		}
-		
-//		String uploadDir = "/resources/upload";
-		String saveDir = request.getServletContext().getRealPath(uploadDir);
-		
-		LocalDate today = LocalDate.now();
-		String datePattern = "yyyy/MM/dd";
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern(datePattern);
-		String subDir = today.format(dtf);
-		saveDir += "/" + subDir;
-		
-		Path path = Paths.get(saveDir);
-		try {
-			Files.createDirectories(path);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		for (Map.Entry<String, MultipartFile> entry : files.entrySet()) {
-			String paramName = entry.getKey();
-			MultipartFile file = entry.getValue(); // mfile
-			if (file != null && !file.getOriginalFilename().equals("")) {
-				String fileName = UUID.randomUUID().toString().substring(0, 8) + "_" + file.getOriginalFilename();
-				try {
-					// DB에 파일 이름 저장
-					if (paramName.equals("class_thumnail")) {
-						map.put("class_thumnail", subDir + "/" + fileName);
-					} else if (paramName.equals("file1")) {
-						map.put("class_image", subDir + "/" + fileName);
-					} else if (paramName.equals("file2")) {
-						map.put("class_image2", subDir + "/" + fileName);
-					} else if (paramName.equals("file3")) {
-						map.put("class_image3", subDir + "/" + fileName);
-					}
-					file.transferTo(new File(saveDir, fileName));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		System.out.println(">>>>> map 파일저장 이후 " + map);
-		creatorService.createrClassModifyPro(map, curriList);
-		
-		return "redirect:/creator-class";
-	}
+	
 	
 	
 	// creater-class 일정등록 페이지로
@@ -796,9 +762,12 @@ public class CreatorController {
 	}
 	
 	@ResponseBody
-	@GetMapping
-	public String graphByClass() {
-		return "";
+	@GetMapping("graphByClass")
+	public List<Map<String, Object>> graphByClass(@RequestParam int classCode, HttpSession session) {
+		MemberVO member = (MemberVO)session.getAttribute("member");
+		List<Map<String, Object>> GraphDataByClassList = creatorService.getChartDataByClass(classCode, member);
+		
+		return GraphDataByClassList;
 	}
 	
 	

@@ -17,6 +17,7 @@
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
 	integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
 	crossorigin="anonymous"></script>
+<script src="${pageContext.request.contextPath }/resources/js/jquery-3.7.1.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gowun+Dodum&family=Hahmlet:wght@100..900&family=Nanum+Gothic&display=swap');
 
@@ -78,7 +79,9 @@ td > img{
 			</tr>
 		</table>
 		<div class="buttonArea" align="center">
-			<a onclick="getPoint()"><img alt="포인트받기버튼" src="${pageContext.request.contextPath}/resources/images/event/point_button.png" style="width:300px;height:100px"></a>
+	        <a href="javascript:void(0);" onclick="getPoint('${event.event_point}', '${param.event_code }')" aria-label="포인트 받기">
+	            <img alt="포인트받기버튼" src="${pageContext.request.contextPath}/resources/images/event/point_button.png" style="width:300px;height:100px">
+	        </a>
 		</div>
 		<div align="center">
 			<button type="submit" class="btn btn-outline-primary" id="searchBtn" onclick="goEventMain()">목록으로</button>
@@ -91,8 +94,22 @@ td > img{
 	</footer>
 	
 	<script type="text/javascript">
-		function getPoint(){
+		function getPoint(event_point, event_code){
 			// 포인트 AJAX 처리 하기
+			 $.ajax({
+		        url: 'event-point',
+		        type: 'POST',
+		        data: {
+		        	"event_point": event_point,
+		        	"event_code" : event_code
+		        },
+		        success: function(response) {
+		            alert(response.message);  // 서버 응답 메시지를 알림으로 표시
+		        },
+		        error: function(xhr, status, error) {
+		            alert(xhr.responseText);  // 오류가 발생한 경우의 처리
+		        }
+			});
 		}
 		
 		function goEventMain() {

@@ -129,14 +129,14 @@
 													<td>계좌번호</td>
 													<td>${token.account_num}</td>
 												</tr>
-												<tr>
-													<td>
-														계좌변경
-													</td>
-													<td>
-														<input type="button" class="col-md-6" value="+" onclick="linkAccount()">
-													</td>
-												</tr>
+<!-- 												<tr> -->
+<!-- 													<td> -->
+<!-- 														계좌변경 -->
+<!-- 													</td> -->
+<!-- 													<td> -->
+<!-- 														<input type="button" class="col-md-6" value="+" onclick="linkAccount()"> -->
+<!-- 													</td> -->
+<!-- 												</tr> -->
 											</table>
 										</c:otherwise>
 									</c:choose>

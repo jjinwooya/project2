@@ -14,13 +14,8 @@
 	        processData: false, // 필수: FormData를 문자열로 변환하지 않도록 설정
 	        contentType: false, // 필수: multipart/form-data 사용 설정
 	        success: function (response) {
-	        	if(response == "true"){
-	        		alert('파일 업로드 성공');
-	                location.reload();	
-	        	}else{
-	        		alert("파일업로드 실패");
-	        	}
-	            
+	        		alert(response.message);
+	                location.reload();
 	        },
 	        error: function (xhr, status, error) {
 	            alert('파일 업로드 실패: ' + xhr.responseText);

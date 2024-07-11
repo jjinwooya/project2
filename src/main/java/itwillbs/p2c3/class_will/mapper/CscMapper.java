@@ -38,5 +38,11 @@ public interface CscMapper {
 	void updateMemberCredit(int member_code);
 
 	MemberVO selectMemberByCode(MemberVO friend);
+
+	void updatePointMember(@Param("event_point") int event_point,@Param("member_code") int member_code);
+
+	int selectEventLogs(@Param("event_code")int event_code,@Param("member_code") int member_code);
+
+	void insertEventLogs(@Param("event_code")int event_code,@Param("member_code") int member_code);
 	
 }

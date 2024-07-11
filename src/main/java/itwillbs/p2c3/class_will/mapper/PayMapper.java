@@ -47,7 +47,7 @@ public interface PayMapper {
 	
 	//성공한 결제 정보 등록
 	@Options(useGeneratedKeys = true, keyProperty = "pay_code")
-	void registPaySuccessInfo(Map<String, Object> map);
+	int registPaySuccessInfo(Map<String, Object> map);
 	
 	//member table의 member_credit 처리
 	void updateCredit(Map<String, Object> map);

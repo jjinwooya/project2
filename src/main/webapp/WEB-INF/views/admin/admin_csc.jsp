@@ -249,15 +249,12 @@
                 el: document.getElementById('grid'),
                 data: data,
                 columns: [
-//                 	{ header: '글번호', name: 'notice_code' , editor: 'text'},
-                	{ header: '글번호', name: type + '_code' , editor: 'text'},
-//                     { header: '제목', name: 'notice_subject' , editor: 'text'},
-                    { header: '제목', name: type + '_subject' , editor: 'text'},
-//                     { header: '카테고리', name: 'notice_category' , editor: 'text'},
-                    { header: '카테고리', name: type + '_category' , editor: 'text'},
-                    { header: '작성일', name: type + '_reg_date' , editor: 'text'},
+                	{ header: '글번호', name: type + '_code'},
+                    { header: '제목', name: type + '_subject'},
+                    { header: '카테고리', name: type + '_category'},
+                    { header: '작성일', name: type + '_reg_date'},
                     {
-                        header: 'Action',
+                        header: '상세보기',
                         name: 'action',
                         renderer: {
                             type: ActionRenderer

@@ -50,6 +50,8 @@
 <script
 	src="https://uicdn.toast.com/tui.code-snippet/latest/tui-code-snippet.js"></script>
 <script src="https://uicdn.toast.com/tui.grid/latest/tui-grid.js"></script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <style>
 body {
 	
@@ -148,7 +150,7 @@ th:nth-child(2), td:nth-child(2) {
 								<!-- 								여기부터 토스트 ui -->
 								<div class="table-responsive">
 									<h3>나의 흔적이 ${totalReview}개 있습니다.</h3>
-									<p>${member.member_name}님이 작성한 리뷰들</p>
+									<p>${member.member_name}님이작성한 리뷰들</p>
 									<table class="table table-hover">
 										<thead>
 											<tr>
@@ -169,7 +171,7 @@ th:nth-child(2), td:nth-child(2) {
 											</c:forEach>
 										</tbody>
 									</table>
-										<div id="pageList">
+									<div id="pageList">
 										<input type="button" value="이전"
 											onclick="location.href='my-delete?pageNum2=${pageNum2 - 1}'"
 											<c:if test="${pageNum2 == 1}">disabled</c:if> />
@@ -257,8 +259,6 @@ th:nth-child(2), td:nth-child(2) {
 	</footer>
 
 	<!-- JavaScript Libraries -->
-	<script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 	<script

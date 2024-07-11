@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -151,18 +152,38 @@
 <div class="container1">
     <!-- 캐러셀 시작 -->
     <div class="row col-md-12">
-        <div id="carouselId" class="carousel slide position-relative" data-bs-ride="carousel">
+        <div id="carouselId" class="carousel slide position-relative mt-3" data-bs-ride="carousel">
             <div class="carousel-indicators">
                 <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
                 <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
             </div>
             <div class="carousel-inner" role="listbox">
-                <div class="carousel-item active rounded">
-                    <img src="${pageContext.request.contextPath}/resources/img/fruite-item-1.jpg" class="img-fluid bg-secondary rounded" alt="First slide">
-                </div>
-                <div class="carousel-item rounded">
-                    <img src="${pageContext.request.contextPath}/resources/img/fruite-item-2.jpg" class="img-fluid rounded" alt="Second slide">
-                </div>
+				<c:if test="${not empty classInfo.class_image}">
+	                <div class="carousel-item active rounded col-12">
+    	                <img src="${pageContext.request.contextPath}/${classInfo.class_image}" class="img-fluid bg-secondary rounded" alt="First slide">
+<%-- 	                    <img src="${pageContext.request.contextPath}/resources/img/fruite-item-1.jpg" class="img-fluid bg-secondary rounded" alt="First slide"> --%>
+	                </div>
+				</c:if>
+				<c:if test="${not empty classInfo.class_image2}">
+	                <div class="carousel-item rounded col-12">
+                    	<img src="${pageContext.request.contextPath}/${classInfo.class_image2}" class="img-fluid bg-secondary rounded" alt="Second slide">
+					</div>				
+				</c:if>
+				<c:if test="${not empty classInfo.class_image3}">
+	                <div class="carousel-item rounded col-12">
+                    	<img src="${pageContext.request.contextPath}/${classInfo.class_image3}" class="img-fluid bg-secondary rounded" alt="Third slide">
+					</div>				
+				</c:if>
+<!-- 		                <div class="carousel-item active rounded"> -->
+<%-- 		                    <img src="${pageContext.request.contextPath}/resources/img/fruite-item-1.jpg" class="img-fluid bg-secondary rounded" alt="First slide"> --%>
+<!-- 		                </div> -->
+<!-- 		                <div class="carousel-item rounded"> -->
+<%-- 		                    <img src="${pageContext.request.contextPath}/resources/img/fruite-item-2.jpg" class="img-fluid rounded" alt="Second slide"> --%>
+<!-- 		                </div> -->
+<!-- 		                <div class="carousel-item rounded"> -->
+<%-- 		                    <img src="${pageContext.request.contextPath}/resources/img/fruite-item-3.jpg" class="img-fluid rounded" alt="Third slide"> --%>
+<!-- 		                </div> -->
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselId" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -182,21 +203,21 @@
             <div class="col box2">
                 <ul class="nav-container nav-container1">
                     <li class="nav-item nav-item1">
-                        <a class="navbar-item navbar-item1" href="#section1">프로그램 상세</a>
+                        <a class="navbar-item navbar-item1" href="#section1">클래스 소개</a>
                     </li>
                 </ul>
             </div>
             <div class="col box2">
                 <ul class="nav-container nav-container1">
                     <li class="nav-item nav-item1">
-                        <a class="navbar-item navbar-item1" href="#section2">후기</a>
+                        <a class="navbar-item navbar-item1" href="#section2">커리큘럼</a>
                     </li>
                 </ul>
             </div>
             <div class="col box2">
                 <ul class="nav-container nav-container1">
                     <li class="nav-item nav-item1">
-                        <a class="navbar-item navbar-item1" href="#section3">커리큘럼</a>
+                        <a class="navbar-item navbar-item1" href="#section3">후기</a>
                     </li>
                 </ul>
             </div>
@@ -208,9 +229,9 @@
                 </ul>
             </div>
             <div class="col box2">
-                <ul class="nav-container nav-container1">
-                    <li class="nav-item nav-item1">
-                        <a class="navbar-item navbar-item1" href="#section5">1:1 채팅하기</a>
+                <ul class="nav-container nav-container1" >
+                    <li class="nav-item nav-item1" id="openUserChat" data-member-code="${classInfo.member.member_code}">
+                        <a class="navbar-item navbar-item1" href="#">1:1 채팅문의</a>
                     </li>
                 </ul>
             </div>
@@ -221,100 +242,107 @@
     <div class="row">
         <!-- navbar content -->
         <div class="content1 col-md-9">
-            <div id="section1">
-<%--                 <img src="${pageContext.request.contextPath}/resources/images/class/class1.png" class="classImg"> --%>
-<%-- 				<p>클래스 위치 : ${classInfo.class_location}</p> --%>
-				<h4>클래스 위치</h4>
-				<div class="location">${classInfo.class_location}</div>
-                <div id="map" style="width: 500px; height: 400px;"></div>
-				
-            </div>
+            <div id="section1 col-12">
+            	<div class="mt-3">
+					<h5>클래스 소개</h5>
+		            <div id="section col-12">
+						<div class="location">클래스 위치 : ${classInfo.class_location}</div>
+		                <div id="map" style="width: 875px; height: 400px;"></div>
+		            </div>
+				</div>
+            </div> <!-- section1 -->
             <div id="section2">
             	<div class="mt-3">
-              		<h4>클래스 후기</h4>
+              		<h5>커리큘럼</h5>
+					<div class="classCurri">
+						<c:choose>
+							<c:when test="${not empty classCurri}">
+								<c:forEach var="classCurri" items="${classCurri}">
+									<div class="classCurriRound">
+										${classCurri.curri_round}<br>
+									</div>
+									<div class="classCurriContent">
+										&nbsp;${classCurri.curri_content}
+									</div>
+								</c:forEach>
+							</c:when>
+							<c:otherwise>
+								<div style="text-align: center;">
+									<h7>커리큘럼이 존재하지 않습니다.</h7>
+								</div>
+							</c:otherwise>
+						</c:choose>
+					</div>
               	</div>
-                <div class="row reviewInfo my-3 mx-1">
-                    <!-- 테이블 -->
-                    <div class="card text-center">
-                        <div class="card-body p-2">
-                            <%-- <c:forEach var="map" items="${map }"> --%>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>후기</th>
-                                        <th>작성일자</th>
-                                        <th>작성자</th>
-                                        <th>별점</th>
-                                    </tr>
-                                </thead>
-							     <tbody>
-							        <c:choose>
-							            <c:when test="${empty classReview}">
-							                <tr>
-							                    <td colspan="4">
-							                        <h6 style="color: black;">리뷰가 존재하지 않습니다</h6>
-							                    </td>
-							                </tr>
-							            </c:when>
-							            <c:otherwise>
-							                <c:forEach var="map" items="${classReview}">
-							                    <c:if test="${map.class_review_subject != null}">
-							                        <tr>
-							                            <td class="creator-review-subject">
-                                                    		<a href="#" onclick="creatorReview(event, '${param.class_code}', '${map.class_review_code}')" >${map.class_review_subject}</a>
-<%-- 															<a onclick="creatorInquiry(event, '${param.class_code}', '${map.class_inquiry_code}')" >${map.class_inquiry_subject}</a> --%>
-                                                    		
-							                            </td>
-							                            <td>
-                                                    		<a href="#" onclick="creatorReview(event, '${param.class_code}', '${map.class_review_code}')" >${map.class_review_date}</a>
-							                            </td>
-							                            <td>
-                                                    		<a href="#" onclick="creatorReview(event, '${param.class_code}', '${map.class_review_code}')" >${map.member_nickname}</a>
-							                            </td>
-							                            <td>
-							                                <div class="reviewStar reviewStar1 col" onclick="creatorReview(event, '${param.class_code}')" style="text-align : left">
-							                                    <ul class="list-inline small">
-							                                        <c:forEach begin="1" end="${map.class_review_rating}">
-							                                            <li class="list-inline-item m-0"><i class="fa fa-star starStyle"></i></li>
-							                                        </c:forEach>
-							                                        <c:forEach begin="${map.class_review_rating + 1}" end="5">
-							                                            <li class="list-inline-item m-0"><i class="fa fa-star-o starStyle"></i></li>
-							                                        </c:forEach>
-							                                    </ul>
-							                                </div> <!-- reviewStar -->
-							                            </td>
-							                        </tr>
-							                    </c:if>
-							                </c:forEach>
-							            </c:otherwise>
-							        </c:choose>
-							    </tbody>
-                            </table>
-                            <%-- </c:forEach> --%>
-                        </div>
-                    </div>
-                </div>
             </div>
             <!-- section2 -->
             <div id="section3">
-            	<h4>커리큘럼</h4>
-<%--                 <img src="${pageContext.request.contextPath}/resources/images/class/class_curri.png" class="classImg"> --%>
+            	<h5>클래스 후기</h5>
 				<div class="classCurri">
-					<c:forEach var="classCurri" items="${classCurri}">
-						<div class="classCurriRound">
-							${classCurri.curri_round}<br>
-						</div>
-						<div class="classCurriContent">
-							&nbsp;&nbsp;&nbsp;&nbsp;${classCurri.curri_content}
-						</div>
-					</c:forEach>
+					<div class="row reviewInfo my-3 mx-1">
+	                    <!-- 테이블 -->
+	                    <div class="card text-center">
+	                        <div class="card-body p-2 ">
+	                            <table>
+	                                <thead>
+	                                    <tr>
+	                                        <th>후기</th>
+	                                        <th>작성일자</th>
+	                                        <th>작성자</th>
+	                                        <th>별점</th>
+	                                    </tr>
+	                                </thead>
+								     <tbody>
+								        <c:choose>
+								            <c:when test="${empty classReview}">
+								                <tr>
+								                    <td colspan="4">
+								                        <h6 style="color: black;">리뷰가 존재하지 않습니다</h6>
+								                    </td>
+								                </tr>
+								            </c:when>
+								            <c:otherwise>
+								                <c:forEach var="map" items="${classReview}">
+								                    <c:if test="${map.class_review_subject != null}">
+								                        <tr>
+								                            <td class="creator-review-subject">
+	                                                    		<a href="#" onclick="creatorReview(event, '${param.class_code}', '${map.class_review_code}')" >${map.class_review_subject}</a>
+								                            </td>
+								                            <td>
+	                                                    		<a href="#" onclick="creatorReview(event, '${param.class_code}', '${map.class_review_code}')" >${map.class_review_date}</a>
+								                            </td>
+								                            <td>
+	                                                    		<a href="#" onclick="creatorReview(event, '${param.class_code}', '${map.class_review_code}')" >${map.member_nickname}</a>
+								                            </td>
+								                            <td>
+								                                <div class="reviewStar reviewStar1 col" onclick="creatorReview(event, '${param.class_code}')" style="text-align : left">
+								                                    <ul class="list-inline small">
+								                                        <c:forEach begin="1" end="${map.class_review_rating}">
+								                                            <li class="list-inline-item m-0"><i class="fa fa-star starStyle"></i></li>
+								                                        </c:forEach>
+								                                        <c:forEach begin="${map.class_review_rating + 1}" end="5">
+								                                            <li class="list-inline-item m-0"><i class="fa fa-star-o starStyle"></i></li>
+								                                        </c:forEach>
+								                                    </ul>
+								                                </div> <!-- reviewStar -->
+								                            </td>
+								                        </tr>
+								                    </c:if>
+								                </c:forEach>
+								            </c:otherwise>
+								        </c:choose>
+								    </tbody>
+	                            </table>
+	                        </div>
+	                    </div>
+	                </div>
 				</div>
             </div>
             <div id="section4">
                 <!-- Q&A 내용 -->
-              	<h4>클래스 Q&A</h4>
+              	<h5>클래스 Q&A</h5>
                 <!-- 테이블 -->
-                <div class="card text-center my-2">
+                <div class="card text-center my-3">
                     <div class="card-body p-2 reviewInfo">
                         <table>
                             <thead>
@@ -338,7 +366,6 @@
 			                                <tr>
 			                                    <td class="creator-review-subject">
                                                     <a onclick="creatorInquiry(event, '${param.class_code}', '${map.class_inquiry_code}')" >${map.class_inquiry_subject}</a>
-<%--                                                     <a href="#" onclick="creatorInquiry(event, '${param.class_code}')" >${map.class_inquiry_subject}</a> --%>
 			                                    </td>
 			                                    <td>
                                                     <a href="#" onclick="creatorInquiry(event, '${param.class_code}', '${map.class_inquiry_code}')" >${map.class_inquiry_date}</a>
@@ -354,10 +381,6 @@
                         </table>
                     </div>
                 </div>
-            </div>
-            <!-- section4 -->
-            <div id="section5">
-                <p>1:1 채팅하기</p>
             </div>
         </div> 
         <!-- content -->
@@ -405,8 +428,12 @@
                     </div>
 
                     <div class="row classHashtag"> <!-- 해시태그 시작 -->
-                        <div class="col-md-4">
-                        </div>
+						<c:forEach var="hashtagItem" items="${classHashtagList}">
+						<c:set var="hashtags" value="${fn:split(hashtagItem.class_hashtag, ',')}" />
+							<c:forEach var="hashtag" items="${hashtags}">
+								<button type="button" class="btn btn-outline-light btn-sm col-6 hashBtn mt-2 h-75 p-1">${hashtag}</button>
+							</c:forEach>
+						</c:forEach>
                     </div>
 
                     <div class="box3"> <!-- 좋아요, 공유버튼 -->
@@ -427,7 +454,7 @@
 											</c:choose>
 											<!-- 라이크 클래스 하트 이미지 변경 -->
                                         </div>
-                                        <div class="heartCount col-7 " id="heartCountElement">
+                                        <div class="heartCount col-6 " id="heartCountElement">
                                         ${likeClassCount}
                                         </div>
                                     </div>
@@ -458,27 +485,6 @@
 <!-- container1 -->
 <script type="text/javascript">
 document.addEventListener("DOMContentLoaded", function() {
-//     var heartOverlays = document.querySelectorAll(".heartImg");
-//     var originalSrc = "${pageContext.request.contextPath}/resources/images/profile/heart.png";
-//     var changeSrc = "${pageContext.request.contextPath}/resources/images/profile/heart_full.png";
-
-//     heartOverlays.forEach(function(heartOverlay) {
-//         heartOverlay.addEventListener("click", function() {
-//             var img = this;
-//             img.classList.add("fade");
-
-//             setTimeout(function() {
-//                 if (img.src.includes("heart_full.png")) {
-//                     img.src = originalSrc;
-//                 } else {
-//                     img.src = changeSrc;
-//                 }
-//                 img.classList.remove("fade");
-//             }, 300); 
-//         });
-//     });
-    
-    //--
 	var btnCustoms = document.querySelector(".btn-customs");
 	var heartImges = document.querySelectorAll(".heartImg");
 	var originalSrc = "${pageContext.request.contextPath}/resources/images/profile/heart.png"; // 라이크 클래스 추가 안했을 시 
@@ -560,20 +566,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
     		
     	});
-//         // 새로운 AJAX 요청을 사용하여 heartCount 업데이트
-//         var xhr = new XMLHttpRequest();
-//         xhr.open("GET", "${pageContext.request.contextPath}/get-heart-count", true); // 예시: heartCount를 가져오는 URL
-//         xhr.onreadystatechange = function() {
-//             if (xhr.readyState === 4) {
-//                 if (xhr.status === 200) {
-//                     var newHeartCount = xhr.responseText;
-//                     heartCountElement.textContent = newHeartCount; // heartCount 업데이트
-//                 } else {
-//                     console.error("Error fetching heartCount");
-//                 }
-//             }
-//         };
-//         xhr.send();
 	}
 });
 
@@ -746,6 +738,39 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         return true;
+    });
+    
+    // ===================================================================================================
+ 	// 채팅 모달 창 열기
+    $("#openUserChat").on("click", function(e) {
+        e.preventDefault(); // 기본 동작 방지
+        let member_code = "${sessionScope.member.member_code}";
+        if(member_code == null || member_code == "") {
+        	 alert("로그인이 필요한 페이지 입니다.");
+        	 let returnUrl = encodeURIComponent(window.location.href); 
+	         window.location.href = "member-login?returnUrl=" + returnUrl;
+        } else {
+	        $("#chatListContent").attr("src", "user-chat-room?receiver_id="+${classInfo.member_code}); // 실제로 열고자 하는 URL로 변경
+	        $("#chatListModal").css("display", "block");
+	        $("#modalBackdrop").css("display", "block"); // 배경 표시
+	        $("body").css("overflow", "hidden"); // 배경 스크롤 방지
+        }
+    });
+
+    // 채팅 모달 창 닫기
+    $("#chatModalClose").on("click", function() {
+        $("#chatListModal").css("display", "none");
+        $("#modalBackdrop").css("display", "none");
+        $("body").css("overflow", "auto"); // 배경 스크롤 복구
+    });
+
+    // 채팅 모달 외부를 클릭하면 모달 닫기
+    $(window).on("click", function(event) {
+        if (event.target == document.getElementById("modalBackdrop")) {
+            $("#chatListModal").css("display", "none");
+            $("#modalBackdrop").css("display", "none");
+            $("body").css("overflow", "auto"); // 배경 스크롤 복구
+        }
     });
 
 });

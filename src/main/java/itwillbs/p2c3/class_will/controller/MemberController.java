@@ -2,9 +2,10 @@ package itwillbs.p2c3.class_will.controller;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,8 +90,9 @@ public class MemberController {
 	
 	// 회원 로그인 비즈니스 로직 처리
 	@PostMapping("member-login")
-	public String memberLoginPro(MemberVO member, Model model, BCryptPasswordEncoder passwordEncoder) {
-		
+	public String memberLoginPro(MemberVO member, Model model, BCryptPasswordEncoder passwordEncoder, 
+				@RequestParam(required = false) String returnUrl, HttpServletRequest request, HttpServletResponse response) {
+            
 		MemberVO dbMember = memberService.selectMember(member);
 		
 		if(dbMember != null && dbMember.getMember_status().equals("2")) {
@@ -119,8 +121,11 @@ public class MemberController {
 			session.setAttribute("member", dbMember);
 			session.setAttribute("token", bank_info); 
 				
-			session.setMaxInactiveInterval(100000000);
+			session.setMaxInactiveInterval(10000);
 			
+			if (returnUrl != null && !returnUrl.isEmpty()) {
+	            return "redirect:" + returnUrl;
+	        } 
 			
 			return "redirect:/";
 		} 
@@ -132,9 +137,11 @@ public class MemberController {
 
 	// 멤버 로그아웃
 	@GetMapping("member-logout")
-	public String memberLogout() {
-		
+	public String memberLogout(@RequestParam(required = false) String returnUrl, HttpServletRequest request, HttpServletResponse response) {
 		session.invalidate();
+		if (returnUrl != null && !returnUrl.isEmpty()) {
+            return "redirect:" + returnUrl;
+        } 
 		return "redirect:/";
 	
 	} // memberLogout()
@@ -228,24 +235,8 @@ public class MemberController {
 		
 	} // wakeUpPro()
 	 
+	
 
-	
-	@GetMapping("user-chat-list")
-	public String userChatList(MemberVO member, Model model, HttpSession session) {
-		
-		model.addAttribute("member", member);
-		return "user_chat/user_chat_list";
-		
-	} // userChatList()
-	
-	@GetMapping("user-chat-room")
-	public String userChatRoom(MemberVO member, Model model, HttpSession session) {
-		
-		
-		model.addAttribute("member", member);
-		return "user_chat/user_chat_room";
-		
-	} // userChatList()
 	
 	
 	

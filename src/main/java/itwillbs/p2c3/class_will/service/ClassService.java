@@ -31,8 +31,8 @@ public class ClassService {
 	}
 	
 	// 클래스 리스트
-	public List<Map<String, Object>> getClassList(Map<String, Object> paramMap){
-		return mapper.selectClassList(paramMap);
+	public List<Map<String, Object>> getClassList(Map<String, Object> list){
+		return mapper.selectClassList(list);
 	}
 	
 //	// 클래스 리스트

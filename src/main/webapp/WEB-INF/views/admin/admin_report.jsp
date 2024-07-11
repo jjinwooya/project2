@@ -135,13 +135,13 @@
                 el: document.getElementById('grid'),
                 data: data,
                 columns: [
-                    { header: '회원 아이디', name: 'member_email', editor: 'text' },
-                    { header: '클래스 이름', name: 'class_name', editor: 'text' },
-                    { header: '대분류', name: 'class_report_big_category', editor: 'text' },
-                    { header: '소분류', name: 'class_report_small_category', editor: 'text' },
-                    { header: '처리상태', name: 'class_report_status', editor: 'text' },
+                    { header: '회원 아이디', name: 'member_email'},
+                    { header: '클래스 이름', name: 'class_name'},
+                    { header: '대분류', name: 'class_report_big_category'},
+                    { header: '소분류', name: 'class_report_small_category'},
+                    { header: '처리상태', name: 'class_report_status'},
                     {
-                        header: 'Action',
+                        header: '상세보기',
                         name: 'action',
                         renderer: {
                             type: ButtonRenderer

@@ -234,24 +234,15 @@ tbody tr:hover {
 									<table class="table table-hover">
 										<thead>
 											<tr>
-												<th>Pay Code</th>
-
-												<th>Amount</th>
-												<th>Datetime</th>
-												<th>Type</th>
-												<th>Status</th>
-												<th>Member Code</th>
-												<th>Schedule Code</th>
-												<th>Headcount</th>
-												<th>Class Code</th>
-												<th>IMP UID</th>
-												<th>Use Willpay</th>
-
+												<th>결제금액</th>
+												<th>결제일</th>
+												<th>결제상태</th>
+												<th>사용한 윌페이</th>
 											</tr>
 										</thead>
 										<tbody id="dataBody">
-											
-										
+
+
 										</tbody>
 									</table>
 								</div>
@@ -367,7 +358,11 @@ tbody tr:hover {
 	        var year = $('#year').val();
 	        var month = $('#month').val();
 	        var member_code = $('#member_code').val(); 
-
+			
+	        if (!year || !month) {
+	            alert("검색할 연도와 월을 선택해 주세요.");
+	            return;
+	        }
 	        //console.log('Year:', year);
 	        //console.log('Month:', month);
 	        //console.log('member_code:', member_code);
@@ -382,31 +377,25 @@ tbody tr:hover {
 	                tbody.empty(); // 기존 데이터 삭제
 
 	                //console.log('Response:', response); // 받은 데이터 콘솔 출력
-
-	                if (Array.isArray(response.data)) {
-	                    response.data.forEach(function(pay) {
+  					if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+                    	response.data.forEach(function(pay) {
 	                        //console.log('Pay Code:', pay.pay_code); // 각 pay의 pay_code 출력
 	                        //console.log('Pay Amount:', pay.pay_amount); // 각 pay의 pay_amount 출력
-	                        // ... 필요한 항목들에 대해 추가적으로 console.log로 확인 가능
-
-	              var row = '<tr>' +
-						    '<td>' + pay.pay_code + '</td>' +
-						    '<td>' + pay.pay_amount + '</td>' +
-						    '<td>' + pay.pay_datetime + '</td>' +
-						    '<td>' + pay.pay_type + '</td>' +
-						    '<td>' + pay.pay_status + '</td>' +
-						    '<td>' + pay.member_code + '</td>' +
-						    '<td>' + pay.class_schedule_code + '</td>' +
-						    '<td>' + pay.pay_headcount + '</td>' +
-						    '<td>' + pay.class_code + '</td>' +
-						    '<td>' + pay.imp_uid + '</td>' +
-						    '<td>' + pay.use_willpay + '</td>' +
+	               	 		var formattedAmount = new Intl.NumberFormat('ko-KR').format(pay.pay_amount) + ' 원'; 
+	               	  		var formattedUseWillpay = new Intl.NumberFormat('ko-KR').format(pay.use_willpay) + ' 원';
+	               	 		var payStatus = pay.pay_status === 'paid' ? '결제완료' : pay.pay_status;
+	                        var formattedDate = new Date(pay.pay_datetime).toISOString().split('T')[0];
+	                        var row = '<tr>' +
+						    '<td>' + formattedAmount + '</td>' +
+						    '<td>' + formattedDate + '</td>' +
+						    '<td>' + payStatus + '</td>' +
+						    '<td>' + formattedUseWillpay + '</td>' +
 							'</tr>';
 
 	                        tbody.append(row); // 테이블에 행 추가
 	                    });
 	                } else {
-	                    console.error("Response data is not an array:", response.data);
+	                	alert("결제완료 된 데이터가 없습니다.");
 	                }
 	            },
 	            error: function(xhr, status, error) {

@@ -50,7 +50,7 @@ public class EventController {
 	
 	@GetMapping("event")
 	public String eventMain(Model model) {
-		List<Map<String, String>> list = adminService.getEventList();
+		List<Map<String, Object>> list = adminService.getEventList();
 		model.addAttribute("list", list);
 		
 		return "event/event_main";
@@ -203,6 +203,35 @@ public class EventController {
 	    return new ResponseEntity<>(responseMessage, headers, HttpStatus.OK);
 	}
 	
+	@ResponseBody
+	@PostMapping("event-point")
+	public ResponseEntity<String> eventGetPoint(int event_point, int event_code, HttpSession session, Model model) {
+		HttpStatus status = null;
+		String message = "";
+		MemberVO member = (MemberVO)session.getAttribute("member");
+		int member_code = member.getMember_code();
+		if(member == null) {
+			status = HttpStatus.BAD_REQUEST;
+			message = "로그인 후 이용해주세요";
+		}else {
+			boolean isExist = cscService.getEventLogs(event_code, member_code);
+			// false 는 이미 로그가 있는것
+			if(!isExist) {
+				status = HttpStatus.BAD_REQUEST;
+				message = "이미 포인트를 받은 이벤트입니다";
+			}else {
+				cscService.updatePointMember(event_point, member_code);
+				cscService.insertEventLogs(event_code, member_code);
+				status = HttpStatus.OK;
+				message = "포인트 획득 성공";
+			}
+			
+		}
+		
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.add("Content-Type", "application/json");
+		return new ResponseEntity<String>("{\"message\": \"" + message + "\"}", headers, status);
+	}
 
 	
 }

@@ -99,6 +99,7 @@
 	            						   ELSE DATA_TYPE END AS DATA_TYPE_WITH_LENGTH
 	    FROM INFORMATION_SCHEMA.COLUMNS
 	    WHERE TABLE_NAME = #{tableName}
+	    ORDER BY ORDINAL_POSITION
 	</select>
 	
 	<insert id="insertExcelDatas">
@@ -333,6 +334,7 @@
 		SET ${type}_subject = #{subject}
 			,${type}_content = #{content}
 			,${type}_category = #{category}
+			,${type}_reg_Date = now()
 		WHERE ${type}_code = #{code}		
 	</update>
 	
@@ -531,5 +533,25 @@
 	<delete id="deleteVisitLogs">
 		DELETE FROM visit_logs
 	</delete>
+	
+	<select id="selectEventDetail" resultType="map">
+		SELECT *
+		FROM event
+		WHERE event_code = #{event_code}
+	</select>
+	
+	<update id="updateEventHide" parameterType="map">
+		UPDATE event
+		SET event_hide = 
+		<choose>
+			<when test="updateRow.hidden == true">
+				'Y'
+			</when>
+			<when test="updateRow.hidden == false">
+				'N'
+			</when>
+		</choose>
+		WHERE event_code = #{updateRow.event_code}
+	</update>
 	
 </mapper>

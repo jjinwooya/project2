@@ -109,4 +109,23 @@
 		FROM MEMBER
 		WHERE member_code = #{member_code}
 	</select>
+	
+	<update id="updatePointMember">
+		UPDATE MEMBER
+		SET member_credit = member_credit + #{event_point}
+		WHERE member_code = #{member_code}
+	</update>
+	
+	<select id="selectEventLogs" resultType="int">
+		SELECT count(*)
+		FROM point_logs
+		WHERE member_code = #{member_code}
+		AND   event_code = #{event_code}
+	</select>
+	
+	<insert id="insertEventLogs">
+		INSERT INTO point_logs
+		VALUES
+		(null, #{member_code}, #{event_code})
+	</insert>
 </mapper>

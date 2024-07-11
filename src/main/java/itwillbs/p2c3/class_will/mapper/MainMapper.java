@@ -20,7 +20,7 @@ public interface MainMapper {
 
 	boolean insertKeyword(@Param("keyword") String keyword, @Param("searchDateTime") String searchDateTime);
 
-	List<Map<String, Object>> selectKeyword(@Param("keyword") String keyword);
+	List<Map<String, String>> selectKeyword(@Param("keyword") String keyword);
 
 	void insertVisitIp(@Param("ip")String ip, @Param("visitDate") String visitDate);
 

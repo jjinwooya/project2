@@ -141,13 +141,13 @@
                 el: document.getElementById('grid'),
                 data: data,
                 columns: [
-                    { header: '이메일(아이디)', name: 'member_email', editor: 'text' },
-                    { header: '이름', name: 'member_name', editor: 'text' },
-                    { header: '닉네임', name: 'member_nickname', editor: 'text' },
-                    { header: '가입일', name: 'member_reg_date', editor: 'text' },
-                    { header: '회원상태', name: 'member_status', editor: 'text' },
+                    { header: '이메일(아이디)', name: 'member_email'},
+                    { header: '이름', name: 'member_name'},
+                    { header: '닉네임', name: 'member_nickname'},
+                    { header: '가입일', name: 'member_reg_date'},
+                    { header: '회원상태', name: 'member_status'},
                     {
-                        header: 'Action',
+                        header: '상세보기',
                         name: 'action',
                         renderer: {
                             type: ButtonRenderer

@@ -185,10 +185,10 @@
 										<div class="px-2 py-2 position-absolute"  style="bottom: 120px; left: 6px;">
 											<c:choose>
 												<c:when test="${empty contents.member_img}">
-													<img src="${pageContext.request.contextPath}/resources/images/class/pic.png" class="member_img">
+													<img src="${pageContext.request.contextPath}/resources/images/class/pic.png" class="member_img" style="width: 25px; height: 25px;">
 												</c:when>	
 												<c:otherwise>
-													<img src="${pageContext.request.contextPath}/resources/images/class/x.png" class="member_img">
+													<img src="${pageContext.request.contextPath}/resources/images/class/x.png" class="member_img" style="width: 25px; height: 25px;">
 												</c:otherwise>
 											</c:choose>
 										</div>	

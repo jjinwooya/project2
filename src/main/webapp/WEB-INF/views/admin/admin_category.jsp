@@ -218,27 +218,28 @@
         $('#btn-apply').on('click', function () {
             const modifiedRows = grid.getModifiedRows();
             const jsonData = JSON.stringify(modifiedRows);
-
-            fetch('insert', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: jsonData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('변경 사항이 성공적으로 적용되었습니다.');
-                    location.reload();
-                } else {
-                    alert('변경 사항 적용 실패: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('변경 사항 적용 실패: 서버 오류');
-            });
+			if(confirm("정말 모든 변경사항을 저장하시겠습니까?")){
+	            fetch('insert', {
+	                method: 'POST',
+	                headers: {
+	                    'Content-Type': 'application/json'
+	                },
+	                body: jsonData
+	            })
+	            .then(response => response.json())
+	            .then(data => {
+	                if (data.success) {
+	                    alert('변경 사항이 성공적으로 적용되었습니다.');
+	                    location.reload();
+	                } else {
+	                    alert('변경 사항 적용 실패: ' + data.message);
+	                }
+	            })
+	            .catch(error => {
+	                console.error('Error:', error);
+	                alert('변경 사항 적용 실패: 서버 오류');
+	            });
+			}
         });
         
         // 데이터 삭제 적용

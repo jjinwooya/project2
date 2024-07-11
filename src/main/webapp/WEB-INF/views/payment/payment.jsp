@@ -108,7 +108,7 @@
 					</div> <!-- card-body 끝 -->
 				</div><!-- card -->
 				<div class="card">
-					<h5 class="card-header ">연락처 정보</h5>
+					<h5 class="card-header ">연락처 정보(본인)</h5>
 					<div class="card-body">
 						<h5 class="card-title text-success">연락처</h5>
 						<p class="card-text">
@@ -358,7 +358,6 @@ function paymentValidation() {
 	if(!use_willpay) {
 		use_willpay = 0;
 	}
-	console.log("사용한 will-pay", use_willpay);
 	
 	let pg = "kcp.AO09C";
 	let className = "${payInfo.class_name}";
@@ -366,8 +365,40 @@ function paymentValidation() {
 	let amount = $("#total").text().replace(/,/g, '');
 	let parsedAmount = parseInt(amount, 10);
 	let member_email = "${memberInfo.member_email}";
-	let member_name = "${memberInfo.member_name}";
+// 	let member_name = "${memberInfo.member_name}";
+	let member_name = "김민주";
 	let member_tel = "${memberInfo.member_tel}";
+	
+	//결제 비용이 0원일 때(willpay로만 결제)
+	if(amount == 0) {
+		$.ajax({
+			url: "willpay-all-case",
+			type: "POST",
+			data: JSON.stringify({ 
+            	class_code: "${payInfo.class_code}",
+            	pay_headcount: "${payInfo.headcount}",
+            	pay_amount: amount,
+            	use_willpay: use_willpay,
+            	class_schedule_code: "${payInfo.class_schedule_code}"
+            }),
+			contentType: "application/json",
+            dataType: "json",
+            success: function(response) {
+                if(response.success) {
+                    console.log("결제 검증 성공:", response.error);
+                    //GET 방식 결제정보 전달
+                    location.href="payment-final?pay_code=" + response.pay_code;
+                } else {
+                    console.log("결제 검증 실패:", response.error);
+                }
+            },
+            error: function(err) {
+                console.error("결제 검증 요청 실패:", err);
+            }
+			
+		});
+		return;
+	}
 	
 	let IMP = window.IMP;   // 생략 가능
 	IMP.init("imp00262041"); //imp00262041
@@ -378,14 +409,13 @@ function paymentValidation() {
             merchant_uid: "order_" + new Date().getTime(),
             name: className,
             amount: parsedAmount,
-//             amount: 1000,
             buyer_email: member_email,
             buyer_name: member_name,
             buyer_tel: member_tel //필수
         },
         function (rsp) {
             if(rsp.success) {
-				console.log(rsp.imp_uid);
+// 				console.log(rsp.imp_uid);
 				$.ajax({
 		            url: "verify",
 		            type: "POST",

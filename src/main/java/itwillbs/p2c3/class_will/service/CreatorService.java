@@ -35,8 +35,7 @@ public class CreatorService {
 
 	// 클래스 수정
 	public void createrClassModifyPro(Map<String, Object> map, List<CurriVO> params) {
-		creatorMapper.createrClassDelete(map);
-		creatorMapper.createrClassRegPro(map);
+		creatorMapper.createrClassUpdate(map);
 //		System.out.println(">>>>>>>>params: " + params);
 		int class_code = Integer.parseInt((String)map.get("class_code"));
 		creatorMapper.creatorCurriDelete(class_code);
@@ -248,6 +247,11 @@ public class CreatorService {
 	// 전체 값에 대한 그래프 데이터
 	public List<Map<String, Object>> getGraphDataList(MemberVO member){
 		return creatorMapper.getGraphDataList(member);
+	}
+	
+	// 클래스에 따른 차트 데이터
+	public List<Map<String, Object>> getChartDataByClass(int classCode, MemberVO member) {
+		return creatorMapper.getChartDataByClass(classCode, member);
 	}
 
 	//==================================================================================================

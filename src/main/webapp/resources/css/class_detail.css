@@ -24,15 +24,24 @@
 	margin-top : 10px;
 	margin-bottom : 10px;
 }
+.hashBtn {
+	font-size : 0.9em;
+	margin-right : 3px;
+}
+.classHashtag {
+/* 	display: flex; */
+/* 	justify-content: center; 수평 가운데 정렬 */
+	align-items: center; 
+}
 .classCurriRound {
 /* 	margin-top : 10px; */
 	margin-bottom : 10px;
-	font-size : 1.2em;
+	font-size : 1.1em;
 	font-weight : bold;
 }
 .classCurriContent {
 	margin-bottom : 10px;
-	font-size : 1em;
+	font-size : 0.9em;
 	
 }
 .classImg {
@@ -118,15 +127,8 @@
     text-align: center; /* 텍스트를 가로로 가운데 정렬 */
 }
 .box3 {
-	margin-top : 20px;
-	padding : 2px;
+	margin : 0px;
 	text-align : center;
-    padding: 0.01rem 0.01rem; /* 원하는 패딩 값으로 조정 */
-	
-	
-/* 	position: sticky; */
-/*     top: 0; */
-/*     z-index: 1000; */
 }
 .btn1 {
 	font-size: 90%; /* 기본 텍스트 크기 */

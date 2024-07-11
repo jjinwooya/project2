@@ -62,6 +62,7 @@ public class ClassController {
 	    
 	    if (member != null) {
 	        member_code = member.getMember_code();
+	        System.out.println(">> member_code : " + member_code);
 	    } else {
 	        System.out.println("Member is null");
 	    }
@@ -135,12 +136,16 @@ public class ClassController {
 	// 카테고리 필터링 ajax
 	@ResponseBody
 	@GetMapping("filter-class")
-		public List<Map<String, Object>> getFilterClass(Model model, HttpSession session, @RequestParam(required = false) String hashtag, @RequestParam Map<String, String> params) {
+		public List<Map<String, Object>> getFilterClass(Model model, HttpSession session, @RequestParam(required = false) String hashtag, @RequestParam(required = false) Map<String, String> params, @RequestParam Map<String, String> requestBody) {
 	    
 	    // 클래스 리스트
-		String big_category = params.get("class_big_category");
-		String small_category = params.get("class_small_category");
-		String local = params.get("local");
+//		String big_category = params.get("class_big_category");
+//		String small_category = params.get("class_small_category");
+//		String local = params.get("common2_code");
+	    String big_category = (String) requestBody.get("big_category"); // Integer로 받지 않고 String으로 받음
+	    String small_category = (String) requestBody.get("small_category"); // Integer로 받지 않고 String으로 받음
+	    String local = (String) requestBody.get("local");
+		System.out.println("filter-class big_category : " + big_category + ", small_category : " + small_category + ", local : " + local);
 		
         Map<String, Object> list = new HashMap<>();
         list.put("big_category", big_category);
@@ -151,6 +156,7 @@ public class ClassController {
         
 	    List<Map<String, Object>> filterClass = classService.getClassList(list);
 	    model.addAttribute("filterClass", filterClass);
+	    System.out.println(">> filter-class filterClass : " + filterClass);
 	    return filterClass;
 	}
 	
@@ -158,7 +164,6 @@ public class ClassController {
 	@ResponseBody
 	@GetMapping("update-class-list")
 	public List<Map<String, Object>> updateClassList(Model model,@RequestParam Map<String, String> requestBody){
-		
 		// 클래스 리스트
 	    String big_category = (String) requestBody.get("big_category"); // Integer로 받지 않고 String으로 받음
 	    String small_category = (String) requestBody.get("small_category"); // Integer로 받지 않고 String으로 받음
@@ -281,12 +286,12 @@ public class ClassController {
 		Boolean heart_status = (Boolean) requestBody.get("heart_status");
 	    String member_code = (String) requestBody.get("member_code"); // Integer로 받지 않고 String으로 받음
 	    String class_code = (String) requestBody.get("class_code"); // Integer로 받지 않고 String으로 받음
-
         Map<String, Object> map = new HashMap<>();
         map.put("heart_status", heart_status);
         map.put("member_code", member_code);
         map.put("class_code", class_code);
 		
+        System.out.println("update-heart-status class_code : " + class_code + ", member_code : " + member_code);
 	    // heart_status가 true이면 좋아요를 추가, false이면 좋아요를 제거
 	    if (heart_status != null && member_code != null && class_code != null) {
 	        if (heart_status) {
@@ -393,9 +398,10 @@ public class ClassController {
 		
 		// 클래스 해시태그 
 		List<Map<String, Object>> classHashtagList = classService.getClassHashtag(class_code);
-		List<String> hashtagStrings = new ArrayList<>();
-		model.addAttribute("hashtagStrings", hashtagStrings);
-		System.out.println(">>>>hashtagStrings : " + hashtagStrings);
+//		List<String> hashtagStrings = new ArrayList<>();
+		model.addAttribute("classHashtagList", classHashtagList);
+		System.out.println(">>>>classHashtagList : " + classHashtagList);
+		
 		//========================================================================
 		//스케쥴 select -- 파라미터: 클래스 코드 (임시)
 		List<Map<String, Object>> scheduleInfo = payService.getClassSchedule(class_code);

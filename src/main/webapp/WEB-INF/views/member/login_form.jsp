@@ -134,7 +134,7 @@
 								</div>
 								<div class="regex py-2" id="regex-pwd"></div>
 							</div>
-							
+							<input type="hidden" name="returnUrl" value="${param.returnUrl}">
 							<div align="right" style="padding-right: 11px;">
 								<p><a href="find-passwd">비밀번호 찾기</a></p>
 							</div>

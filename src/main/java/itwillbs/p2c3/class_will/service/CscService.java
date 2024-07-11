@@ -72,4 +72,17 @@ public class CscService {
 	public MemberVO selectMemberByCode(MemberVO friend) {
 		return cscMapper.selectMemberByCode(friend);
 	}
+
+	public void updatePointMember(int event_point, int member_code) {
+		cscMapper.updatePointMember(event_point, member_code);
+	}
+
+	public boolean getEventLogs(int event_code, int member_code) {
+		return cscMapper.selectEventLogs(event_code, member_code) > 0 ? false : true;
+	}
+
+	public void insertEventLogs(int event_code, int member_code) {
+		cscMapper.insertEventLogs(event_code, member_code);
+	}
+
 }

@@ -41,10 +41,14 @@
 			   , c.class_big_category
 			   , c.class_small_category
 			   , c.class_thumnail
+			   , c.class_image
+			   , c.class_image2
+			   , c.class_image3
 			   , c.class_location
 			   , c.class_price
 			   , c.class_ex
 			   , c.class_creator_explain 
+			   , c.member_code
 			   , c.class_map_x
 			   , c.class_map_y
 		--	   , cs.class_schedule_date
@@ -84,7 +88,9 @@
 		 	   , cs.class_ed_time
 		 	   , cs.class_round
 		 	   , cs.class_schedule_code
-		 	   , (SELECT m.member_credit FROM MEMBER m WHERE m.member_code = #{member_code}) AS member_credit
+		 	   , (SELECT m.member_credit 
+		 	   	  FROM MEMBER m 
+		 	   	  WHERE m.member_code = #{member_code}) AS member_credit
 		FROM class c
 		JOIN class_schedule cs 
 		ON c.class_code = cs.class_code 
@@ -179,7 +185,7 @@
 		)
 		VALUES (
 			null
-		    , #{merchant_uid}
+		    <if test="merchant_uid != null">, #{merchant_uid}</if><if test="merchant_uid == null">, null</if>
 		    , #{pay_amount}
 		    , #{pay_datetime}
 		    , #{pay_type}
@@ -188,10 +194,10 @@
 		    , #{class_schedule_code}
 		    , #{pay_headcount}
 		    , #{class_code}
-		    , #{imp_uid}
+		    <if test="imp_uid != null">, #{imp_uid}</if><if test="imp_uid == null">, null</if>
 		    , #{use_willpay}
-		    , #{pg_provider}
-		    , #{card_name}
+			<if test="pg_provider != null">, #{pg_provider}</if><if test="pg_provider == null">, null</if>
+			<if test="card_name != null">, #{card_name}</if><if test="card_name == null">, null</if>
 		)
 	</insert>
 	
@@ -215,25 +221,26 @@
 		   , cs.class_schedule_date
 		   , c2.code_value AS 'upper_level'
 		   , c3.code_value AS 'lower_level'
-		   , CAST(p.pay_amount AS SIGNED) - p.use_willpay AS 'result_amount'
-	FROM pay p 
-	JOIN class c 
-	ON p.class_code = c.class_code
-	JOIN MEMBER m
-	ON p.member_code = m.member_code
-	JOIN class_schedule cs 
-	ON p.class_schedule_code = cs.class_schedule_code
-	JOIN common2 c2 
-	ON c.class_big_category = c2.common2_code
-	AND c2.common1_code = 'CLC'
-	JOIN common2 c2tem
-	ON c2tem.common2_code = p.pay_type 
-	AND c2tem.common1_code = 'PT'
-	JOIN common3 c3 
-	ON c.class_small_category = c3.common3_code 
-	AND c3.common1_code = 'CLC'
-	AND c3.common2_code = c.class_big_category 
-	WHERE p.pay_code = #{pay_code};
+		   , CAST(FLOOR(c.class_price * p.pay_headcount) AS UNSIGNED) AS 'total_amount'
+		   , CAST(FLOOR((c.class_price * p.pay_headcount) - p.use_willpay) AS UNSIGNED) AS 'result_amount'
+		FROM pay p 
+		JOIN class c 
+		ON p.class_code = c.class_code
+		JOIN MEMBER m
+		ON p.member_code = m.member_code
+		JOIN class_schedule cs 
+		ON p.class_schedule_code = cs.class_schedule_code
+		JOIN common2 c2 
+		ON c.class_big_category = c2.common2_code
+		AND c2.common1_code = 'CLC'
+		JOIN common2 c2tem
+		ON c2tem.common2_code = p.pay_type 
+		AND c2tem.common1_code = 'PT'
+		JOIN common3 c3 
+		ON c.class_small_category = c3.common3_code 
+		AND c3.common1_code = 'CLC'
+		AND c3.common2_code = c.class_big_category 
+		WHERE p.pay_code = #{pay_code};
 	</select>
 	
 	<!-- ========금융결제원 관련 sql======== -->
@@ -294,6 +301,7 @@
 		   , p.member_code
 		   , p.pay_datetime 
 		   , p.pay_status
+		   , p.pay_type
 		   , upper_code_value AS 'class_upper'
 		   , lower_code_value AS 'class_lower'
 		   , m.member_name
@@ -342,11 +350,11 @@
 	]]>
 	</select>
 	
-<!-- 	<update id="updatePayStatus"> -->
-<!-- 		UPDATE pay -->
-<!-- 		SET pay_status = 'canceled' -->
-<!-- 		WHERE pay_code = #{pay_code} -->
-<!-- 	</update> -->
+	<update id="updatePayStatus">
+		UPDATE pay
+		SET pay_status = 'canceled'
+		WHERE pay_code = #{pay_code}
+	</update>
 	
 	<update id="resetHeadcount">
 		UPDATE class_schedule
@@ -391,6 +399,7 @@
 	</select>
 	
 	<select id="selectWillpayChargeList" resultType="map">
+		<![CDATA[
 		SELECT wp.will_pay_code
 			   , wp.will_pay_date
 			   , wp.will_pay_amount
@@ -401,6 +410,12 @@
 			   , c2.code_value AS pay_type
 			   , wp.member_code
 			   , m.member_credit
+			   ,CASE 
+			       WHEN TIMESTAMPDIFF(MINUTE, wp.will_pay_date , NOW()) < 1 THEN CONCAT(TIMESTAMPDIFF(SECOND, wp.will_pay_date, NOW()), ' 초전')
+			       WHEN TIMESTAMPDIFF(HOUR, wp.will_pay_date, NOW()) < 1 THEN CONCAT(TIMESTAMPDIFF(MINUTE, wp.will_pay_date, NOW()), ' 분전')
+			       WHEN TIMESTAMPDIFF(HOUR, wp.will_pay_date, NOW()) < 24 THEN CONCAT(TIMESTAMPDIFF(HOUR, wp.will_pay_date, NOW()), ' 시간전')
+			       ELSE CONCAT(TIMESTAMPDIFF(DAY, wp.will_pay_date, NOW()), ' 일전')
+		       END AS diff_date
 		FROM will_pay wp
 		JOIN common2 c2
 		ON wp.will_pay_type = c2.common2_code
@@ -409,28 +424,9 @@
 		ON m.member_code = wp.member_code
 		WHERE wp.member_code = #{member_code}
 		ORDER BY will_pay_code DESC
-	</select>
-	
-	<!-- willpay 환불약관 검사 -->
-	<select id="selectWillpayDate" resultType="int">
-		<![CDATA[
-		SELECT 
-			CASE WHEN total_willpay > #{will_pay_amt} * 3/10 THEN total_willpay 
-			ELSE 0 END AS used_willpay
-		FROM (
-		    SELECT SUM(COALESCE(use_willpay, 0)) AS total_willpay
-		    FROM pay p_main
-		    WHERE p_main.use_willpay IN (
-		        SELECT p_sub.use_willpay
-		        FROM pay p_sub
-		        WHERE CAST(p_sub.pay_datetime AS DATE) BETWEEN CAST(#{will_pay_date} AS DATE)
-		                                               AND DATE_ADD(CAST(#{will_pay_date} AS DATE), INTERVAL 6 DAY)
-		        AND p_sub.use_willpay <> 0
-		        AND p_sub.member_code = #{member_code}
-		    )
-		) AS total_sum; 
 		]]>
 	</select>
+	
 	
 	<select id="selectAbledWillpay" resultType="int">
 		SELECT m.member_credit - bonus_willpay.willpay AS abled_willpay

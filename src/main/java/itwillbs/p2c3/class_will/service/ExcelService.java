@@ -36,10 +36,8 @@ public class ExcelService {
 	
 	
     public byte[] createExcel(String title, List<String> headers, List<Map<String, Object>> data) throws IOException {
-    	logger.debug("들어오긴함");
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet(title);
-        logger.debug(workbook.toString());
         // 헤더 행 생성
         Row headerRow = sheet.createRow(0);
         for (int i = 0; i < headers.size(); i++) {

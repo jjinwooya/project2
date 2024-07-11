@@ -37,13 +37,13 @@ public class MainService {
 	
 	
 	@Transactional
-	public List<Map<String, Object>> retrieveKeyword(String keyword, String searchDateTime) {
+	public List<Map<String, String>> retrieveKeyword(String keyword, String searchDateTime) {
 		
 		if(mainMapper.insertKeyword(keyword, searchDateTime)) {
 			System.out.println("checkKeyword - insertKeyword 성공");
 		}
 		
-		List<Map<String, Object>> searchClassList = mainMapper.selectKeyword(keyword);
+		List<Map<String, String>> searchClassList = mainMapper.selectKeyword(keyword);
 		
 		return searchClassList;
 	}

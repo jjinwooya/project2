@@ -44,6 +44,8 @@
 <link
 	href="${pageContext.request.contextPath}/resources/css/creator/creator-main.css"
 	rel="stylesheet">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <style>
 body {
 	
@@ -97,6 +99,9 @@ th:nth-child(2), td:nth-child(2) {
 }
 .refundBtn {
 	display: none;
+}
+.refund_product {
+	color:green;
 }
 </style>
 </head>
@@ -167,15 +172,15 @@ th:nth-child(2), td:nth-child(2) {
 													<fmt:formatNumber var="willpay_amt" value="${chargeInfo.will_pay_get_pay }"  pattern="#,###"/>
 													${willpay_amt} WILL-PAY
 												</td>
-												<td>${chargeInfo.will_pay_date }</td>
-												<td>${chargeInfo.will_pay_bank_name }(${chargeInfo.will_pay_account })</td>
+												<td>${chargeInfo.will_pay_date }&nbsp;(${chargeInfo.diff_date})</td>
+												<td>${chargeInfo.will_pay_bank_name }&nbsp;(${chargeInfo.will_pay_account })</td>
 												<td>
 													<c:choose>
 														<c:when test="${chargeInfo.will_pay_chargeType eq 2 }">
-															환불불가 상품
+															<span class="refund_product">부분 환불가능</span>
 														</c:when>
 														<c:otherwise>
-															
+															<span class="refund_product">환불 가능상품</span>
 														</c:otherwise>
 													</c:choose>
 												</td>
@@ -210,42 +215,12 @@ th:nth-child(2), td:nth-child(2) {
 	}
 	
 	function openPopUpRefund() {
-		window.open("refund-inputRefund", "agree", "width=544, height=532, top=270, left=700");	
+		window.open("refund-inputRefund", "inputRefund", "width=544, height=532, top=270, left=700");	
 	}
 	
-	function refundWillpay(param_pay_amt, param_get_willpay, param_willpay_code, param_willpay_date) {
-		let will_pay_amt = param_pay_amt;
-		let will_pay_get_pay = param_get_willpay;
-		let will_pay_code = param_willpay_code;
-		let will_pay_date = param_willpay_date;
-		
-		let params = {
-			will_pay_amt : will_pay_amt,
-			will_pay_get_pay : will_pay_get_pay,
-			will_pay_code : will_pay_code,
-			will_pay_date : will_pay_date,
-		};
-		
-		$.ajax({
-			url: "refund-willpay",
-			type: "POST",
-			data : JSON.stringify(params),
-			contentType: "application/json",
-			dataType: "json",
-			success: function(res) {
-				console.log(res);
-			},
-			error: function() {
-				alert("호출 실패");
-			}
-		});
-		
-	}	
 </script>
 
 <!-- JavaScript Libraries -->
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 <script
