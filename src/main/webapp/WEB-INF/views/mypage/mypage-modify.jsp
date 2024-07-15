@@ -137,6 +137,7 @@
 												<input type="text" id="address2" name="member_address2"
 													class="form-control" placeholder="상세주소" size="25"
 													pattern="^.{2,20}$" maxlength="20" value="${address[2]}">
+													 <span id="msg_addr" style="color: red;"></span>
 											</div>
 
 										</div>
@@ -246,8 +247,8 @@
 						|| validatePasswordStrength() > 1;
 				
 				let nicknameIsValid = validateNickname();		
-						
-				if (pwdIsValid && pwd2IsValid && isPasswordStrong) {
+				let addressIsValid = validateAddress2();		
+				if (pwdIsValid && pwd2IsValid && isPasswordStrong && addressIsValid) {
 					$("button[type='submit']").prop("disabled", false); // submit 버튼 활성화
 				} else {
 					$("button[type='submit']").prop("disabled", true); // submit 버튼 비활성화
@@ -305,11 +306,14 @@
 				if (address2 === "") {
 					$("#msg_addr").text("상세주소를 입력하세요");
 					$("#msg_addr").css("color", "red");
+					 return false;
 				} else if (!regex.test(address2)) {
 					$("#msg_addr").text("2~20자리의 문자를 입력하세요");
 					$("#msg_addr").css("color", "red");
+					 return false;
 				} else {
 					$("#msg_addr").empty();
+					 return true;
 				}
 			}
 
@@ -380,10 +384,14 @@
             let lengthRegx = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*?_]).{6,16}$/;
             let nickname = $("#member_nickname").val();
             let nicknameRegex = /^[^\s]{3,15}$/; 
-            if ((pwd !== "" && (!lengthRegx.test(pwd) || pwd !== pwd2)) || !nicknameRegex.test(nickname)) {
-    			event.preventDefault();
-    			alert("닉네임이 유효하지 않거나 비밀번호가 유효하지 않습니다. 닉네임은 공백 없이 3~15자로 입력하고, 비밀번호는 영문자, 숫자, 특수문자(!, @, #, $)를 포함한 6~16자리를 입력하고 비밀번호 확인란과 일치해야 합니다.");
-    		}
+            let address2 = $("#address2").val();
+
+            if ((pwd !== "" && (!lengthRegx.test(pwd) || pwd !== pwd2)) || 
+                !nicknameRegex.test(nickname) || 
+                address2 === "") {
+                event.preventDefault();
+                alert("닉네임이 유효하지 않거나 비밀번호가 유효하지 않습니다. 닉네임은 공백 없이 3~15자로 입력하고, 비밀번호는 영문자, 숫자, 특수문자(!, @, #, $)를 포함한 6~16자리를 입력하고 비밀번호 확인란과 일치해야 합니다. 또한, 상세주소를 입력하세요.");
+            }
         });
 		
 		$(function() { //이거 닉네임관련임.

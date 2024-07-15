@@ -298,11 +298,22 @@
 	</select>
 	
 	
-	<select id="selectWillpayChart" resultType="Integer">
-		SELECT  SUM(CAST(pay_amount AS DECIMAL(10, 2))) AS totalSales
-		FROM pay
-		GROUP BY DATE_FORMAT(STR_TO_DATE(pay_datetime, '%Y-%m-%d'), '%Y-%m')
-		ORDER BY DATE_FORMAT(STR_TO_DATE(pay_datetime, '%Y-%m-%d'), '%Y-%m')
+	<select id="selectWillpayChart" resultType="map">
+		SELECT DATE_FORMAT(STR_TO_DATE(wp.will_pay_date, '%Y-%m-%d'), '%m') AS month,
+		       SUM(CAST(will_pay_amount AS DECIMAL(10, 2))) AS totalSales
+		FROM will_pay wp
+		WHERE YEAR(STR_TO_DATE(wp.will_pay_date, '%Y-%m-%d')) = YEAR(CURDATE())
+		GROUP BY DATE_FORMAT(STR_TO_DATE(wp.will_pay_date, '%Y-%m-%d'), '%m')
+		ORDER BY month
+	</select>
+	
+	<select id="selectPayChart" resultType="map">
+		SELECT DATE_FORMAT(STR_TO_DATE(p.pay_datetime, '%Y-%m-%d'), '%m') AS month,
+		       SUM(CAST(pay_amount AS DECIMAL(10, 2))) AS totalSales
+		FROM pay p
+		WHERE YEAR(STR_TO_DATE(p.pay_datetime , '%Y-%m-%d')) = YEAR(CURDATE())
+		GROUP BY DATE_FORMAT(STR_TO_DATE(p.pay_datetime, '%Y-%m-%d'), '%m')
+		ORDER BY month
 	</select>
 	
 	<select id="selectRewardData" resultType="map">
@@ -459,7 +470,7 @@
 	<select id="selectNewMemberCount" resultType="Integer">
 		SELECT COUNT(*) AS new_member_count
 		FROM MEMBER
-		WHERE DATE_FORMAT(STR_TO_DATE(member_reg_date, '%Y%m%d'), '%Y-%m-%d') = CURDATE()
+		WHERE DATE_FORMAT(STR_TO_DATE(member_reg_date, '%Y-%m-%d'), '%Y-%m-%d') = CURDATE()
 	</select>
 	
 	<select id="selectDailyVisit" resultType="Integer">

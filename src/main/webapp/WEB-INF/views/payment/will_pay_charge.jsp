@@ -200,11 +200,8 @@ body{
 <input type="hidden" value="${token }" id="sessionToken">
 <script>
 	// JSON 데이터를 JavaScript 변수에 할당
-	let bankInfoJson;
-	let tokenSession = "${token}";
-	if(tokenSession != '') {
-		bankInfoJson = JSON.parse("${bankInfoJson}");
-	}
+	let	bankInfoJson = JSON.parse('${bankInfoJson}');
+		console.log("bankInfoJson1111111111 : " + bankInfoJson + ", dataType " + typeof(bankInfoJson));
 </script>
 <script src="${pageContext.request.contextPath }/resources/js/will_pay_charge.js"></script>
 </body>

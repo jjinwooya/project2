@@ -40,6 +40,7 @@ body {
   font-family: "Nanum Gothic", sans-serif;
   font-weight: 400;
   font-style: normal;
+  background-color : black;
 }
 
 main {

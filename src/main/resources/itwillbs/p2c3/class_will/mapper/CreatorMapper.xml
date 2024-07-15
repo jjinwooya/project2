@@ -4,6 +4,24 @@
   
 <mapper namespace="itwillbs.p2c3.class_will.mapper.CreatorMapper">
 	
+	
+	<!-- 크리에이터 이벤트 -->
+	<select id="getCreatorEvent" resultType="map">
+		SELECT *
+		FROM event
+		Limit 2
+	</select>
+
+	<!-- 크리에이터 공지사항 -->
+	<select id="creatorNoticeList" resultType="map">
+		SELECT * 
+		FROM notice n 
+		WHERE n.notice_category = 
+			(SELECT common2_code FROM common2 WHERE code_value='크리에이터' AND common1_code = 'NTC')
+		ORDER BY n.notice_reg_date DESC
+		Limit 5
+	</select>
+	
 	<!-- 클래스 수정 -->
 	<insert id="createrClassRegPro">
 		INSERT INTO class(  	  
@@ -90,11 +108,38 @@
 	
 	<!-- 클래스 상세정보 -->
 	<select id="getClassDetail" resultType="map">
-		SELECT *
-		FROM class
+		SELECT c.*
+			, (
+				SELECT	
+					code_value
+				FROM 
+					common2
+				WHERE 
+					common2_code = c.common2_code
+				AND 
+					common1_code = 'LC'
+			) as sido
+		FROM class c
 		WHERE
 			class_code = #{class_code}
 	</select>
+	
+	<!-- 클래스 스케쥴 체크 -->
+	<select id="CountClassSchedule" resultType="int">
+		SELECT COUNT(*)
+		FROM class_schedule
+		WHERE class_code = #{class_code}
+		AND 
+			STR_TO_DATE(class_schedule_date, '%Y-%m-%d') > CURDATE() 
+	</select>
+	
+	
+	<!-- 클래스 삭제 -->
+	<update id="deleteClass">
+		UPDATE	class
+		SET class_active = 'N'
+		WHERE class_code = #{class_code}
+	</update>
 	
 	<!-- 커리큘럼 삽입 -->
 	<insert id="creatorCurriInsert" parameterType="map">
@@ -120,6 +165,7 @@
 		SELECT curri_round, curri_content
 		FROM curri
 		WHERE class_code = #{class_code}
+		ORDER BY curri_round
 	</select>
 	
 	<!-- 커리큘럼 삭제 -->
@@ -320,6 +366,8 @@
 			c222.common1_code = 'HIDE'
 		WHERE
 			c.member_code = #{member_code}
+		AND 
+			c.class_active = 'Y'
 	</select>
 	
 	<!-- 상태에 따른 클래스 정보 가져오기 -->
@@ -354,7 +402,10 @@
 			<if test="!status.equals(0)">
 				AND class_regist_status = #{status}
 			</if>
-		AND c.member_code = #{member.member_code}
+		AND 
+			c.member_code = #{member.member_code}
+		AND 
+			c.class_active = 'Y'
 	</select>
 	
 	<!-- 클래스 정보 가져오기 -->
@@ -413,6 +464,8 @@
 			c.class_regist_status = 2
 		AND 
 			c.member_code = #{member_code}
+		AND 
+			c.class_active = 'Y'
 	</select>
 	
 	<!-- 클래스 파일 삭제 -->
@@ -446,7 +499,6 @@
 	</update>
 	
 	
-	
 	<!-- =========================================================================================== -->
 	<!-- 문의사항 클래스 정보 가져오기 -->
 	<select id="getInquiryClassInfo" resultType="map">
@@ -472,6 +524,8 @@
 			ci.member_code = m.member_code 
 		WHERE 
 			c.member_code = #{member_code}
+		AND 
+			c.class_active = 'Y'
 	</select>
 	
 	<!-- 문의에 따른 클래스 정보 가져오기 -->
@@ -487,6 +541,8 @@
 			c.class_code = ci.class_code 
 		WHERE 
 			c.member_code = #{member_code}
+		AND 
+			c.class_active = 'Y'
 		GROUP BY c.class_code
 	</select>
 	
@@ -634,6 +690,8 @@
 			m.member_code = cr.member_code
 		WHERE 
 			c.member_code = #{member_code}
+		AND 
+			c.class_active = 'Y'
 	</select>
 	
 	<!-- 후기에 따른 클래스 정보 가져오기 -->
@@ -649,6 +707,8 @@
 			c.class_code = cr.class_code 
 		WHERE 
 			c.member_code = #{member_code}
+		AND 
+			c.class_active = 'Y'
 		GROUP BY c.class_code
 	</select>
 
@@ -801,7 +861,7 @@
 	
 	<!-- =========================================================================================== -->
 	
-	<!-- 후기에 따른 클래스 정보 가져오기 -->
+	<!-- 클래스 정보 가져오기 -->
 	<select id="getAnalyzeClassInfo" resultType="map">
 		SELECT  c.class_name
 			 , c.class_code
@@ -809,6 +869,8 @@
 			class c
 		WHERE 
 			c.member_code = #{member_code}
+		AND 
+			c.class_active = 'Y'
 	</select>
 	
 	<!-- 분석한 데이터 -->
@@ -816,7 +878,7 @@
 		SELECT 
 			count(*) AS classCount
 			, ifnull(sum(cs.class_total_headcount - cs.class_remain_headcount),0) AS attendCount
-			, round(avg(cs.class_total_headcount - cs.class_remain_headcount), 1) AS avgAttendCount
+			, ifnull(round(avg(cs.class_total_headcount - cs.class_remain_headcount), 1),0) AS avgAttendCount
 		FROM 
 			class c
 		LEFT JOIN 
@@ -824,11 +886,17 @@
 		ON 	
 			c.class_code = cs.class_code
 		WHERE 
-			c.member_code = #{member_code}
+			c.member_code = #{member.member_code}
 		AND 
 			CURDATE() > STR_TO_DATE(cs.class_schedule_date, '%Y-%m-%d')
 		And 
 			cs.class_total_headcount != cs.class_remain_headcount
+		AND 
+			c.class_active = 'Y'
+		<if test="class_code != 0">
+			AND
+				c.class_code = #{class_code}
+		</if>
 	</select>
 
 	<select id="getAnalyzeReviewList" resultType="map">
@@ -841,7 +909,13 @@
 		ON 
 			c.class_code = cr.class_code 
 		WHERE 
-			c.member_code = 1079
+			c.member_code = #{member.member_code}
+		AND 
+			c.class_active = 'Y'
+			<if test="class_code != 0">
+				AND
+					c.class_code = #{class_code}
+			</if>
 	</select>
 	
 	<select id="getGraphDataList" resultType="map">
@@ -860,8 +934,12 @@
 		    p.class_schedule_code = cs.class_schedule_code 
 		WHERE 
 		    c.member_code = #{member_code}
-		    AND cs.class_schedule_date >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 12 MONTH), '%Y-%m-01')
-		    AND DATE_FORMAT(CURDATE(), '%Y-%m-01') > cs.class_schedule_date 
+		    AND 
+				c.class_active = 'Y'
+		    AND 
+		    	cs.class_schedule_date >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 12 MONTH), '%Y-%m-01')
+		    AND 
+		    	DATE_FORMAT(CURDATE(), '%Y-%m-01') > cs.class_schedule_date 
 		GROUP BY 
 		    DATE_FORMAT(cs.class_schedule_date, '%Y-%m')
 		ORDER BY 
@@ -884,18 +962,19 @@
 		    p.class_schedule_code = cs.class_schedule_code 
 		WHERE 
 		    c.member_code = #{member.member_code}
-		    AND cs.class_schedule_date >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 12 MONTH), '%Y-%m-01')
-		    AND DATE_FORMAT(CURDATE(), '%Y-%m-01') > cs.class_schedule_date
-		    AND c.class_code = #{classCode} 
+		    AND 
+				c.class_active = 'Y'
+		    AND 
+		    	cs.class_schedule_date >= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 12 MONTH), '%Y-%m-01')
+		    AND 
+		    	DATE_FORMAT(CURDATE(), '%Y-%m-01') > cs.class_schedule_date
+		    AND 
+		    	c.class_code = #{classCode} 
 		GROUP BY 
 		    DATE_FORMAT(cs.class_schedule_date, '%Y-%m')
 		ORDER BY 
 		    DATE_FORMAT(cs.class_schedule_date, '%Y-%m') ASC
     </select>
-    
-    
-	
-	
 	
 	<!-- =========================================================================================== -->
 	<!-- settlement 값 가져오기 -->
@@ -934,7 +1013,7 @@
 			</if>
 			AND 
 				DATE_FORMAT(CURDATE(), '%Y-%m') > DATE_FORMAT(cs.class_schedule_date, '%Y-%m')  
-		) AS subquery;
+		) AS subquery
 	</select>
 	
 	<!-- 한달 정산금 -->
@@ -955,9 +1034,9 @@
 			ON 
 				p.class_schedule_code  = cs.class_schedule_code 
 			WHERE 
-				c.member_code = 1079
+				c.member_code = #{member.member_code}
 			AND 
-				cs.class_schedule_date LIKE CONCAT('2024-05', '%')
+				cs.class_schedule_date LIKE CONCAT('${monthPicker}', '%')
 		) AS subquery;
 	</select>
 	

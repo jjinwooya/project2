@@ -1,4 +1,10 @@
 $(function() {
+	//엑세스 토큰 없을 시 충전버튼 비활성화
+	let token = $("#sessionToken").val();
+	if(token == '') {
+		$("#chargeBtn").prop("disabled", true);
+	}
+
     // 금액 입력 이벤트
     $('#will_pay_charge').on('input', function() {
         let willpay = $('#will_pay_charge').val();
@@ -60,10 +66,7 @@ $(function() {
         }
     });
     
-	let token = $("#sessionToken").val();
-	if(token == '') {
-		$("#chargeBtn").prop("disabled", true);
-	}
+	
 });
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -77,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function() {
         button.className = "btn btn-light text-black m-2 custom-btn";
         button.setAttribute("data-bs-toggle", "modal");
         button.setAttribute("data-bs-target", "#modal-" + info.transfer_agree_dtime);
-        button.textContent = "등록된 계좌";
+        button.textContent = "등록된 계좌 (" + info.bank_name + ")";
         buttonsContainer.appendChild(button);
 
         // Create the modal
@@ -135,6 +138,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 function linkAccount() {
     sessionStorage.setItem("redirectUrl", "will_pay_charge");
+    
     // 새 창을 열어 사용자 인증 서비스 요청(금융결제원 오픈뱅킹 API 활용)
     let authWindow = window.open("about:blank", "authWindow", "width=500, height=700");
     authWindow.location = "https://testapi.openbanking.or.kr/oauth/2.0/authorize?" +

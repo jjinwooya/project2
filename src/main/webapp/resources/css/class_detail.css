@@ -5,6 +5,7 @@
 	width: 1200px;
 	margin: auto;
 	color : white;
+	line-height: 2.2;
 /* 	margin-top : 50px; */
 }
 
@@ -17,9 +18,23 @@
     position: sticky;
     top: 0;
     background-color: black;
-    z-index: 1000;
+/*     z-index: 1000; */
 }
-
+.section {
+    padding: 20px 0;
+    scroll-margin-top: 63px; /* 네비게이션 바와의 간격 설정 */
+}
+.stickyHeight {
+	margin-top : 60px;
+}
+.classImg img {
+/* 	width: 100%; 너비를 100%로 설정하여 부모 요소의 너비에 맞춥니다 */
+/* 	height: 100px;
+/* 	object-fit: cover;  */
+}
+.classEx {
+	font-color : black;
+}
 .classCurri {
 	margin-top : 10px;
 	margin-bottom : 10px;
@@ -30,23 +45,26 @@
 }
 .classHashtag {
 /* 	display: flex; */
-/* 	justify-content: center; 수평 가운데 정렬 */
+	justify-content: center;
 	align-items: center; 
 }
 .classCurriRound {
 /* 	margin-top : 10px; */
-	margin-bottom : 10px;
+/* 	margin-bottom : 10px; */
 	font-size : 1.1em;
 	font-weight : bold;
 }
 .classCurriContent {
-	margin-bottom : 10px;
-	font-size : 0.9em;
+/* 	margin-bottom : 10px; */
+	font-size : 1.0em;
 	
 }
 .classImg {
 	width : 900px;
 	height : 1300px;
+}
+.map{
+	z-index: auto;
 }
 .nav-container1 {
 	display : flex;
@@ -109,8 +127,12 @@
 	transition: opacity 0.01s ease;
 	opacity: 1;
 }
-
-
+.creatorInfo {
+	display: flex;
+}
+.creatorNickname {
+	margin-left:10px;
+}
 /* .heartImg.fade { */
 /* 	opacity: 0; */
 /* } */
@@ -180,10 +202,9 @@
 /* 	flex-basis: 40%; */
 	        flex: 1;
 }
-/* .userNickname p{ */
-/* 	font-size : 1.0rem; */
-/* } */
-
+.categoryDiv{
+	margin-left : 0px;
+}
 .userNickname p {
 	margin: 0;
 	font-size: 1.1rem; /* Adjust the font size as needed */

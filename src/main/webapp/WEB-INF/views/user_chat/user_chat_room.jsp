@@ -62,7 +62,7 @@
 		background: none;
 	}
 	
-	.chat-room-content {
+	#chat-room-content {
 		flex: 1;
 		padding: 15px;
 		overflow-y: auto;
@@ -108,7 +108,7 @@
     	align-items: flex-end; 
     }
     
-    #send-msg-area {
+    #send-msg-input {
 		height: 100%;
 	    width: 100%;
 	    border: none;
@@ -162,7 +162,7 @@
 		</div>
 		
 		<!-- 채팅 내역 -->
-		<div class="chat-room-content d-flex flex-column">
+		<div class="d-flex flex-column" id="chat-room-content">
 			<!-- 날짜 -->
 			<div class="d-flex flex-row justify-content-center">
 				<span class="chatDate">2024년 7월 4일 목요일</span>
@@ -178,14 +178,17 @@
 					<span class="send-time">오후 5:03</span>
 				</div>
 			</div>		
+			
 			<div class="d-flex flex-row justify-content-end msg-area">
 				<span class="send-time">오후 5:04</span>
 				<span class="my_msg">안녕하세요. 둘리예요.</span>
 			</div>		
+			
 			<div class="d-flex flex-row justify-content-end msg-area">
 				<span class="send-time">오후 5:04</span>
 				<span class="my_msg">준비물이 있을까요?</span>
-			</div>		
+			</div>	
+				
 			<div class="d-flex flex-row flex-column msg-area">
 				<div class="d-flex flex-row mb-1">
 					<img src="${pageContext.request.contextPath}/resources/images/class/pic.png" class="receiver_img">
@@ -196,6 +199,7 @@
 					<span class="send-time">오후 5:05</span>
 				</div>
 			</div>		
+			
 			<div class="d-flex flex-row flex-column msg-area">
 				<div class="d-flex flex-row mb-1">
 					<img src="${pageContext.request.contextPath}/resources/images/class/pic.png" class="receiver_img">
@@ -243,46 +247,96 @@
 		
 		<!-- 메시지 입력창 -->
 		<div class="chat-room-text d-flex flex-column">
-			<input type="text" id="send-msg-area" class="d-flex flex-row" placeholder="메시지 보내기">
+			<input type="text" id="send-msg-input" class="d-flex flex-row" placeholder="메시지 보내기" onkeypress="checkEnter(event, this)">
 			<div class="chat-icon-area flex-row d-flex justify-content-between">
 				<button type="button" class="btn chat-icon-btm p-0" id=""><i class="bi bi-paperclip"></i></button>
-				<button type="button" class="btn" id="msg-send-btn">전송</button>
+				<button type="button" class="btn" id="msg-send-btn"  onclick="send(this)" >전송</button>
 			</div>
 		</div>
 		
 	</div>
 	
 	<script type="text/javascript">
-		$(function() {
+		let receiver_email = "${receiverInfo.member_email}";
+		let receiver_code =  "${receiverInfo.member_code}";
+		console.log("receiver_email : " + receiver_email);
+		console.log("receiver_code : " + receiver_code);
+		
+		if(receiver_email != "") {
+			const startMessage = {
+					type: "TYPE_INIT_COMPLETE",
+					receiver_email : receiver_email
+			};
+			window.parent.postMessage(startMessage, '*');
+		}
+		
+		
+		function send(target) {
+			let inputElement = $("#send-msg-input");
+			let inputValue = $("#send-msg-input").val();
+			let room_code = "";
 			
+			const message = {
+				    type: 'SEND_MESSAGE',
+				    chat_room_code: room_code,
+				    sender_code: 'user1',
+				    content: inputValue
+			};
+			window.parent.postMessage(message, '*');
+			
+			// 입력 메세지가 비어있을 경우 작업 종료
+			if(inputValue == "") {
+				inputElement.focus();
+				return;
+			}
+			
+			// 채팅 입력창 초기화
+			inputElement.val("");
+			inputElement.focus();
+			
+		}
+		
+		function checkEnter(event, target) {
+			console.log("checkEnter - event : " + event + ", target : " + target);
+			// 누른 키의 코드값 가져오기
+			let keyCode = event.keyCode;
+			if(keyCode == 13) { // 엔터키 감지하여 send() 함수 호출
+				send(target);
+			}
+		}
+	
+		
+		$(function() {
+			// 뒤로 가기 누르면 채팅 목록으로 가기
 			$("#to-chat-list").on("click", function() {
 				location.href = "user-chat-list";
 			});
 			
+						
+			// 부모창(top.jsp)으로부터 전송된 메시지 수신/처리 후 다시 보내기
+			$(window).on("message", function(event) {
+				const data = event.originalEvent.data;
+				console.log("data : " + data);
+				
+				if (data.type === "NEW_MESSAGE") {
+					// 채팅방에 메세지 추가
+				    $('#chat-room-content').append(`<p>${data.content}</p>`);
+				    
+				    const readMessage = {
+				        type: "READ_MESSAGE",
+				        chat_room_code: '12345',
+				        message_code: data.message_code // Use message unique code
+				    };
+				    
+				    window.parent.postMessage(readMessage, '*');
+				}
+			});
+			
+			
+			
 		});
 		
 		
-		let receiver_email = "${receiverInfo.member_email}";
-		console.log("receiver_email : " + receiver_email);
-		
-		if(receiver_email != "") {
-			startChat();
-		}
-		
-		function startChat() {
-			console.log("startChat 실행");
-			
-			let startChatInterval = setInterval(() => {
-				if(ws != null && ws.readyState === ws.OPEN) { // 웹소켓 연결 시
-					console.log("1:1 채팅방 웹소켓 연결 완료");
-					// 초기화 메세지 전송
-					sendMessage("INIT", "", receiver_member_code, "", "");
-					// 메세지 전송 후 반복 인터벌 작업 종료 => clearInterval() 함수 활용
-					// => 함수 파라미터로 반복 인터벌 수행하는 함수 전달
-					clearInterval(startChatInterval);
-				}
-			}, 1000);
-		}
 	</script>
 
 

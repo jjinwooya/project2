@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-config.dtd">
+  <configuration>
+  	<typeAliases>
+		<!-- <typeAlias type="클래스타입" alias="별칭" /> -->
+		<typeAlias type="itwillbs.p2c3.class_will.vo.MemberVO" alias="member"/>
+		<typeAlias type="itwillbs.p2c3.class_will.vo.ChatMessageVO" alias="chatMessage"/>
+		<typeAlias type="itwillbs.p2c3.class_will.vo.ChatRoomVO" alias="chatRoom"/>
+	</typeAliases>
+  </configuration>

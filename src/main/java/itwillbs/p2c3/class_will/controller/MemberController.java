@@ -110,7 +110,8 @@ public class MemberController {
 			session.setMaxInactiveInterval(100000000);
 			return "redirect:/";
 			
-		} else if(dbMember == null || !passwordEncoder.matches(member.getMember_pwd(), dbMember.getMember_pwd())) { // 로그인 실패
+		} else if(dbMember == null || !passwordEncoder.matches(member.getMember_pwd(), dbMember.getMember_pwd()) 
+					|| !member.getMember_email().equals(dbMember.getMember_email())) { // 로그인 실패
 			model.addAttribute("msg", "이메일 또는 비밀번호를 확인해 주세요.");
 			return "result_process/fail";
 			

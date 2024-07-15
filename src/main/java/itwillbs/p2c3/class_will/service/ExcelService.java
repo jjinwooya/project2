@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import itwillbs.p2c3.class_will.controller.AdminController;
 import itwillbs.p2c3.class_will.mapper.AdminMapper;
 
 
@@ -34,10 +33,12 @@ public class ExcelService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ExcelService.class);
 	
+	private static final int MAX_CELL_LENGTH = 32767;
 	
     public byte[] createExcel(String title, List<String> headers, List<Map<String, Object>> data) throws IOException {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet(title);
+
         // 헤더 행 생성
         Row headerRow = sheet.createRow(0);
         for (int i = 0; i < headers.size(); i++) {
@@ -51,15 +52,23 @@ public class ExcelService {
             Row row = sheet.createRow(rowNum++);
             int cellNum = 0;
             for (String header : headers) {
-                Cell cell = row.createCell(cellNum++);
-                if(rowData.get(header) == null || rowData.get(header).equals("")) {
-                	cell.setCellValue("");
-                }else {
-                	cell.setCellValue(rowData.get(header).toString());
+                String text = rowData.get(header) == null ? "" : rowData.get(header).toString();
+                if (text.length() > MAX_CELL_LENGTH) {
+                    // 텍스트를 나누어 여러 셀에 분배
+                    int parts = (int) Math.ceil((double) text.length() / MAX_CELL_LENGTH);
+                    for (int j = 0; j < parts; j++) {
+                        int start = j * MAX_CELL_LENGTH;
+                        int end = Math.min(start + MAX_CELL_LENGTH, text.length());
+                        Cell cell = row.createCell(cellNum++);
+                        cell.setCellValue(text.substring(start, end));
+                    }
+                } else {
+                    Cell cell = row.createCell(cellNum++);
+                    cell.setCellValue(text);
                 }
             }
         }
-        
+
         // 각 열의 너비를 자동으로 조정
         for (int i = 0; i < headers.size(); i++) {
             sheet.autoSizeColumn(i);
@@ -161,7 +170,7 @@ public class ExcelService {
                 rowData = new ArrayList<>();
                 for (int j = 0; j < headerRow.getLastCellNum(); j++) {
                     Cell cell = row.getCell(j);
-                    if (cell == null || cell.getCellType() == CellType.BLANK) {
+                    if (cell == null || cell.getCellTypeEnum() == CellType.BLANK) {
                         rowData.add(""); // 비어 있는 셀을 빈 문자열로 처리
                     } else {
                         String cellValue = getCellValueAsString(cell, dateFormat);
@@ -191,7 +200,7 @@ public class ExcelService {
     
     private String getCellValueAsString(Cell cell, SimpleDateFormat dateFormat) {
         DecimalFormat decimalFormat = new DecimalFormat("#.##########");
-        switch (cell.getCellType()) {
+        switch (cell.getCellTypeEnum()) {
             case STRING:
                 System.out.println("@@@@@@@@@@@@@@@@Stringcell : " + cell);
                 return cell.getStringCellValue();
@@ -207,7 +216,7 @@ public class ExcelService {
                 System.out.println("@@@@@@@@@@@@@@@@booleancell : " + cell);
                 return String.valueOf(cell.getBooleanCellValue());
             case FORMULA:
-                switch (cell.getCachedFormulaResultType()) {
+                switch (cell.getCachedFormulaResultTypeEnum()) {
                     case STRING:
                         System.out.println("@@@@@@@@@@@@@@@@Stringcell : " + cell);
                         return cell.getRichStringCellValue().getString();

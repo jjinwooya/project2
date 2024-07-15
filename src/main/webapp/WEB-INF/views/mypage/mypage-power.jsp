@@ -343,7 +343,7 @@ tbody tr:hover {
 	            },
 	            responsive: true,
 	            maintainAspectRatio: false,
-	            barPercentage: 0.4 // 막대 너비 설정
+	            barPercentage: 0.2 // 막대 너비 설정
 	        }
 	        });
 	    } else {

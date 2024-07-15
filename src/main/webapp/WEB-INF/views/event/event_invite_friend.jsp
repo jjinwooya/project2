@@ -41,6 +41,7 @@ body {
   font-family: "Nanum Gothic", sans-serif;
   font-weight: 400;
   font-style: normal;
+  color : white;
 }
 main {
 	width: 1400px;
@@ -161,7 +162,8 @@ td > img{
 		 	dataType: "text", 		
 		 	success: function (response) {
 		 		if(response === "true"){
-		 			alert("메일 발송 완료");
+		 			alert("이벤트 등록 완료, 포인트를 획득하셨습니다");
+		 			location.href = "eventDetail?event_code=0&tab=contact";
 		 		}else{
 		 			alert(response);
 		 		}			
@@ -202,7 +204,10 @@ td > img{
 	    if (tab === 'code') {
 	        $('#profile-tab').tab('show');
 	        $('#invite_code').val(inviteCode);
+	    }else if(tab === 'contact'){
+	    	$('#contact-tab').tab('show');
 	    }
+	    
 	});
 </script>
 

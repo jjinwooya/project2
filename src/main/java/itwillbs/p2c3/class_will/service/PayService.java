@@ -165,36 +165,27 @@ public class PayService {
 	//======================================================================
 	//access_token 획득
 	public Map getAccessToken(Map<String, String> authResponse) {
-		Map token = bankApi.requestAccessToken(authResponse);
-		System.out.println("accessTOKEN!" + token.get("access_token"));
-		
-		//bankUserInfo 데이터 가져오기
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("access_token", (String)token.get("access_token"));
-		map.put("user_seq_no", (String)token.get("user_seq_no"));
-		
-		Map userInfo = bankApi.requestUserInfo(map);
-		List<Map<String, Object>> res_list = (List<Map<String, Object>>)userInfo.get("res_list");
-		
-		//update를 하기위한 Map객체
-		Map<String, String> fintech = new HashMap<String, String>();
-		fintech.put("access_token", (String)map.get("access_token"));
-		
-		//마지막 계좌에서 fintech_use_num 가져오기
-		Map<String, Object> lastMap = res_list.get(res_list.size() - 1);
-		for(Map.Entry<String, Object> entry : lastMap.entrySet()) {
-			fintech.put((String)entry.getKey(), (String)entry.getValue());
-		}
-		//fintech_num 등록
-		payMapper.updateFintechUseNum(fintech);
-		
-		
-		return token;
+		return bankApi.requestAccessToken(authResponse);
 	}
 	
 	//access_token DB 등록
 	public void registAccessToken(Map<String, String> map) {
 		payMapper.registAccessToken(map);
+		
+		Map<String, String> fintech = new HashMap<String, String>();
+		fintech.put("access_token", (String)map.get("access_token"));
+		
+		Map userInfo = bankApi.requestUserInfo(map);
+		List<Map<String, Object>> res_list = (List<Map<String, Object>>)userInfo.get("res_list");
+		//마지막 계좌에서 fintech_use_num 가져오기
+		Map<String, Object> lastMap = res_list.get(res_list.size() - 1);
+		for(Map.Entry<String, Object> entry : lastMap.entrySet()) {
+			fintech.put((String)entry.getKey(), (String)entry.getValue());
+		}
+		
+		//fintech_num 등록
+		payMapper.updateFintechUseNum(fintech);
+		
 	}
 	
 	//token과 user_seq_no을 이용하여 bankUserInfo 가져오기
@@ -212,7 +203,7 @@ public class PayService {
 //		for(Map.Entry<String, Object> entry : lastMap.entrySet()) {
 //			fintech.put((String)entry.getKey(), (String)entry.getValue());
 //		}
-//		
+		
 //		payMapper.updateFintechUseNum(fintech);
 		
 		return userInfo;

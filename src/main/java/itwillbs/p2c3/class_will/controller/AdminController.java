@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpSession;
 
@@ -45,9 +44,7 @@ import itwillbs.p2c3.class_will.service.CscService;
 import itwillbs.p2c3.class_will.service.ExcelService;
 import itwillbs.p2c3.class_will.service.PayService;
 import itwillbs.p2c3.class_will.vo.CategoryData;
-import itwillbs.p2c3.class_will.vo.GroupedData;
 import itwillbs.p2c3.class_will.vo.MemberVO;
-import retrofit2.http.POST;
 
 @Controller
 public class AdminController {
@@ -75,11 +72,13 @@ public class AdminController {
 	@GetMapping("admin")
 	public String admin(Model model, HttpSession session) {
 		MemberVO member = (MemberVO)session.getAttribute("member");
-		String member_email = member.getMember_email();
-		
 		if(member == null) {
 			return WillUtils.checkDeleteSuccess(false, model, "로그인 후 이용해주세요", false);
-		}else if(!member_email.equals("admin")) {
+		}
+		
+		String member_email = member.getMember_email();
+		
+		if(!member_email.equals("admin")) {
 			return WillUtils.checkDeleteSuccess(false, model, "관리자만 이용 가능합니다", false);
 		}
 		
@@ -95,7 +94,8 @@ public class AdminController {
         }
         
 		// 월별 매출 서치
-		List<Integer> sales_list = adminService.getWillpayChart();
+        List<Map<String, Object>> sales_list = adminService.getWillpayChart();
+		// TODO Map으로 바꾸기
 		
 		// 오늘 회원가입 숫자
 		Integer new_member = adminService.getNewMember();
@@ -588,7 +588,6 @@ public class AdminController {
     @PostMapping("admin-csc-pro")
     public String noticePro(@RequestParam Map<String, Object> map, Model model) {
     	boolean isInsertSuccess = false;
-    	String result = "";
     	String registType = (String)map.get("registType");
     	
     	if(registType.equals("regist")) {
@@ -598,13 +597,10 @@ public class AdminController {
     	}
     	
     	if(!isInsertSuccess) {
-		result = WillUtils.checkDeleteSuccess(false, model, "글 등록 실패!", true);
-    		return result;
+    		return WillUtils.checkDeleteSuccess(false, model, "글 등록 실패!", true);
     	}
     	
-    	result = WillUtils.checkDeleteSuccess(true, model, "글 등록 완료!", true);    	
-    	
-    	return result;
+    	return WillUtils.checkDeleteSuccess(true, model, "글 등록 완료!", true);    	
     }
     
   @GetMapping("admin-pay")
@@ -657,9 +653,16 @@ public class AdminController {
   
   @ResponseBody
   @GetMapping("willpay-chart")
-  public List<Integer> willpayChart() {
-	  List<Integer> list = adminService.getWillpayChart(); 
-	  
+  public List<Map<String, Object>> willpayChart() {
+	  List<Map<String, Object>> list = adminService.getWillpayChart(); 
+	  return list;
+  }
+  
+  
+  @ResponseBody
+  @GetMapping("pay-chart")
+  public List<Map<String, Object>> payChart() {
+	  List<Map<String, Object>> list = adminService.getPayChart(); 
 	  return list;
   }
 		  
@@ -751,15 +754,23 @@ public class AdminController {
     @GetMapping("admin-class-report-detail")
     public String classReportDetail(int class_report_code, Model model, HttpSession session) {
 		MemberVO member = (MemberVO)session.getAttribute("member");
-		String member_email = member.getMember_email();
-		
+		String category = "";
 		if(member == null) {
 			return WillUtils.checkDeleteSuccess(false, model, "로그인 후 이용해주세요", false);
-		}else if(!member_email.equals("admin")) {
+		}
+		String member_email = member.getMember_email();
+		if(!member_email.equals("admin")) {
 			return WillUtils.checkDeleteSuccess(false, model, "관리자만 이용 가능합니다", false);
 		}
+		
     	Map<String, String> report = adminService.getClassReportDetail(class_report_code);
-    	String category = report.get("class_report_big_category") + " / " + report.get("class_report_small_category");
+    	if(report.get("class_report_small_category") == null) {
+    		category = report.get("class_report_big_category");
+    	}else {
+    		category = report.get("class_report_big_category") + " / " + report.get("class_report_small_category");
+    	}
+    	
+    	
     	report.put("category", category);
     	
     	model.addAttribute("report", report);
@@ -768,26 +779,30 @@ public class AdminController {
     
     @ResponseBody
     @PostMapping("hideClass")
-    public boolean hideClass(@RequestParam Map<String, Object> params,Model model) {
+    public String hideClass(@RequestParam Map<String, Object> params,Model model) {
     	String class_code = (String)params.get("class_code");
     	String class_report_code = (String)params.get("class_report_code");
     	boolean isSuccess = adminService.updateClassReportStatus(class_report_code, "hide");
     	if(!isSuccess) {
-    		return isSuccess;
+    		return "false";
     	}
     	isSuccess = adminService.updateClassStatusHide(class_code);
     	if(!isSuccess) {
-    		return isSuccess;
+    		return "false";
     	}
     	
-    	return true;
+    	return "true";
     }
     
     @ResponseBody
     @PostMapping("cancelReport")
-    public boolean cancelReport(@RequestParam Map<String, Object> params) {
+    public String cancelReport(@RequestParam Map<String, Object> params) {
     	String class_report_code = (String)params.get("class_report_code");
-    	return adminService.updateClassReportStatus(class_report_code, "cancel");
+    	boolean isSuccess = adminService.updateClassReportStatus(class_report_code, "cancel");
+    	if(!isSuccess) {
+    		return "false";
+    	}
+    	return "true";
     }
     
 //    @ResponseBody

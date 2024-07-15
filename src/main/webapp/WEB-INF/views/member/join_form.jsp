@@ -181,20 +181,20 @@
 							</div>
 							<div class="regex" id="regex-tel"></div>
 						</div>	
-						<div class="d-grid gap-2 col-4  mt-2 pe-3 mb-2 " style="height: 58px; padding: 0">
-							<button class="float-start" type="button" id="phone-auth-btn" onclick="authSms()">인증번호 전송</button>
-						</div>	
+						
+						
+						
+						<%-- 클래스 넣고 주석 풀기 --%> 
+<!-- 						<div class="d-grid gap-2 col-4  mt-2 pe-3 mb-2 " style="height: 58px; padding: 0"> -->
+<!-- 							<button class="float-start" type="button" id="phone-auth-btn" onclick="authSms()">인증번호 전송</button> -->
+<!-- 						</div>	 -->
+						<%-- 클래스 넣고 주석 풀기 --%> 
+						
+						
+						
+						
 					</div>
 					<div class="row nav-fill" id="sms-auth"> 
-<!-- 						<div class="col-8 "> -->
-<!-- 							<div class="form-floating mt-2 " > -->
-<!-- 								<input type="text" class="form-control " id="phone_auth_number" name="phone_auth_number" placeholder="123456" required> -->
-<!-- 								<label for="phone_auth_number">인증번호</label> -->
-<!-- 							</div> -->
-<!-- 						</div>	 -->
-<!-- 						<div class="d-grid gap-2 col-4 mt-2 pe-3" style="height: 58px; padding: 0"> -->
-<!-- 							<button class="float-start join-btn" type="button" id="auth-btn" onclick="authSmsBtn()">확인</button> -->
-<!-- 						</div> -->
 					</div>
 					<div class="regex mb-3" id="regex-auth"></div>
 					<fieldset>

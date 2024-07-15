@@ -65,7 +65,7 @@ public interface AdminMapper {
 	
 	void insertSettlement(int memberCode, String month, double totalSales);
 
-	List<Integer> selectWillpayChart();
+	List<Map<String, Object>> selectWillpayChart();
 
 	List<Map<String, Object>> selectRewardData();
 
@@ -114,6 +114,8 @@ public interface AdminMapper {
 	Map<String, Object> selectEventDetail(int event_code);
 
 	boolean updateEventHide(@Param("updateRow") Map<String, Object> updateRow);
+
+	List<Map<String, Object>> selectPayChart();
 	
 
 }

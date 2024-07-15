@@ -149,7 +149,7 @@ th:nth-child(2), td:nth-child(2) {
 									${member.member_name}님</div>
 								<!-- 								여기부터 토스트 ui -->
 								<div class="table-responsive">
-									<h3>나의 흔적이 ${totalReview}개 있습니다.</h3>
+									<h3>나의 리뷰 흔적이 ${totalReview}개 있습니다.</h3>
 									<p>${member.member_name}님이작성한 리뷰들</p>
 									<table class="table table-hover">
 										<thead>
@@ -191,6 +191,56 @@ th:nth-child(2), td:nth-child(2) {
 									</div>
 								</div>
 								<div class="table-responsive">
+									<h3>내가 적은 클래스 문의 흔적이 ${totalInquiry}개 있습니다.</h3>
+									<p>클래스 정보</p>
+									<table class="table table-hover">
+										<thead>
+											<tr>
+												<th>클래스 이름</th>
+												<th>문의 제목</th>
+												<th>삭제 하기</th>
+											</tr>
+										</thead>
+										<tbody>
+											<c:forEach var="memberInquiry" items="${memberInquiry}"
+												varStatus="loop">
+												<tr>
+													<td>${memberInquiry.class_name}</td>
+													<td>${memberInquiry.class_inquiry_subject}</td>
+													<td>
+														<button class="btn btn-danger"
+															onclick="confirmDelete2(${memberInquiry.class_inquiry_code})">삭제</button>
+													</td>
+												</tr>
+											</c:forEach>
+										</tbody>
+									</table>
+										<div id="pageList">
+										<input type="button" value="이전"
+											onclick="location.href='my-delete?pageNum=${pageNum - 1}'"
+											<c:if test="${pageNum == 1}">disabled</c:if> />
+										<c:forEach var="i" begin="1" end="${maxPage}">
+											<c:choose>
+												<c:when test="${pageNum == i}">
+													<b>${i}</b>
+												</c:when>
+												<c:otherwise>
+													<a href="my-delete?pageNum=${i}">${i}</a>
+												</c:otherwise>
+											</c:choose>
+										</c:forEach>
+										<input type="button" value="다음"
+											onclick="location.href='my-delete?pageNum=${pageNum + 1}'"
+											<c:if test="${pageNum == maxPage or maxPage == 0}">disabled</c:if> />
+									</div>
+								</div>
+								<div class="col-md-12 text-right h2 mb-5">*경고 
+									${member.member_name}님 일괄삭제 기능*<button id="deleteAllButton" class="btn btn-danger">일괄삭제</button></div>
+								
+								
+								
+								
+								<div class="table-responsive">
 									<c:set var="credit" value="${member.member_credit}" />
 									<h3>${member.member_name}님의
 										남은 윌페이 잔액은
@@ -219,31 +269,7 @@ th:nth-child(2), td:nth-child(2) {
 											</div>
 										</form>
 									</div>
-									<!-- col -->
-									<!--									<table class="table table-hover"> -->
-									<!-- 										<thead> -->
-									<!-- 											<tr> -->
-									<!-- 												<th>클래스 이름</th> -->
-									<!-- 												<th>리뷰 제목</th> -->
-									<!-- 												<th>리뷰 별점</th> -->
-									<!-- 												<th>작성 날짜</th> -->
-									<!-- 												<th>답변 여부</th> -->
-									<!-- 												<th>수정</th> -->
-									<!-- 												<th>삭제</th> -->
-									<!-- 											</tr> -->
-									<!-- 										</thead> -->
-									<!-- 										<tbody> -->
-									<!-- 											<tr> -->
-									<!-- 												<td>아직 미정</td> -->
-									<!-- 												<td>아직 미정</td> -->
-									<!-- 												<td>아직 미정</td> -->
-									<!-- 												<td>아직 미정</td> -->
-									<!-- 												<td>아직 미정</td> -->
-									<!-- 												<td>아직 미정</td> -->
-									<!-- 											</tr> -->
-
-									<!-- 										</tbody> -->
-									<!-- 									</table> -->
+								
 								</div>
 
 							</div>
@@ -293,8 +319,44 @@ th:nth-child(2), td:nth-child(2) {
 	            }
 	        });
 	    } 
+	   function confirmDelete2(class_inquiry_code) {
+		   if (confirm("삭제하시겠습니까?")) {
+               deleteInquiry2(class_inquiry_code);
+           }	
+	   }
+
+	   function deleteInquiry2(class_inquiry_code) {
+	        $.ajax({
+	            url: 'delete-inquiry',
+	            type: 'POST',
+	            data: {class_inquiry_code: class_inquiry_code},
+	            success: function(response) {
+	                alert('성공적으로 삭제했습니다.');
+	                location.reload(); 
+	            },
+	            error: function() {
+	                alert('리뷰 삭제에 실패하였습니다.');
+	            }
+	        });
+	    }
 	   $(function() {
-					
+		   $('#deleteAllButton').click(function() {
+	            if (confirm("${member.member_name}님, 정말 모든 데이터를 삭제하시겠습니까?")) {
+	            		            	
+	            	$.ajax({
+	                    url: 'delete-all',
+	                    type: 'POST',
+	                    data: { member_code: '${member.member_code}' },
+	                    success: function(response) {
+	                        alert('성공적으로 모든 데이터를 삭제했습니다.');
+	                        location.reload();
+	                    },
+	                    error: function() {
+	                        alert('데이터 삭제에 실패했습니다.');
+	                    }
+	                });
+	            }
+	        });		
 			// 비밀번호 정규표현식
 			$("#member_pwd").on("input", function() {
 			      let inputPwd = $(this).val();

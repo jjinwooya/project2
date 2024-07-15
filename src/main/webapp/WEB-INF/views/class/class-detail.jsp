@@ -38,6 +38,23 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
 <style>
+      .fixed-button {
+          position: fixed;
+          top: 50%; /* 위에서부터 50% 위치 */
+          right: 20px;
+          background-color: #007BFF;
+          color: white;
+          border: none;
+          border-radius: 50%;
+          width: 60px;
+          height: 60px;
+          font-size: 24px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+          cursor: pointer;
+          display: none; /* 초기에는 숨김 */
+          transform: translateY(-50%); /* 버튼을 수직 중앙 정렬 */
+	}
+
     .flatpickr-calendar {
         font-size: 24px; /* 기본 글꼴 크기 조정 */
     }
@@ -149,6 +166,8 @@
 <header>
     <jsp:include page="../inc/top.jsp" />
 </header>
+    <!-- 고정 버튼 -->
+	<button class="fixed-button" id="backButton" onclick="javascript:reportBack()">◀️</button>
 <div class="container1">
     <!-- 캐러셀 시작 -->
     <div class="row col-md-12">
@@ -160,30 +179,21 @@
             </div>
             <div class="carousel-inner" role="listbox">
 				<c:if test="${not empty classInfo.class_image}">
-	                <div class="carousel-item active rounded col-12">
-    	                <img src="${pageContext.request.contextPath}/${classInfo.class_image}" class="img-fluid bg-secondary rounded" alt="First slide">
-<%-- 	                    <img src="${pageContext.request.contextPath}/resources/img/fruite-item-1.jpg" class="img-fluid bg-secondary rounded" alt="First slide"> --%>
+	                <div class="carousel-item active rounded col-12 classImg">
+    	                <img src="${pageContext.request.contextPath}/resources/upload/${classInfo.class_image}" class="img-fluid bg-secondary rounded" alt="First slide">
+<%--     	                <img src="${pageContext.request.contextPath}/resources/images/class/class_2.png" class="img-fluid bg-secondary rounded" alt="First slide"> --%>
 	                </div>
 				</c:if>
 				<c:if test="${not empty classInfo.class_image2}">
-	                <div class="carousel-item rounded col-12">
-                    	<img src="${pageContext.request.contextPath}/${classInfo.class_image2}" class="img-fluid bg-secondary rounded" alt="Second slide">
+	                <div class="carousel-item rounded col-12 classImg">
+                    	<img src="${pageContext.request.contextPath}/resources/upload/${classInfo.class_image2}" class="img-fluid bg-secondary rounded" alt="Second slide">
 					</div>				
 				</c:if>
 				<c:if test="${not empty classInfo.class_image3}">
-	                <div class="carousel-item rounded col-12">
-                    	<img src="${pageContext.request.contextPath}/${classInfo.class_image3}" class="img-fluid bg-secondary rounded" alt="Third slide">
+	                <div class="carousel-item rounded col-12 classImg">
+                    	<img src="${pageContext.request.contextPath}/resources/upload/${classInfo.class_image3}" class="img-fluid bg-secondary rounded" alt="Third slide">
 					</div>				
 				</c:if>
-<!-- 		                <div class="carousel-item active rounded"> -->
-<%-- 		                    <img src="${pageContext.request.contextPath}/resources/img/fruite-item-1.jpg" class="img-fluid bg-secondary rounded" alt="First slide"> --%>
-<!-- 		                </div> -->
-<!-- 		                <div class="carousel-item rounded"> -->
-<%-- 		                    <img src="${pageContext.request.contextPath}/resources/img/fruite-item-2.jpg" class="img-fluid rounded" alt="Second slide"> --%>
-<!-- 		                </div> -->
-<!-- 		                <div class="carousel-item rounded"> -->
-<%-- 		                    <img src="${pageContext.request.contextPath}/resources/img/fruite-item-3.jpg" class="img-fluid rounded" alt="Third slide"> --%>
-<!-- 		                </div> -->
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselId" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -242,18 +252,27 @@
     <div class="row">
         <!-- navbar content -->
         <div class="content1 col-md-9">
-            <div id="section1 col-12">
+<!--             <div id="section1 col-12"> -->
+            <div id="section1" class="section">
             	<div class="mt-3">
-					<h5>클래스 소개</h5>
+					<h4>클래스 소개</h4>
+					<div class="classEx col-11">
+						<h7>${classInfo.class_ex }</h7>
+					</div>
 		            <div id="section col-12">
-						<div class="location">클래스 위치 : ${classInfo.class_location}</div>
+						<h4>클래스 위치</h4>
+						<div class="location">${classInfo.class_location}</div>
 		                <div id="map" style="width: 875px; height: 400px;"></div>
+		            </div>
+		            <div class="createrEx mt-4">
+						<h4>크리에이터 소개</h4>
+		            	<h7>${classInfo.class_creator_explain}</h7>
 		            </div>
 				</div>
             </div> <!-- section1 -->
-            <div id="section2">
+            <div id="section2"class="section">
             	<div class="mt-3">
-              		<h5>커리큘럼</h5>
+              		<h4>커리큘럼</h4>
 					<div class="classCurri">
 						<c:choose>
 							<c:when test="${not empty classCurri}">
@@ -276,8 +295,8 @@
               	</div>
             </div>
             <!-- section2 -->
-            <div id="section3">
-            	<h5>클래스 후기</h5>
+            <div id="section3"class="section">
+            	<h4>클래스 후기</h4>
 				<div class="classCurri">
 					<div class="row reviewInfo my-3 mx-1">
 	                    <!-- 테이블 -->
@@ -338,9 +357,9 @@
 	                </div>
 				</div>
             </div>
-            <div id="section4">
+            <div id="section4"class="section">
                 <!-- Q&A 내용 -->
-              	<h5>클래스 Q&A</h5>
+              	<h4>클래스 Q&A</h4>
                 <!-- 테이블 -->
                 <div class="card text-center my-3">
                     <div class="card-body p-2 reviewInfo">
@@ -387,12 +406,28 @@
         <!-- 우측 강의 소개 -->
         <div class="col-md-3">
             <form action="payment" method="post" id="class_form">
-                <input type="hidden" name="class_code" value="${classInfo.class_code }">
-                <input type="hidden" name="class_big_category" value="${classInfo.class_big_category }">
-                <input type="hidden" name="class_small_category" value="${classInfo.class_small_category }">
+                <input type="hidden" name="class_code" value="${classInfo.class_code}">
+                <div class="categoryDiv">
+	                <button class="btn btn-outline-light" type="button" name="class_big_category">${classInfo.class_upper}</button>
+	                <button class="btn btn-outline-light" type="button" name="class_small_category">${classInfo.class_lower}</button>
+                </div>
                 <div class="box1">
-                    <h6>${classInfo.class_name }</h6>
-                    <h3>${classInfo.class_ex }</h3>
+                    <div class="row creatorInfo mt-2 mb-2">
+                    	<div class="col-2 creatorImg">
+		                    <c:choose>
+								<c:when test="${not empty classInfo.member_img}">
+										<img src="${pageContext.request.contextPath}/resources/upload/${classInfo.member_img}" class="memberImg"style="width : 50px; height : 50px;">
+								</c:when>
+								<c:otherwise>
+										<img src="${pageContext.request.contextPath}/resources/images/class/pic.png" class="memberImg"alt="Default Image"style="width : 50px; height : 50px;">
+								</c:otherwise>
+							</c:choose>
+						</div>
+                    	<div class="col creatorNickname mt-4">
+		                    <h6>${classInfo.member_nickname}</h6>
+						</div>
+                    </div>
+                    <h5>${classInfo.class_name }</h5>
                     <div class="row">
                         <div id="datePicker"></div>
                         <!-- 선택된 날짜를 저장할 input -->
@@ -431,7 +466,7 @@
 						<c:forEach var="hashtagItem" items="${classHashtagList}">
 						<c:set var="hashtags" value="${fn:split(hashtagItem.class_hashtag, ',')}" />
 							<c:forEach var="hashtag" items="${hashtags}">
-								<button type="button" class="btn btn-outline-light btn-sm col-6 hashBtn mt-2 h-75 p-1">${hashtag}</button>
+								<button type="button" class="btn btn-outline-light btn-sm hashBtn w-75 mt-2 h-75 p-1">${hashtag}</button>
 							</c:forEach>
 						</c:forEach>
                     </div>
@@ -491,6 +526,22 @@ document.addEventListener("DOMContentLoaded", function() {
 	var changeSrc = "${pageContext.request.contextPath}/resources/images/profile/heart_full.png"; // 라이크 클래스 추가 했을 시 
 	var heartCountElement = document.getElementById("heartCountElement"); // heartCount 요소
 	
+	
+	// 신고에서 온 요청에 대한 버튼 이벤트
+	var fromReport = "${fromReport}";
+	    if (fromReport) {
+			// 고정 버튼 활성화
+			const backButton = document.getElementById('backButton');
+			   backButton.style.display = 'block';
+			console.log(backButton);
+			
+            // 버튼 클릭 이벤트 추가
+            backButton.addEventListener('click', function() {
+                window.history.back();
+            });
+	    }
+	    
+
 	// btnCustoms 클릭 시의 이벤트 핸들러
 	btnCustoms.addEventListener("click", function() {
 	    // btnCustoms를 클릭했을 때 할 일을 여기에 추가할 수 있습니다.
@@ -750,28 +801,13 @@ document.addEventListener('DOMContentLoaded', function() {
         	 let returnUrl = encodeURIComponent(window.location.href); 
 	         window.location.href = "member-login?returnUrl=" + returnUrl;
         } else {
-	        $("#chatListContent").attr("src", "user-chat-room?receiver_id="+${classInfo.member_code}); // 실제로 열고자 하는 URL로 변경
+	        $("#chatListContent").attr("src", "user-chat-room?receiver_code="+${classInfo.member_code});
 	        $("#chatListModal").css("display", "block");
-	        $("#modalBackdrop").css("display", "block"); // 배경 표시
-	        $("body").css("overflow", "hidden"); // 배경 스크롤 방지
+	        $("#modalBackdrop").css("display", "block"); 
+	        $("body").css("overflow", "hidden"); 
         }
     });
 
-    // 채팅 모달 창 닫기
-    $("#chatModalClose").on("click", function() {
-        $("#chatListModal").css("display", "none");
-        $("#modalBackdrop").css("display", "none");
-        $("body").css("overflow", "auto"); // 배경 스크롤 복구
-    });
-
-    // 채팅 모달 외부를 클릭하면 모달 닫기
-    $(window).on("click", function(event) {
-        if (event.target == document.getElementById("modalBackdrop")) {
-            $("#chatListModal").css("display", "none");
-            $("#modalBackdrop").css("display", "none");
-            $("body").css("overflow", "auto"); // 배경 스크롤 복구
-        }
-    });
 
 });
 </script>

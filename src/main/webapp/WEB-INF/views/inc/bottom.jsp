@@ -152,8 +152,8 @@
 	                    <div class="col-lg-6 d-flex justify-content-start align-items-center" >
 	                        <div class="">
 	                       		 <ul class="bottom-ul">
-									<li class="bottom-menu"><a href="csc">공지사항</a></li>
-									<li class="bottom-menu"><a href="csc-faq">FAQ</a></li>
+									<li class="bottom-menu"><a href="csc?type=notice">공지사항</a></li>
+									<li class="bottom-menu"><a href="csc?type=faq">FAQ</a></li>
 									<li class="bottom-menu"><a href="use-info">이용약관</a></li>
 									<li class="bottom-menu"><a href="privacy-info">개인정보처리방침</a></li>
 									<li class="bottom-menu"><a href="refund-info">환불규정</a></li>
@@ -214,9 +214,8 @@
 		        
 		            <a class="nav-link bottom-nav-link px-0 mx-2 position-relative openChatModal" href="#" id="openChatModal2" >
 		            	<i class="bi bi-envelope bi-top bottom-icon"></i>
-		            	<span class="position-absolute badge-position-bt bg-danger border border-light rounded-circle">
-							<span class="visually-hidden">New alerts</span>
-						</span><br>메시지
+<!-- 		            	<span class="position-absolute badge-position-bt bg-danger border border-light rounded-circle alerts"></span> -->
+						<br>메시지
 					</a>
 		        </li>
 		        <li class="nav-item bottom-nevi-item d-flex justify-content-center align-items-center">
@@ -254,10 +253,9 @@
 			if(x.parentNode){x.parentNode.insertBefore(s,x);}}
 			if(document.readyState==="complete"){l();}
 			else{w.addEventListener("DOMContentLoaded",l);
-			w.addEventListener("load",l);}})();
+			w.addEventListener("load",l);}
+		})();
 		ChannelIO('boot', {
 			"pluginKey": "e4e4b39e-51da-4d32-b93f-b4e5dcacd689" // fill your plugin key
-		});
-		
-		
+		});		
 	</script>

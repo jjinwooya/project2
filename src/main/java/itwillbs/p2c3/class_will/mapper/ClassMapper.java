@@ -45,7 +45,7 @@ public interface ClassMapper {
 	int deleteLikeClass(Map<String, Object> map);
 	
 	// 클래스 좋아요 취소
-	List<Map<String,Object>> selectLikeClassCode(int member_coode);
+	List<Integer> selectLikeClassCode(int member_coode);
 	
 	// 클래스 리스트
 	List<Map<String, Object>> selectClassList(Map<String, Object> list);

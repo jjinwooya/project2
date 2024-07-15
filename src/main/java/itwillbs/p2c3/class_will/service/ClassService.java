@@ -41,7 +41,7 @@ public class ClassService {
 //	}
 	
 	// 클래스 리스트
-	public List<Map<String, Object>> selectLikeClassCode(int member_code){
+	public List<Integer> selectLikeClassCode(int member_code){
 		return mapper.selectLikeClassCode(member_code);
 	}
 	

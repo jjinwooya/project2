@@ -301,31 +301,24 @@ public class PayController {
 		Map map = payService.getAccessToken(authResponse);
 		logger.info("엑세스 토큰: " + map.get("access_token"));
 		
+		String resultSuccess = "";
+		String resultFail = "";
 		if(map == null || map.get("access_token") == null) {
-			model.addAttribute("msg", "토큰 발급 실패! 다시 인증을 해주세요!");
-			model.addAttribute("isClose", true);
-			return "result_process/fail";
+			return resultFail = WillUtils.checkDeleteSuccess(false, model, "토큰 발급 실패! \\n다시 인증을 해주세요!", true);
+		} else {
+			map.put("member_code", member_code);
+			
+			Map<String, String> token = new HashMap<String, String>();
+			token.put("access_token", (String)map.get("access_token"));
+			token.put("user_seq_no", (String)map.get("user_seq_no"));
+			// 세션에 엑세스토큰(access_token)과 사용자번호(user_seq_no) 저장
+			session.setAttribute("token", token);
+			
+			// access_token db저장
+			payService.registAccessToken(map);
+			
+			return resultSuccess = WillUtils.checkDeleteSuccess(true, model, "계좌 인증 완료!", true, "will-pay-charge");
 		}
-		map.put("member_code", member_code);
-		
-		Map<String, String> token = new HashMap<String, String>();
-		token.put("access_token", (String)map.get("access_token"));
-		token.put("user_seq_no", (String)map.get("user_seq_no"));
-		// 세션에 엑세스토큰(access_token)과 사용자번호(user_seq_no) 저장
-		session.setAttribute("token", token);
-		
-		// access_token db저장
-		payService.registAccessToken(map);
-		
-		//session에 저장한 redirectUrl
-		String redirectUrl = (String)session.getAttribute("redirectUrl");
-		
-		//"success.jsp 페이지로 포워딩
-		// 메세지 : "계좌 인증 완료!", isClose 값을 true, "targetURL" 값을  "FintechUserInfo" 설정
-		model.addAttribute("msg", "계좌 인증 완료!");
-		model.addAttribute("isClose", "true");
-		model.addAttribute("targetURL", redirectUrl);
-		return "result_process/success";
 	}
 	
 	// 마이클래스
@@ -338,9 +331,8 @@ public class PayController {
 		int member_code = member.getMember_code();
 		Map<String, Object> memberCode = new HashMap<String, Object>();
 		memberCode.put("member_code", member_code);
+		//결제된 클래스 list 가져오기
 		List<Map<String, String>> payInfoList = payService.getPayInfoList(memberCode);
-		System.out.println(payInfoList);
-		
 		
 		model.addAttribute("payInfoList", payInfoList);
 		return "mypage/mypage-class";
@@ -369,7 +361,6 @@ public class PayController {
 	@GetMapping("refund-willpay")
 	public boolean refundWillpay(@RequestParam Map<String, Object> map, HttpSession session, Model model) {
 		boolean isRefund = false;
-		System.out.println("mappppp:" + map);
 		MemberVO member = (MemberVO) session.getAttribute("member");
 		
 		//금융결제원 파라미터

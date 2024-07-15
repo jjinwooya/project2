@@ -26,9 +26,19 @@
   font-weight: 400;
   font-style: normal;
 }
+  
+
+.btn-outline-primary{
+	color : white!important;
+}
+body{
+	background-color : black;
+	color : white!important;
+}
 main {
 	width: 1400px;
 	margin: 0 auto;
+	
 }
 
 tr td{

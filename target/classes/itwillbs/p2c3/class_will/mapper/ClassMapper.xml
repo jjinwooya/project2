@@ -199,7 +199,7 @@
 		SELECT 
 		    IFNULL(AVG(cr.class_review_rating), 0) AS avg_rating
 		    ,c.class_code
-		    ,c.class_thumbnail
+		    ,c.class_thumnail
 		FROM class c
 		LEFT JOIN class_review cr ON cr.class_code = c.class_code
 		WHERE c.class_regist_status = '2'
@@ -229,7 +229,7 @@
 	</delete>
 	
 	<!-- 클래스 좋아요 -->
-	<select id="selectLikeClassCode" resultType="map">
+	<select id="selectLikeClassCode" resultType="Integer">
 		SELECT class_code
 		FROM like_class
 		WHERE member_code = #{member_code} 
@@ -294,10 +294,9 @@
 	<select id="selectClassCurri" resultType="map">
 		SELECT curri_round
 			, curri_content
-		FROM
-			curri
-		WHERE 
-			class_code = #{class_code}
+		FROM curri
+		WHERE class_code = #{class_code}
+		ORDER BY CAST(curri_round AS UNSIGNED)
 	</select>
 	
 	<!-- 클래스 해시태그 -->
@@ -327,7 +326,16 @@
 		INSERT INTO class_report
 		(class_report_code, class_report_big_category, class_report_small_category, class_report_content, class_report_status, class_code, member_code)
 		VALUES
-		(null, #{big_category}, #{small_category}, #{content}, '처리중', #{class_code}, #{member_code})
+		(null, #{big_category},
+		<choose>
+			<when test="small_category.equals('')">
+				NULL
+			</when>
+			<otherwise>
+				#{small_category}
+			</otherwise>
+		</choose>
+		, #{content}, '처리중', #{class_code}, #{member_code})
 	</insert>
 </mapper>
 	

@@ -140,8 +140,10 @@ th:nth-child(2), td:nth-child(2) {
 						<div class="creator-event mt-5">
 							<div class="col-md-12 text-center h2 mb-5">윌페이 사용 내역</div>
 							<div class="container">
-								<c:forEach begin="1" end="1" var="credit" items="${willpayChargeInfoList }">
-									<h2>윌페이 잔액 <fmt:formatNumber value="${credit.member_credit}" type="number" pattern="#,###" /> 원</h2>
+								<c:forEach var="credit" items="${willpayChargeInfoList }" varStatus="status">
+								    <c:if test="${status.index == 0}">
+								        <h2>윌페이 잔액 <fmt:formatNumber value="${credit.member_credit}" type="number" pattern="#,###" /> 원</h2>
+								    </c:if>
 								</c:forEach>
 								<a href="will-pay-charge" class="btn btn-primary">계좌 등록 및 충전</a>
 								<button class="btn btn-light w-25" id="refundAgreeBtn" onclick="openPopUp()">환불 정책 동의</button>

@@ -36,7 +36,6 @@
 	href="${pageContext.request.contextPath}/resources/css/creator/creator-classReg.css" rel="stylesheet">
 
 <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
-<!-- 썸머노트 cdn -->
 <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
 <!-- <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script> -->
     <style>
@@ -51,6 +50,10 @@
         }
         .addCurri{
         	cursor: pointer;
+        }
+        .note-editor.note-frame .note-editing-area .note-editable {
+            background-color: black; /* 배경색을 검정색으로 설정 */
+            color: white;            /* 글씨색을 흰색으로 설정 */
         }
     </style>
 </head>
@@ -67,38 +70,22 @@
 	</div>
 	<!-- Spinner End -->
 
-	<!-- Single Page Header start -->
-	<div class="container-fluid page-header py-5">
-		<h1 class="text-center text-white display-6">Creator</h1>
-		<ol class="breadcrumb justify-content-center mb-0">
-			<li class="breadcrumb-item"><a href="main">Home</a></li>
-			<li class="breadcrumb-item"><a href="main">크리에이터 페이지</a></li>
-			<li class="breadcrumb-item active text-white">클래스</li>
-		</ol>
-	</div>
-	<!-- Single Page Header End -->
 
 	<div class="container-fluid fruite">
 		<div class="container">
-			<h1 class="mb-4 text-white">Creator Center</h1>
+			<h1 class="mt-4 text-white">Creator Center</h1>
 			<div class="row g-4">
 				<div class="col-lg-12">
 					<div class="row g-4">
 						<jsp:include page="/WEB-INF/views/creator/sideBar.jsp" />
 
 						<div class="col-lg-9 creator-body" >
+							<div class="creator-intro col-md-12">
+								<div class="text-white h2">클래스등록</div>
+								<hr class="text-white mb-5">
+							</div>
 							<div class="creator-main-table col-xl-8 mb-5 ">
-								<form class="validation-form" novalidate action="creator-classRegPro" name="fr" method="post" enctype="multipart/form-data" onsubmit="return confirm('클래스를 등록하시겠습니까?');">
-									<!-- 	셀렉트박스 -->
-									<div class="col-md-12 mb-2" align="center">
-										<div class="col-xl-6 mb-5">
-											<hr style="color:white;">
-											<div>
-												<h3 class="text-white">클래스등록</h3>
-											</div>
-											<hr style="color:white;">
-										</div>
-									</div>
+								<form class="validation-form classReg" novalidate action="creator-classRegPro" name="fr" method="post" enctype="multipart/form-data" onsubmit="return confirm('클래스를 등록하시겠습니까?');">
 									<div class="classReg-basic">
 										<div class="h4">클래스 기본정보</div>
 										<div class="h6 d-flex justify-content-start mt-4">
@@ -108,11 +95,12 @@
 										<div class="classReg-basic-form">
 											<div class="col-md-6 mt-2 mb-4">
 												<label for="class_show" class="h6">공개여부</label> 
-												<select name="class_hide" id="class_show" class="form-control" required>
+												<select name="class_hide" id="class_hide" class="form-control" required>
+													<option value="">선택해주세요</option>
 													<option value="1">공개</option>
 													<option value="2">비공개</option>
 												</select>
-												<div class="invalid-feedback">카테고리를 입력해주세요.</div>
+												<div class="invalid-feedback">공개여부를 선택해주세요.</div>
 											</div>
 											<div class="col-md-12 mt-2 my-4">
 												<label for="class_name" class="h6">클래스 제목</label> 
@@ -123,48 +111,51 @@
 												<div class="col-md-6 my-4">
 													<label for="class_big_category" class="h6">카테고리</label> 
 													<select name="class_big_category" id="class_big_category" class="form-control" required>
+														<option value="">선택해주세요</option>
 														<c:forEach var="category" items="${categoryList}">
 															<option value="${category.common2_code}">${category.code_value}</option>
 														</c:forEach>
 													</select>
-													<div class="invalid-feedback">카테고리를 선택해주세요.</div>
+													<div class="invalid-feedback">카테고리를 선택해주세요</div>
 												</div>
 												<div class="col-md-6 my-4">
 													<label for="class_small_category" class="h6">상세분류</label> 
-													<select name="class_small_category" id="class_small_category" class="form-control" required></select>
-													<div class="invalid-feedback">카테고리를 입력해주세요.</div>
+													<select name="class_small_category" id="class_small_category" class="form-control" required>
+													</select>
+													<div class="invalid-feedback">상세분류를 선택해주세요.</div>
 												</div>
 											</div>
 											
 											<div class="my-4">
 												<label for="class_hashtag" class="h6">해쉬태그 선택</label>
-												<div id="item-list" class="d-flex">
+												<div id="item-list" class="d-flex form-control">
 													<c:forEach var="hashtag" items="${hashtagList}">
 														<button type="button" class="item" data-value="#${hashtag.hash_tag_name}">#${hashtag.hash_tag_name}</button>
 													</c:forEach>
 											    </div>
-											    <input type="hidden" id="selected-items" name="class_hashtag" value=""> 
+											    <input type="hidden" id="selected-items" name="class_hashtag" value="" >
+											    <div class="invalid-feedback">해쉬태그를 선택해주세요.</div> 
 											</div>
 											<div class="col-md-12 my-4">
 												<label for="class_thumnail" class="h6">커버이미지</label> 
 												<input type="file" name="class_thumnail" id="class_thumnail" class="form-control" required />
-												<div class="invalid-feedback">커버이미지 입력해주세요.</div>
+												<div class="invalid-feedback">커버이미지 선택해주세요.</div>
 											</div>
 											<div class="col-md-12 my-4">
 												<label for="class_image" class="h6">본문이미지</label> 
-												<input type="file" name="file1" id="class_image" class="form-control mb-1" required />
-												<input type="file" name="file2" id="class_image" class="form-control" required />
-												<input type="file" name="file3" id="class_image" class="form-control mt-1" required />
-												<div class="invalid-feedback">본문이미지를 입력해주세요.</div>
+												<input type="file" name="file1" class="form-control class_image mb-1" required />
+												<input type="file" name="file2" class="form-control class_image"  />
+												<input type="file" name="file3" class="form-control class_image mt-1" />
+												<div class="invalid-feedback">본문이미지 선택해주세요.</div>
 											</div>
 											<div class="my-4">
 												<label for="summernote" class="h6">클래스 소개</label> 
-												<textarea name="class_ex" id="summernote" maxlength="3000" cols="30" rows="5" placeholder="내용을 입력해주세요" class="with-border"></textarea>
-												<div class="invalid-feedback">내용을 입력해주세요.</div>
+												<textarea name="class_ex" id="summernote" maxlength="3000" cols="30" rows="5" placeholder="내용을 입력해주세요" class="with-border form-control" required></textarea>
+												<div class="invalid-feedback">클래스 소개를 입력해주세요.</div>
 											</div>
 											<div class="col-md-12 my-4">
 												<label for="postCode" class="h6">주소</label><br>
-												<input type="hidden" id="sido" name="sido" class="form-control" placeholder="시 / 도" onclick="search_address()" readonly>
+												<input type="hidden" id="sido" name="sido" readonly>
 												<div class="d-flex justify-content-between">
 													<div class="col-md-3">
 											    		<input type="text" id="post_code" name="post_code" class="form-control my-1" size="6" readonly onclick="search_address()" placeholder="우편번호">
@@ -173,7 +164,7 @@
 														<input type="text" id="address1" name="address1" class="form-control my-1" placeholder="클릭 시 주소검색" size="25" readonly onclick="search_address()">
 													</div>
 												</div>
-												<input type="text" id="address2" name="address2" class="form-control" placeholder="상세주소" size="25" pattern="^.{2,20}$" maxlength="20">
+												<input type="text" id="address2" name="address2" class="form-control" placeholder="상세주소" size="25" pattern="^.{2,20}$" maxlength="20" required>
 												
 												<!-- 주소지의 x y 좌표 -->
 												<div class="d-flex justify-content-between">
@@ -184,11 +175,12 @@
 														<input type="text" id="location_y" name="location_y" placeholder="Y좌표" class="form-control my-1" readonly>
 													</div>
 												</div>
+												<div class="invalid-feedback">주소를 입력해주세요.</div>
 											</div>
 											<div class="col-md-12 my-4">
 												<label for="class_price" class="h6">회당 클래스가격(원)</label> 
 												<input type="text" name="class_price" id="class_price" class="form-control my-1" onKeyup="this.value=this.value.replace(/[^-0-9]/g,'');" required />
-												<div class="invalid-feedback">클래스명을 입력해주세요.</div>
+												<div class="invalid-feedback">클래스 가격을 입력해주세요.</div>
 											</div>
 										</div>
 									</div>
@@ -206,11 +198,12 @@
 							        		<tr>
 							        			<td>1차시</td>
 							        			<td>
-							        				<textarea name="1차시" id="curri_content" maxlength="1000" rows="5" placeholder="내용을 입력해주세요" class="form-control"></textarea>
+							        				<textarea name="1차시" maxlength="1000" rows="5" placeholder="내용을 입력해주세요" class="form-control curri_content" required></textarea>
 							        			</td>
 							        		</tr>
 							        	</table>
 									</div>
+						        	<div class="invalid-feedback">커리큘럼을 입력해주세요.</div>
 									
 									<div class="classReg-creator-info my-3">
 										<div class="d-flex justify-content-between">
@@ -219,7 +212,7 @@
 										<div class="classReg-creator-info-form">
 											<div class="col-md-12 mt-2 mb-5">
 												<label for="class_creator_explain" class="h6">크리에이터 소개</label>
-												<textarea name="class_creator_explain" class="class_creator_explain with-border" maxlength="3000" cols="30" rows="5" placeholder="내용을 입력해주세요" ></textarea> 
+												<textarea name="class_creator_explain" class="class_creator_explain with-border" maxlength="3000" cols="30" rows="5" placeholder="내용을 입력해주세요" required></textarea> 
 <!-- 												<input type="text" name="class_creator_explain" class="class_creator_explain" class="form-control" required /> -->
 												<div class="invalid-feedback">크리에이터 소개를 입력해주세요.</div>
 											</div>
@@ -253,8 +246,56 @@
 <%-- 	<script src="${pageContext.request.contextPath}/resources/js/main.js"></script> --%>
 	
 	<script type="text/javascript">	
-	
+		window.addEventListener('load', () => {
+		      const forms = document.getElementsByClassName('validation-form');
+		
+		      Array.prototype.filter.call(forms, (form) => {
+		        form.addEventListener('submit', function (event) {
+		          if (form.checkValidity() === false) {
+		            event.preventDefault();
+		            event.stopPropagation();
+		            window.scrollTo({ top: 0, behavior: 'smooth' });
+		          }
+		
+		          form.classList.add('was-validated');
+		        }, false);
+		      });
+		}, false);
+		
 		$(function() {
+			
+			// 폼 제출시 체크
+			    $('.classReg').on('submit', function(e) {
+			    	
+//             	// 유효성 검사
+//         	        // 선택 상자의 값이 비어 있는지 확인
+        	        if ($("#selected-items").val() == "") {
+        	        	alert("해쉬태그를 선택해주세요!");
+        	            $("#item-list").focus();
+        	            return false; // 폼 제출을 막음
+        	        }
+        	        if ($("#summernote").val() == "") {
+        	        	alert("클래스소개를 입력해주세요!");
+        	            $("#summernote").focus();
+        	            return false; // 폼 제출을 막음
+        	        }
+        	        if ($("#post_code").val() == "") {
+        	        	alert("주소를 입력해주세요!");
+        	            $("#post_code").focus();
+        	            return false; // 폼 제출을 막음
+        	        }
+        	        if ($(".class_creator_explain").val() == "") {
+        	        	alert("크리에이터 소개를 입력해주세요!");
+        	            $(".class_creator_explain").focus();
+        	            return false; // 폼 제출을 막음
+        	        }
+        	
+        	
+        	        return true; // 폼 제출을 허용
+            });
+			
+			
+			
 			// 카테고리 선택시 상세카테
 			$("#class_big_category").change(function() {
 				var big_category = $("#class_big_category").val();
@@ -264,6 +305,7 @@
 					data: { "big_category" : big_category },
 					success: function(data) {
 						$("#class_small_category").empty();
+						$("#class_small_category").append('<option value="">선택해주세요</option>');
 						$.each(data, function(index, item) {
 							$("#class_small_category").append(
 								$('<option></option>').val(item.common3_code).text(item.code_value)	
@@ -280,7 +322,7 @@
 		  		roundCount++;
 	            let newRow = '<tr>'
 			                     + '<td>' + roundCount + '차시 <span class="delete-btn">&times;</span></td>'
-			                     + '<td><textarea name="' + roundCount + '차시" id="curri_content" maxlength="1000" rows="5" placeholder="내용을 입력해주세요" class="form-control"></textarea></td>'
+			                     + '<td><textarea name="' + roundCount + '차시" maxlength="1000" rows="5" placeholder="내용을 입력해주세요" class="form-control curri_content" required></textarea></td>'
 			                 + '</tr>';
 	            $('#timeTable').append(newRow);
 		  	} else{
@@ -297,6 +339,10 @@
 			});
 			
 			$('#timeTable').on('click', '.delete-btn', function() {
+				if($('#timeTable tr').length - 1 < 2){
+					alert("1차시는 삭제할 수 없습니다");
+					return;
+				}
 			    $(this).closest('tr').remove();
 			    updateTextAreaNames();
 			});
@@ -310,8 +356,20 @@
 	                    $(this).find('td:first').html(index + '차시 <span class="delete-btn">&times;</span>');
 	                }
 	            });
-// 	            debugger;
 	        }
+			
+			// 클래스 가격 
+			$("#class_price").on('input', function() {
+		         if ($(this).val() <= 0) {
+		             $(this).val(''); // 값이 0 이하일 경우 비움
+		         }
+		     });
+		
+			$("#class_price").on('keypress', function(e) {
+		         if (e.key === '-' || (e.key === '0' && $(this).val() === '')) {
+		             e.preventDefault(); // '-'나 맨 처음에 '0' 입력을 막음
+		         }
+		     });
 			
 			
 			
@@ -388,7 +446,6 @@
 		            .map(item => item.getAttribute('data-value'));
 	
 		        selectedItemsInput.value = selectedItems.join(',');
-		        debugger;
 		    }
 		    
 		});

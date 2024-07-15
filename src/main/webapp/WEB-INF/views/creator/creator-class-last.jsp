@@ -89,35 +89,21 @@ th, td {
 	</div>
 	<!-- Spinner End -->
 
-	<!-- Single Page Header start -->
-	<div class="container-fluid page-header py-5">
-		<h1 class="text-center text-white display-6">Creator</h1>
-		<ol class="breadcrumb justify-content-center mb-0">
-			<li class="breadcrumb-item"><a href="main">Home</a></li>
-			<li class="breadcrumb-item"><a href="main">크리에이터 페이지</a></li>
-			<li class="breadcrumb-item active text-white">클래스 일정관리</li>
-		</ol>
-	</div>
-	<!-- Single Page Header End -->
-
 	<div class="container-fluid fruite">
 		<div class="container">
-			<h1 class="mb-4 text-white">Creator Center</h1>
+			<h1 class="mt-4 text-white">Creator Center</h1>
 			<div class="row g-4">
 				<div class="col-lg-12">
 					<div class="row g-4">
 						<jsp:include page="/WEB-INF/views/creator/sideBar.jsp" />
 						<!-- 	셀렉트박스 -->
 						<div class="col-md-9 creator-body">
+							<div class="creator-intro col-md-12">
+								<div class="text-white h2">진행완료수업</div>
+								<hr class="text-white mb-5">
+							</div>
 							<c:set var="classCode" value="${classCode}" />
 							<div class="col-md-12  mb-2" align="center">
-								<div class="col-xl-6 mb-5">
-									<hr style="color: white;" class="col-xl-8">
-									<div>
-										<h3 class="text-white">진행완료</h3>
-									</div>
-									<hr style="color: white;" class="col-xl-8">
-								</div>
 								<div class="col-md-8">
 									<div
 										class="bg-light rounded py-2 d-flex justify-content-center mb-4">

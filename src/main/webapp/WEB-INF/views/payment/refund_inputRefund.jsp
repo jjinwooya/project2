@@ -79,11 +79,12 @@ $(function() {
 	let ableWillpay = parseInt(abledWillpay);
 	$("#abledWillpay").text(ableWillpay.toLocaleString());
 });
-</script>
-<script>
+
 function refundWillpay() {
 	let refundAmt = $("#will_pay_refund_amt").val();
-	let abledWillpay = $("#abledWillpay").text();
+	let abledWillpay = $("#abledWillpay").text().replace(/,/g, '');
+	console.log("inputRefund: " + refundAmt);
+	console.log("abledWillpay: " + abledWillpay);
 	
 	let refundAmtParse = parseInt(refundAmt);
 	let abledWillpayParse = parseInt(abledWillpay);
@@ -91,7 +92,7 @@ function refundWillpay() {
 	let regex = /^[1-9]\d*0$/; // 0이 아닌 양의 정수를 검사하는 정규식
 	
 	if(refundAmtParse > abledWillpayParse) {
-		alert("환불할 수 없는 금액입니다").
+		alert("환불할 수 없는 금액입니다");
 		return;
 	}
 

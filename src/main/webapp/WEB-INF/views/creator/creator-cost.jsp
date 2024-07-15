@@ -57,109 +57,103 @@
 	</div>
 	<!-- Spinner End -->
 
-	<!-- Single Page Header start -->
-	<div class="container-fluid page-header py-5">
-		<h1 class="text-center text-white display-6">Creator</h1>
-		<ol class="breadcrumb justify-content-center mb-0">
-			<li class="breadcrumb-item"><a href="main">Home</a></li>
-			<li class="breadcrumb-item"><a href="main">크리에이터 페이지</a></li>
-			<li class="breadcrumb-item active text-white">클래스정산</li>
-		</ol>
-	</div>
-	<!-- Single Page Header End -->
-
 	<div class="container-fluid fruite">
 		<div class="container">
-			<h1 class="mb-4 text-white">Creator Center</h1>
+			<h1 class="mt-4 text-white">Creator Center</h1>
 			<div class="row g-4">
 				<div class="col-lg-12">
 					<div class="row g-4">
 						<jsp:include page="/WEB-INF/views/creator/sideBar.jsp" />
 
-						<div class="col-lg-9 creator-body" align="center">
-							<!-- 날짜 선택 셀렉트박스 -->
-							<div class="col-md-6  mb-5" >
-								<div class="col-xl-8">
-									<div class="bg-light rounded py-2 mb-4">
-										<label for="monthPicker"></label>
-    									<input type="month" id="monthPicker" name="monthPicker">
-									</div>
-<!-- 									<hr class="text-white"> -->
-								</div>
+						<div class="col-lg-9 creator-body">
+							<div class="creator-intro col-md-12">
+								<div class="text-white h2">클래스정산</div>
+								<hr class="text-white mb-5">
 							</div>
-							
-							<div class="creator-event my-3">
-								<h5 class="col-md-8 mt-5 text-white mb-3" align="center">💲 상세정산 💲</h5>
-								<div class="card col-md-8 my-1 card-body">
-<!-- 								    <div class="d-flex justify-content-start card-content"> -->
-<!-- 									    <p class="card-text">상태&nbsp;:</p> -->
-<!-- 									    <p class="card-text">&nbsp;지급완료</p> -->
-<!-- 								    </div> -->
-								    <div class="d-flex justify-content-between card-content">
-									    <p class="card-text h6">원데이클래스 수익&nbsp;:</p>
-									    <p class="card-text h6 classIncome"></p>
-									    
-								    </div>
-								    <div class="d-flex justify-content-between card-content">
-									    <p class="card-text h6">수수료(10%)&nbsp;:</p>
-									    <p class="card-text h6 classFee"></p>
-								    </div>
-								    <div class="d-flex justify-content-between card-content">
-									    <p class="card-text h4">정산금&nbsp;:</p>
-									    <p class="card-text h4 totalSettle"></p>
-								    </div>
+							<div align="center">
+								<!-- 날짜 선택 셀렉트박스 -->
+								<div class="col-md-6  mb-5" >
+									<div class="col-xl-8">
+										<div class="bg-light rounded py-2 mb-4">
+											<label for="monthPicker"></label>
+	    									<input type="month" id="monthPicker" name="monthPicker">
+										</div>
+	<!-- 									<hr class="text-white"> -->
+									</div>
 								</div>
 								
-								<hr class="col-md-8 text-white mt-5">
-								
-<!-- 								<p class="text-white">계좌변경</p> -->
-<!-- 								<div class="regist_account mb-5"> -->
-<!-- 									<input type="button" class="col-md-3" value="+" onclick="linkAccount()"> -->
-<!-- 								</div> -->
-								<div class="col-md-8">
-									<c:choose>
-										<c:when test="${token eq null}">
-											<h5 class="mb-3 text-white">🪙 계좌 등록 🪙</h5>
-											<input type="button" class="col-md-3" value="+" onclick="linkAccount()">
-										</c:when>
-										<c:otherwise>
-											<h5 class="mb-3 text-white">🪙 등록된 계좌 🪙</h5>
-											<table>
-												<tr>
-													<td>계좌번호</td>
-													<td>${token.account_num}</td>
-												</tr>
-<!-- 												<tr> -->
-<!-- 													<td> -->
-<!-- 														계좌변경 -->
-<!-- 													</td> -->
-<!-- 													<td> -->
-<!-- 														<input type="button" class="col-md-6" value="+" onclick="linkAccount()"> -->
-<!-- 													</td> -->
-<!-- 												</tr> -->
-											</table>
-										</c:otherwise>
-									</c:choose>
-								</div>
-								
-								<hr class="col-md-8 text-white mt-5">
-								
-								<h5 class="col-md-8 mt-4 text-white mb-3" align="center">💰 총정산금 💰</h5>
-								<div class="card col-md-8 mb-5">
-								  <div class="card-body">
-								  	<div class="d-flex justify-content-between mb-3">
-									    <p class="card-title h6" align="left">누적 정산금</p>
-										<p class="card-text word-break " >정산기간 : ${settlementDate} ~</p>
-									</div> 
-									<form action="creator-settlement" method="Post">
-									    <div class="d-flex justify-content-center card-content mb-3">
-										    <input type="text" class="card-text word-break h4 mb-3 form-control col-md-4 total_sum" disabled name="total_sum" value="" pattern="#,###"> 
+								<div class="creator-event my-3">
+									<h5 class="col-md-8 mt-5 text-white mb-3" align="center">💲 상세정산 💲</h5>
+									<div class="card col-md-8 my-1 card-body">
+	<!-- 								    <div class="d-flex justify-content-start card-content"> -->
+	<!-- 									    <p class="card-text">상태&nbsp;:</p> -->
+	<!-- 									    <p class="card-text">&nbsp;지급완료</p> -->
+	<!-- 								    </div> -->
+									    <div class="d-flex justify-content-between card-content">
+										    <p class="card-text h6">원데이클래스 수익&nbsp;:</p>
+										    <p class="card-text h6 classIncome"></p>
+										    
 									    </div>
-										<button type="submit" class="btn btn-outline-primary btn-lg settlement">정산받기</button>
-									</form>
-								  </div>
+									    <div class="d-flex justify-content-between card-content">
+										    <p class="card-text h6">수수료(10%)&nbsp;:</p>
+										    <p class="card-text h6 classFee"></p>
+									    </div>
+									    <div class="d-flex justify-content-between card-content">
+										    <p class="card-text h4">정산금&nbsp;:</p>
+										    <p class="card-text h4 totalSettle"></p>
+									    </div>
+									</div>
+									
+<!-- 									<hr class="col-md-8 text-white mt-5"> -->
+									
+	<!-- 								<p class="text-white">계좌변경</p> -->
+	<!-- 								<div class="regist_account mb-5"> -->
+	<!-- 									<input type="button" class="col-md-3" value="+" onclick="linkAccount()"> -->
+	<!-- 								</div> -->
+									<div class="col-md-8 mt-5">
+										<c:choose>
+											<c:when test="${token eq null}">
+												<h5 class="mb-3 text-white">⚜️ 계좌 등록 ⚜️</h5>
+												<input type="button" class="col-md-3" value="+" onclick="linkAccount()">
+											</c:when>
+											<c:otherwise>
+												<h5 class="mb-3 text-white">💳 등록된 계좌 💳</h5>
+												<table>
+													<tr>
+														<td>계좌번호</td>
+														<td>${token.account_num}</td>
+													</tr>
+	<!-- 												<tr> -->
+	<!-- 													<td> -->
+	<!-- 														계좌변경 -->
+	<!-- 													</td> -->
+	<!-- 													<td> -->
+	<!-- 														<input type="button" class="col-md-6" value="+" onclick="linkAccount()"> -->
+	<!-- 													</td> -->
+	<!-- 												</tr> -->
+												</table>
+											</c:otherwise>
+										</c:choose>
+									</div>
+									
+<!-- 									<hr class="col-md-8 text-white mt-5"> -->
+									
+									<h5 class="col-md-8 mt-4 text-white mt-5 mb-3" >💰 총정산금 💰</h5>
+									<div class="card col-md-8 mb-5">
+									  <div class="card-body">
+									  	<div class="d-flex justify-content-between mb-3">
+										    <p class="card-title h6" align="left">누적 정산금</p>
+											<p class="card-text word-break " >정산기간 : ${settlementDate} ~ </p>
+										</div> 
+										<form action="creator-settlement" method="Post">
+										    <div class="d-flex justify-content-center card-content mb-3">
+											    <input type="text" class="card-text word-break h4 mb-3 form-control col-md-4 total_sum" disabled name="total_sum" value="" pattern="#,###"> 
+										    </div>
+											<button type="submit" class="btn btn-outline-primary btn-lg settlement">정산받기</button>
+										</form>
+									  </div>
+									</div>
 								</div>
-								
 							</div>
 
 						</div>

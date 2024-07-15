@@ -150,10 +150,10 @@
 	                <div class="owl-carousel vegetable-carousel justify-content-center">
 	                	
 	                	<c:forEach var="contents" items="${top10List}">
-	                		
+	                		 
 							<div class="rounded position-relative vesitable-item" style="width: 306px;">
 								<div class="vesitable-img">
-									<img src="${pageContext.request.contextPath}/resources/images/products/s4.jpg" class="img-fluid w-100 rounded-top classPic" alt="" onclick="location.href='class-detail?class_code=${contents.class_code}'">
+									<img style="height : 225px;" src="${pageContext.request.contextPath}/resources/upload/${contents.class_thumnail}" class="img-fluid w-100 rounded-top classPic" onclick="location.href='class-detail?class_code=${contents.class_code}'">
 								</div>
 		                        <div class="text-white bg-tertiary rounded position-absolute" style="top: 5px; right: 5px;">
 									<!-- like class 하트 여부-->
@@ -188,7 +188,7 @@
 													<img src="${pageContext.request.contextPath}/resources/images/class/pic.png" class="member_img" style="width: 25px; height: 25px;">
 												</c:when>	
 												<c:otherwise>
-													<img src="${pageContext.request.contextPath}/resources/images/class/x.png" class="member_img" style="width: 25px; height: 25px;">
+													<img src="${pageContext.request.contextPath}/resources/upload/${contents.member_img}" class="member_img" style="width: 25px; height: 25px;">
 												</c:otherwise>
 											</c:choose>
 										</div>	
@@ -239,8 +239,8 @@
 										<div class="rounded position-relative class-item classCard">
 											<div class="">
 												<!-- ${contents.class_thumnail} 썸네일 이미지  -->
-												<img src="${pageContext.request.contextPath}/resources/images/products/s4.jpg" class="img-fluid w-100 rounded-top classPic" 
-													alt="" onclick="location.href='class-detail?class_code=${contents.class_code}'">
+												<img style="height : 225px;" src="${pageContext.request.contextPath}/resources/upload/${contents.class_thumnail}" class="img-fluid w-100 rounded-top classPic" 
+														onclick="location.href='class-detail?class_code=${contents.class_code}'">
 												<!-- like class 하트 여부-->
 												<c:choose>
 													<c:when test="${not empty likeClassList and not empty sessionScope.member}">  <!-- likeClassList 존재 -->
@@ -253,7 +253,7 @@
 														<c:if test="${isLiked}">
 															<img src="${pageContext.request.contextPath}/resources/images/profile/heart_full.png" id="heartOverlay" 
 																class="heartImg" data-class-code="${contents.class_code}" data-member-code="${sessionScope.member.member_code}">
-														</c:if>w
+														</c:if>
 														<c:if test="${not isLiked}">
 															<img src="${pageContext.request.contextPath}/resources/images/profile/heart.png" id="heartOverlay" 
 																class="heartImg" data-class-code="${contents.class_code}" data-member-code="${sessionScope.member.member_code}">
@@ -279,7 +279,7 @@
 															<img src="${pageContext.request.contextPath}/resources/images/class/pic.png" class="member_img">
 														</c:when>	
 														<c:otherwise>
-															<img src="${pageContext.request.contextPath}/resources/images/class/x.png" class="member_img">
+															<img src="${pageContext.request.contextPath}/resources/upload/${contents.member_img}" class="member_img">
 														</c:otherwise>
 													</c:choose>
 													<p class="mb-0 ml-2">${contents.member_nickname}</p>

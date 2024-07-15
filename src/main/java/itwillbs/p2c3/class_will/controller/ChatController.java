@@ -31,9 +31,9 @@ public class ChatController {
 	} // userChatList()
 	
 	@GetMapping("user-chat-room")
-	public String userChatRoom(MemberVO member, Model model, @RequestParam(defaultValue = "") int receiver_id, HttpServletRequest request) {
+	public String userChatRoom(MemberVO member, Model model, @RequestParam(defaultValue = "") int receiver_code, HttpServletRequest request) {
 		
-		MemberVO receiverInfo = chatservice.selectMemberInfo(receiver_id);
+		MemberVO receiverInfo = chatservice.selectMemberInfo(receiver_code);
 		
 		model.addAttribute("receiverInfo", receiverInfo);
 		

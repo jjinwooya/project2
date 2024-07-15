@@ -83,11 +83,11 @@
 			<div class="regist_account col-md-6 text-center py-3 mb-4">
 				<c:choose>
 					<c:when test="${token eq null}">
-						<h5 class="text-black mb-3">🪙 계좌 등록 🪙</h5>
+						<h5 class="text-black mb-3">⚜️ 계좌 등록 ⚜️</h5>
 						<input type="button" class="col-md-3" value="+" onclick="linkAccount()">
 					</c:when>
 					<c:otherwise>
-						<h5 class="text-black mb-3">🪙 등록된 계좌 🪙</h5>
+						<h5 class="text-black mb-3">💳 등록된 계좌 💳</h5>
 						<table>
 							<tr>
 								<td>계좌번호</td>

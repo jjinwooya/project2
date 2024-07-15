@@ -9,7 +9,28 @@
 		  FROM MEMBER
 		 WHERE member_code = #{member_code}
 	</select>
-		
 	
+	<select id="selectMemberEmail" resultType="string">
+		SELECT member_email
+		  FROM MEMBER
+		 WHERE member_email = #{member_email}
+	</select>
+		
+	<select id="selectChatRoom" resultType="chatRoom">
+		SELECT chat_room_code, member_email1, member_email2, chat_room_status
+	      FROM chat_rooms
+	     WHERE ((member_email1 = #{sender_email} AND member_email2 = #{receiver_email})
+	           OR (member_email1 = #{receiver_email} AND member_email2 = #{sender_email}))
+	       AND chat_room_status = '1'
+	</select>
+	
+	<insert id="insertChatRoom">
+		INSERT INTO chat_rooms
+		VALUES ( null
+		     , #{sender_email}
+		     , #{receiver_email}
+		     , '1'
+		)
+	</insert>
 	
 </mapper>

@@ -73,6 +73,12 @@ a {
 					</li>
 					<li>
 						<div class="d-flex justify-content-between fruite-name">
+							<a href="my-inquiry" class="h5"><i class="bi bi-patch-question"></i>&nbsp;
+								나의 클래스 문의</a>
+						</div>
+					</li>
+					<li>
+						<div class="d-flex justify-content-between fruite-name">
 							<a href="my-powerup" class="h5"><i class="bi bi-sunrise-fill"></i>&nbsp;
 								나의 성장</a>
 						</div>

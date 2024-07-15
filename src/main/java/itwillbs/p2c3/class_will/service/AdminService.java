@@ -127,8 +127,12 @@ public class AdminService {
         }
     }
 
-	public List<Integer> getWillpayChart() {
+	public List<Map<String, Object>> getWillpayChart() {
 		return adminMapper.selectWillpayChart();
+	}
+	
+	public List<Map<String, Object>> getPayChart() {
+		return adminMapper.selectPayChart();
 	}
 	
 	public List<Map<String, Object>> getRewardData() {
@@ -224,6 +228,8 @@ public class AdminService {
 	public boolean updateEventHide(Map<String, Object> updateRow) {
 		return adminMapper.updateEventHide(updateRow);
 	}
+
+
 
 	
 	

@@ -62,10 +62,6 @@
                 <div class="container-fluid">
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">윌페이 매출</h1>
-                        <div class="btn-group">
-                            <button id="downloadBtn" class="btn btn-success btn-sm">차트 다운로드</button>
-                            <input type="file" id="file-input" style="display:none;" />
-                        </div>
                     </div>
                     <div>
                         <button class="category-btn" data-category="member" onclick="location.href='admin-pay'">일반결제 관리</button>
@@ -88,10 +84,7 @@
                                         <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
                                             aria-labelledby="dropdownMenuLink">
                                             <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
+                                            <a class="dropdown-item" id="downloadBtn">차트 다운로드</a>
                                         </div>
                                     </div>
                                 </div>
@@ -148,7 +141,7 @@
 	    document.getElementById('downloadBtn').addEventListener('click', function() {
 	        var link = document.createElement('a');
 	        link.href = myLineChart.toBase64Image();
-	        link.download = 'chart.png';
+	        link.download = '윌페이매출차트.png';
 	        link.click();
 	    });
 	    
@@ -179,6 +172,14 @@
         });
         
         grid.on('afterChange', (ev) => {
+        	console.log(ev);
+            const { columnName, value, rowKey } = ev.changes[0];
+            if (columnName === 'reward_fee' || columnName === 'reward_rate') {
+                if (!/^\d+$/.test(value)) {  // 숫자만 허용
+                    alert('숫자만 입력 가능합니다.');
+                	location.reload();
+                }
+            }
             grid.sort('reward_fee', true);  // 'reward_fee' 기준 오름차순 정렬
         });
         
@@ -214,13 +215,19 @@
         });
 		
 	    function updateChart(data) {
-	    	debugger;
 	        var ctx = document.getElementById("myAreaChart").getContext('2d');
-	        var currentMonth = new Date().getMonth(); // 0부터 시작하므로, 0은 1월, 1은 2월 ...
 			
-	        var labels = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
-	        labels = labels.slice(0, currentMonth + 1);
-	
+	        var labels = data.map(thing => {
+	        	  // month 값에서 앞의 0을 제거
+	        	  const monthNumber = parseInt(thing.month, 10);
+	        	  return monthNumber + "월";
+	        	});
+	        
+	        var salesData = data.map(thing => {
+				return thing.totalSales;
+	        });
+	        
+	        
 	        myLineChart = new Chart(ctx, {
 	            type: 'line',
 	            data: {
@@ -238,7 +245,7 @@
 	                    pointHoverBorderColor: "rgba(78, 115, 223, 1)",
 	                    pointHitRadius: 10,
 	                    pointBorderWidth: 2,
-	                    data: data,
+	                    data: salesData,
 	                }],
 	            },
 	            options: {

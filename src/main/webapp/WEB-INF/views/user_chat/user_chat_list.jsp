@@ -352,7 +352,7 @@
 			</div> <!-- chat-list -->
 			
 		</div> <!-- chat-list-content -->
-		
+
 	</div> <!-- user-chat -->
 	
 	<script type="text/javascript">
@@ -361,9 +361,11 @@
 				location.href = "user-chat-room";
 			});
 			
-			
-			
 		});
+		
+		
+		
+		
 	
 	</script>
 

@@ -57,7 +57,10 @@ public class EventController {
 	}
 	
 	@GetMapping("eventDetail")
-	public String eventDetail(int event_code, Model model, HttpSession session) {
+	public String eventDetail(int event_code, Model model, HttpSession session,@RequestParam(defaultValue = "common") String tab) {
+		if(tab.equals("contact")) {
+			model.addAttribute("tab", "contact");
+		}
 		MemberVO member = (MemberVO)session.getAttribute("member");
 		if(member == null) {
 			return WillUtils.checkDeleteSuccess(false, model, "로그인 후 이용해주세요", false, "member-login");
@@ -66,6 +69,7 @@ public class EventController {
 		//친구초대 이벤트
 		if(event_code == 0) {
 			Map<String, Object> map = cscService.getInviteFriendInfo(member_code);
+			
 			if(map == null) {
 				String invite_code = GenerateRandomCode.getRandomCode(24);
 				cscService.insertInviteCode(member_code, invite_code);
@@ -78,7 +82,6 @@ public class EventController {
 				friend = cscService.selectMemberByCode(friend);
 				map.put("friend_email", friend.getMember_email());
 				model.addAttribute("invite_info", map);
-				System.out.println("dddddddddd최종 : " + map);
 			}
 			
 			model.addAttribute("invite_code", map.get("invite_code"));
@@ -120,30 +123,40 @@ public class EventController {
     }
 	
 	@ResponseBody
-	@PostMapping("SendingEmail")
-	public ResponseEntity<String> sendingEmail(@RequestParam Map<String, Object> map, Model model) {
+	@PostMapping("SendingEmail")	
+	public ResponseEntity<String> sendingEmail(@RequestParam Map<String, Object> map, Model model, HttpSession session) {
 		String responseMessage = "";
-		String friend_email = (String)map.get("friend_email");
-		String invite_code = (String)map.get("invite_code");
-		MemberVO member = new MemberVO();
-		member.setMember_email(friend_email);
-		MemberVO dbMember =  memberService.selectMember(member);
-		if(dbMember == null) {
-			responseMessage = "존재하지 않는 회원입니다.";
+		MemberVO sessionMember = (MemberVO)session.getAttribute("member");
+		int sessionMemberCode = sessionMember.getMember_code();
+		
+		Map<String, Object> validationMemberInfo = cscService.getInviteFriendInfo(sessionMemberCode);
+		System.out.println("validddddddd : " + validationMemberInfo);
+		if(validationMemberInfo != null) {
+			responseMessage = "이벤트에 이미 응모하셨습니다.";
+		}else {
+			String friend_email = (String)map.get("friend_email");
+			String invite_code = (String)map.get("invite_code");
+			MemberVO member = new MemberVO();
+			member.setMember_email(friend_email);
+			MemberVO dbMember =  memberService.selectMember(member);
+			if(dbMember == null) {
+				responseMessage = "존재하지 않는 회원입니다.";
+			}
+			
+			mailService.sendInviteFriendMail(friend_email, invite_code);
+			
+			Map<String, Object> mail_info = cscService.getInviteMailInfo(invite_code, friend_email);
+			// 등록되어있는 정보가 없다면 INSERT
+			if(mail_info == null) {
+				cscService.insertInviteMailInfo(invite_code, friend_email);
+				responseMessage = "true";
+				// 등록되어있는 정보가 있다면 UPDATE
+			}else if(mail_info.get("invite_code").equals(map.get("invite_code"))) {
+				cscService.updateInviteMailInfo(invite_code, friend_email);	
+				responseMessage = "true";
+			}
 		}
 		
-		mailService.sendInviteFriendMail(friend_email, invite_code);
-		
-		Map<String, Object> mail_info = cscService.getInviteMailInfo(invite_code, friend_email);
-		// 등록되어있는 정보가 없다면 INSERT
-		if(mail_info == null) {
-			cscService.insertInviteMailInfo(invite_code, friend_email);
-			responseMessage = "true";
-			// 등록되어있는 정보가 있다면 UPDATE
-		}else if(mail_info.get("invite_code").equals(map.get("invite_code"))) {
-			cscService.updateInviteMailInfo(invite_code, friend_email);	
-			responseMessage = "true";
-		}
 		
 		HttpHeaders headers = new HttpHeaders();
 	    headers.add("Content-Type", "text/plain; charset=UTF-8");

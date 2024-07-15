@@ -210,7 +210,7 @@ th:nth-child(2), td:nth-child(2) {
 								</div>
 								<div class="table-responsive">
 									<h2>작성한 클래스 후기들</h2>
-									<p>내가 적은 총 리뷰 수 ${totalPossible}개</p>
+									<p>내가 적은 총 리뷰 수 ${totalPossible2}개</p>
 									<table class="table table-hover">
 										<thead>
 											<tr>

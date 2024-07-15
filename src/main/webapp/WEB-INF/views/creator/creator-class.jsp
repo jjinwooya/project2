@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<title>Insert title here</title>
+<title>CreatorClass</title>
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <meta content="" name="keywords">
@@ -61,44 +61,48 @@
 	</header>
 
 	<!-- Single Page Header start -->
-	<div class="container-fluid page-header py-5">
-		<h1 class="text-center text-white display-6">Creator</h1>
-		<ol class="breadcrumb justify-content-center mb-0">
-			<li class="breadcrumb-item"><a href="main">Home</a></li>
-			<li class="breadcrumb-item"><a href="main">크리에이터 페이지</a></li>
-			<li class="breadcrumb-item active text-white">클래스</li>
-		</ol>
-	</div>
+<!-- 	<div class="container-fluid page-header py-5"> -->
+<!-- 		<h1 class="text-center text-white display-6">Creator</h1> -->
+<!-- 		<ol class="breadcrumb justify-content-center mb-0"> -->
+<!-- 			<li class="breadcrumb-item"><a href="main">Home</a></li> -->
+<!-- 			<li class="breadcrumb-item"><a href="main">크리에이터 페이지</a></li> -->
+<!-- 			<li class="breadcrumb-item active text-white">클래스</li> -->
+<!-- 		</ol> -->
+<!-- 	</div> -->
 	<!-- Single Page Header End -->
 
 	<div class="container-fluid fruite">
 		<div class="container">
-			<h1 class="mb-4 text-white">Creator Center</h1>
-			<div class="row">
+			<h1 class="mt-4 text-white">Creator Center</h1>
+			<div class="row g-4">
 				<div class="col-md-12">
-					<div class="row">
+					<div class="row g-4">
 						<jsp:include page="/WEB-INF/views/creator/sideBar.jsp" />
 
 						<div class="col-md-9 creator-body">
-							
-							<!-- 버튼들 -->
-							<div class="mb-3 col-md-12 align-bottom" align="right">
-								<button class="category-btn classReg" value="respond"
-									onclick="location.href='creator-classReg'">클래스등록</button>
-								<button class="category-btn classReg" value="respond"
-									onclick="location.href='creator-class-plan'">일정등록</button>
-								<button class="category-btn classReg" value="respond"
-									onclick="location.href='creator-class-last'">진행완료</button>
+							<div class="creator-intro col-md-12">
+								<div class="text-white h2">클래스페이지</div>
+								<hr class="text-white mb-5">
 							</div>
-							<!-- 	셀렉트박스 -->
-							<div class="mb-3 col-md-3 align-bottom" align="left">
-								<select class="form-control selectBox">
-									<option value="">전체</option>
-									<c:forEach var="status" items="${regStatus}">
-										<option value="${status.common2_code}">${status.code_value}</option>
-									</c:forEach>
-								</select>
-							</div>
+								
+								<!-- 버튼들 -->
+								<div class="mb-3" align="right">
+									<button class="category-btn classReg" value="respond"
+										onclick="location.href='creator-classReg'">클래스등록</button>
+									<button class="category-btn classReg" value="respond"
+										onclick="location.href='creator-class-plan'">일정등록</button>
+									<button class="category-btn classReg" value="respond"
+										onclick="location.href='creator-class-last'">진행완료</button>
+								</div>
+								<!-- 	셀렉트박스 -->
+								<div class="mb-1 col-md-3">
+									<select class="form-control selectBox">
+										<option value="">전체</option>
+										<c:forEach var="status" items="${regStatus}">
+											<option value="${status.common2_code}">${status.code_value}</option>
+										</c:forEach>
+									</select>
+								</div>
 							<div class="creator-main-table col-md-12 mb-5" align="center">
 
 								<div class="row">

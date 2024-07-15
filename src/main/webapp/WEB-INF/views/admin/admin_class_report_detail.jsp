@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>고객센터 등록폼</title>
+<title>신고 상세보기</title>
 <!-- 부트스트랩 링크 -->
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
@@ -119,7 +119,7 @@ body {
 					<div class="space"></div>
 					<hr class="mb-4">
 					<div class="mb-4" align="center">
-						<input type="button" value="클래스 상세페이지" class="btn btn-primary btn-lg btn-block" onclick="class_detail">
+						<input type="button" value="클래스 상세페이지" class="btn btn-primary btn-lg btn-block" onclick="classDetail(${report.class_code})">
 						<input type="button" value="처리" class="btn btn-primary btn-lg btn-block" onclick="showModal()">
 						<input type="button" value="돌아가기" class="btn btn-primary btn-lg btn-block" onclick="window.close()">
 					</div>
@@ -162,17 +162,18 @@ body {
 			 class_report_code : class_report_code,
 			 class_code : class_code,
 		 },
-		 dataType : "json",
 		 success : function(response){
-			 if(response){
-				 alert('클래스가 숨겨졌습니다.');		 
+			 if(response == "true"){
+				 alert('클래스가 숨겨졌습니다.');
+				 window.close();
+				 window.opener.location.reload();
 			 }else{
 				 alert('데이터 오류.');
 			 }
 		 }
 	  });
 	  $('#exampleModal').modal('hide'); // 모달 닫기
-	  location.reload();
+
 	}
 	
 	// 신고 취소 함수
@@ -183,17 +184,23 @@ body {
 		 data : {
 		        class_report_code: class_report_code
 		}, 
-		 dataType : "json",
 		 success : function(response){
-			 if(response){
-				 alert('신고가 취소되었습니다');		 
+			 if(response == "true"){
+				alert('신고가 취소되었습니다');	 
+				// 자식 창 닫기
+				window.close();
+				// 부모 창 새로고침
+				window.opener.location.reload();
 			 }else{
 				 alert('데이터 오류.');
 			 }
 		 }
 	  });
-	  $('#exampleModal').modal('hide'); // 모달 닫기
-	  location.reload();
+	}
+	
+	
+	function classDetail(class_code){
+		location.href="class-detail?class_code=" + class_code + "&fromReport=true";
 	}
 </script>
 </body>

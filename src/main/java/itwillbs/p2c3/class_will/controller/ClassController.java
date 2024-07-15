@@ -115,8 +115,9 @@ public class ClassController {
 	        }
 	        
 	        // 라이크 클래스
-	        List<Map<String, Object>> likeClassCode = classService.selectLikeClassCode(member_code);
+	        List<Integer> likeClassCode = classService.selectLikeClassCode(member_code);
 	        model.addAttribute("likeClassCode", likeClassCode);
+	        System.out.println(">> likeClassCode : " + likeClassCode);
 	    } else {
 	        System.out.println("Member code is null, skipping likeClassCode.");
 	    }
@@ -168,7 +169,7 @@ public class ClassController {
 	    String big_category = (String) requestBody.get("big_category"); // Integer로 받지 않고 String으로 받음
 	    String small_category = (String) requestBody.get("small_category"); // Integer로 받지 않고 String으로 받음
 	    String local = (String) requestBody.get("common2_code"); // Integer로 받지 않고 String으로 받음
-
+	    
 //		String big_category = params.get("class_big_category");
 //		String small_category = params.get("class_small_category");
 //		String local = params.get("common2_code");
@@ -281,17 +282,15 @@ public class ClassController {
     @ResponseBody
     public String updateHeartStatus(@RequestBody Map<String, Object> requestBody, HttpSession session, Model model) {
     	
-//		MemberVO member = (MemberVO)session.getAttribute("member");
-
 		Boolean heart_status = (Boolean) requestBody.get("heart_status");
-	    String member_code = (String) requestBody.get("member_code"); // Integer로 받지 않고 String으로 받음
-	    String class_code = (String) requestBody.get("class_code"); // Integer로 받지 않고 String으로 받음
+	    Integer member_code = (Integer) requestBody.get("member_code"); // Integer로 받지 않고 String으로 받음
+	    Integer class_code = (Integer) requestBody.get("class_code"); // Integer로 받지 않고 String으로 받음
         Map<String, Object> map = new HashMap<>();
         map.put("heart_status", heart_status);
         map.put("member_code", member_code);
         map.put("class_code", class_code);
 		
-        System.out.println("update-heart-status class_code : " + class_code + ", member_code : " + member_code);
+        System.out.println("update-heart-status class_code : " + class_code + ", member_code : " + member_code + ", heart_status : " + heart_status);
 	    // heart_status가 true이면 좋아요를 추가, false이면 좋아요를 제거
 	    if (heart_status != null && member_code != null && class_code != null) {
 	        if (heart_status) {
@@ -310,7 +309,19 @@ public class ClassController {
 	        return "fail";
 	    }
     }
-    
+//    @GetMapping("check-like-status")
+//    @ResponseBody
+//    public String checkLikeStatus(@RequestParam("member_code") String member_code, @RequestParam("class_code") String class_code) {
+//    	Map<String, Object> map = new HashMap<>();
+//    	map.put("member_code", member_code);
+//    	map.put("class_code", class_code);
+//    	
+//        // like_class 테이블에서 member_code와 class_code로 조회하여 좋아요 여부를 확인하는 로직
+//        boolean isLiked = classService.getLikeClassList(map);
+//        return String.valueOf(isLiked);
+//    	return "";
+//    }
+//    
     // ajax bigCategory
 	@GetMapping("big-category")
 	@ResponseBody
@@ -329,8 +340,7 @@ public class ClassController {
 	
 	// 클래스 디테일
 	@GetMapping("class-detail")
-	public String classDetail(Model model, HttpSession session, @RequestParam(name = "class_code") int class_code) {
-		
+	public String classDetail(Model model, HttpSession session, @RequestParam(name = "class_code") int class_code,@RequestParam(defaultValue = "0") boolean fromReport) {
 	    MemberVO member = (MemberVO) session.getAttribute("member");
 //	    Integer member_code = null;
 	    
@@ -420,6 +430,11 @@ public class ClassController {
 		model.addAttribute("class_schedule_date", jsonString);
         //========================================================================
         
+		//클래스 신고에서 들어온 요청 처리
+		if(fromReport) {
+			model.addAttribute("fromReport", true);
+		}
+		
 		return"class/class-detail";
 	}
 	

@@ -176,9 +176,9 @@
                 data: data,
                 columns: [
                     { header: '클래스이름', name: 'class_name'},
-                    { header: '클래스구분', name: 'class_type'},
                     { header: '카테고리', name: 'class_category'},
                     { header: '강사이름', name: 'member_name'},
+                    { header: '클래스 가격', name: 'class_price'},
                     { header: '등록상태', name: 'class_regist_status'},
                     {
                         header: '상세보기',

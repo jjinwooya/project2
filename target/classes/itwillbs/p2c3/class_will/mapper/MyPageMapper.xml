@@ -15,27 +15,22 @@
 	</update>
 
 	<update id="updateMember">
+		
 		UPDATE MEMBER
 		SET
-		<if test="member_addr != null">
-			<if test="member_addr != null and !member_addr.equals('')">
-				member_addr = #{member_addr},
-			</if>
+		<if test="member_addr != null and !member_addr.isEmpty()">
+			member_addr = #{member_addr},
 		</if>
-
-		<if test="member_pwd != null">
-			<if test="member_pwd != null and !member_pwd.equals('')">
-				member_pwd = #{member_pwd},
-			</if>
+		<if test="member_pwd != null and !member_pwd.isEmpty()">
+			member_pwd = #{member_pwd},
 		</if>
-		<if test="member_pwd != null">
-			<if test="member_pwd != null and !member_pwd.equals('')">
-				member_nickname = #{member_nickname}
-			</if>
+		<if test="member_nickname != null and !member_nickname.isEmpty()">
+			member_nickname = #{member_nickname}
 		</if>
-
 		WHERE
 		member_code = #{member_code}
+
+		
 	</update>
 
 	<select id="selectMemberReview">
@@ -74,8 +69,7 @@
 		UPDATE class_review
 		SET class_review_subject = #{class_review_subject},
 		class_review_content = #{class_review_content},
-		class_review_rating =
-		#{class_review_rating}
+		class_review_rating =	#{class_review_rating}
 		WHERE class_review_code = #{class_review_code}
 	</update>
 
@@ -244,15 +238,18 @@
 	<select id="calDate">
 		<!-- 특정 회원이 가입한지로 지난 시간 -->
 		SELECT member_code, member_name, member_reg_date,
-		DATEDIFF(NOW(), member_reg_date) AS days_since_registration
+		DATEDIFF(NOW(),
+		member_reg_date) AS days_since_registration
 		FROM MEMBER
-		WHERE member_code = #{member_code}
+		WHERE
+		member_code = #{member_code}
 	</select>
 
 	<select id="countMoney">
 		<!-- 특정 회원이 사용한 금액 -->
 		SELECT member_code, SUM(pay_amount + use_willpay) AS total_amount
-		FROM pay
+		FROM
+		pay
 		WHERE member_code = #{member_code}
 		GROUP BY member_code
 	</select>
@@ -261,9 +258,63 @@
 		WHERE member_code = #{member_code}
 		AND YEAR(pay_datetime) = #{year}
 		AND MONTH(pay_datetime) = #{month}
-		AND pay_status = 'paid'
+		AND
+		pay_status = 'paid'
 	</select>
 
-
+	<select id="countInquiry">
+		<!-- 특정 회원이 적은 문의수 -->
+		SELECT COUNT(*)
+		FROM class_inquiry
+		WHERE member_code = ${member_code}
+	</select>
+	
+	<select id="selectMemberInquiry">
+		<!-- 특정 회원이 적은 모든  문의수 -->	
+		SELECT 
+		ci.class_inquiry_code,
+		ci.class_inquiry_subject,
+		ci.class_inquiry_content,
+		ci.class_inquiry_date,
+		c.class_name,
+		ci.class_inquiry_status
+		FROM
+		class_inquiry ci
+		LEFT JOIN class
+		c ON ci.class_code = c.class_code
+		WHERE
+		ci.member_code = #{member_code}
+		LIMIT #{startRow}, #{listLimit}
+	</select>
+	<delete id="deleteInquiry">
+		<!-- 특정 회원이 적은 리뷰 삭제 -->	
+		DELETE FROM class_inquiry 
+		WHERE class_inquiry_code = #{class_inquiry_code}
+	</delete>
+	
+	<select id="selectInquiry">
+		SELECT * FROM class_inquiry
+		WHERE class_inquiry_code = #{class_inquiry_code}
+	
+	</select>
+	
+	<update id="updateInquiry">
+		<!-- 특정 회원이 적은 문의 업데이트 -->	
+		UPDATE class_inquiry
+		SET class_inquiry_subject = #{class_inquiry_subject},
+		class_inquiry_content = #{class_inquiry_content}
+		WHERE class_inquiry_code = #{class_inquiry_code}
+	
+	</update>
+	
+	<delete id="deleteMemberCode">
+		DELETE FROM class_review 
+		WHERE member_code = #{member_code}
+	</delete>
+	<delete id="deleteMemberCode2">
+		DELETE FROM class_inquiry   
+		WHERE member_code = #{member_code}
+	</delete>
+		
 
 </mapper>
